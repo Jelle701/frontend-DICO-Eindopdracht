@@ -1,0 +1,119 @@
+{
+  "Bloedglucosemeters": [
+    {
+      "Merk": "Abbott",
+      "Modellen": [
+        "FreeStyle Lite",
+        "FreeStyle InsuLinx",
+        "FreeStyle Precision Neo"
+      ]
+    },
+    {
+      "Merk": "Ascensia",
+      "Modellen": [
+        "Contour USB",
+        "Contour Next One",
+        "Contour Next EZ",
+        "Contour Next Link"
+      ]
+    },
+    {
+      "Merk": "LifeScan",
+      "Modellen": [
+        "OneTouch Verio",
+        "Verio IQ",
+        "Verio Flex"
+      ]
+    },
+    {
+      "Merk": "Roche",
+      "Modellen": [
+        "Accu-Chek Aviva",
+        "Aviva Connect",
+        "Guide"
+      ]
+    },
+    {
+      "Merk": "Sanofi",
+      "Modellen": [
+        "iBG Star"
+      ]
+    },
+    {
+      "Merk": "Overige",
+      "Modellen": [
+        "Metene TD-4116",
+        "CareSens N",
+        "True Metrix",
+        "iHealth Gluco+"
+      ]
+    }
+  ],
+  "CGM": [
+    {
+      "Merk": "Dexcom",
+      "Modellen": [
+        "G6",
+        "G7"
+      ]
+    },
+    {
+      "Merk": "Abbott",
+      "Modellen": [
+        "FreeStyle Libre 2",
+        "FreeStyle Libre 3",
+        "Lingo biosensor"
+      ]
+    },
+    {
+      "Merk": "Senseonics / Ascensia",
+      "Modellen": [
+        "Eversense"
+      ]
+    }
+  ],
+  "Insulinepompen": [
+    {
+      "Merk": "Medtronic",
+      "Modellen": [
+        "MiniMed 630G",
+        "670G",
+        "770G",
+        "780G"
+      ]
+    },
+    {
+      "Merk": "Insulet",
+      "Modellen": [
+        "Omnipod 5"
+      ]
+    },
+    {
+      "Merk": "Tandem",
+      "Modellen": [
+        "t:slim X2",
+        "Tandem Mobi"
+      ]
+    },
+    {
+      "Merk": "Ypsomed",
+      "Modellen": [
+        "mylife YpsoPump"
+      ]
+    },
+    {
+      "Merk": "Debiotech",
+      "Modellen": [
+        "JewelPUMP"
+      ]
+    },
+    {
+      "Merk": "Overige",
+      "Modellen": [
+        "TouchCare Nano",
+        "Symbioze",
+        "TruCare I"
+      ]
+    }
+  ]
+}

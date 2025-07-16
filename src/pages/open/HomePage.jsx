@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './HomePage.css';
-import '../../index.css';
+import 'src/index.css';
+import Navbar from "../../components/Navbar.jsx";
+import { Link } from "react-router-dom";
+import { ThemeContext } from 'src/services/ThemeContext.jsx'; // ✅ correct pad
+
 
 const HomePage = () => {
+    const { theme } = useContext(ThemeContext); // haal huidige thema op
+
     return (
-        <div className="homepage">
+        <div className={`homepage theme-${theme}`}>
             {/* TOP BANNER */}
             <div className="top-banner">
                 <p>
@@ -13,27 +19,9 @@ const HomePage = () => {
                 </p>
             </div>
 
-            {/* NAVIGATION */}
-            <header className="hero-section">
-                <nav className="hero-nav">
-                    <div className="container navbar">
-                        <div className="navbar-left">
-                            <a href="/public" className="logo">
-                                <img src="../../content/DicoLogowitV1.svg" alt="DICO Logo" height="35" />
-                            </a>
-                        </div>
-                        <ul className="navbar-center">
-                            <li><a href="#membership">Lidmaatschap</a></li>
-                            <li><a href="#how">Hoe werkt het</a></li>
-                            <li><a href="#why">Waarom DICO</a></li>
-                            <li><a href="#accessories">Accessoires</a></li>
-                        </ul>
-                        <div className="navbar-right">
-                            <a href="/register" className="btn btn-light">JOIN NU</a>
-                        </div>
-                    </div>
-                </nav>
+            <Navbar />
 
+            <header className="hero-section">
                 <div className="hero-content container">
                     <video
                         src="src/content/Test-Video.mp4"
@@ -47,9 +35,10 @@ const HomePage = () => {
                     <div className="hero-context">
                         <h1>Optimaliseer je gezondheid.</h1>
                         <p>Beheer je glucose, medicatie en lifestyle met de DICO app.</p>
-                        <button className="btn btn-primary">Probeer DICO</button>
+                        <Link to="/register" className="btn btn-primary">
+                            Probeer DICO
+                        </Link>
                     </div>
-
                 </div>
             </header>
 
@@ -96,7 +85,14 @@ const HomePage = () => {
                 <div className="container text-center">
                     <h2>Start vandaag nog met DICO</h2>
                     <p>Ervaar de voordelen van inzicht in je gezondheid.</p>
-                    <button className="btn btn-secondary">Maak een account aan</button>
+                    <Link to="/register" className="btn btn-secondary">
+                        Maak een account aan
+                    </Link>>
+
+
+
+
+
                 </div>
             </section>
 

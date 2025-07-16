@@ -1,0 +1,162 @@
+[
+  {
+    "Merknaam": "Humalog",
+    "Generieke naam": "Insulin lispro",
+    "Type": "Rapid-acting",
+    "Duur": "3–5 uur",
+    "Opmerkingen": "Meest gebruikt in maaltijdbolus",
+    "Fabrikant": "Lilly"
+  },
+  {
+    "Merknaam": "Humulin R",
+    "Generieke naam": "Regular human insulin",
+    "Type": "Short-acting",
+    "Duur": "5–8 uur",
+    "Opmerkingen": "Traditioneel gebruikt; tragere werking",
+    "Fabrikant": "Lilly"
+  },
+  {
+    "Merknaam": "Humulin N",
+    "Generieke naam": "NPH (Neutral Protamine Hagedorn)",
+    "Type": "Intermediate",
+    "Duur": "12–18 uur",
+    "Opmerkingen": "Basale dekking; soms 2×/dag nodig",
+    "Fabrikant": "Lilly"
+  },
+  {
+    "Merknaam": "Basaglar",
+    "Generieke naam": "Insulin glargine U100",
+    "Type": "Long-acting (biosimilar)",
+    "Duur": "20–24 uur",
+    "Opmerkingen": "Biosimilar van Lantus",
+    "Fabrikant": "Lilly"
+  },
+  {
+    "Merknaam": "Humalog Mix 75/25",
+    "Generieke naam": "75% lispro protamine + 25% lispro",
+    "Type": "Premix",
+    "Duur": "10–24 uur",
+    "Opmerkingen": "Basale en bolus in 1 injectie",
+    "Fabrikant": "Lilly"
+  },
+  {
+    "Merknaam": "Rezvoglar",
+    "Generieke naam": "Biosimilar insulin glargine",
+    "Type": "Long-acting",
+    "Duur": "~24 uur",
+    "Opmerkingen": "Alternatief voor Lantus",
+    "Fabrikant": "Lilly"
+  },
+  {
+    "Merknaam": "Afrezza",
+    "Generieke naam": "Inhaled human insulin",
+    "Type": "Ultra-rapid",
+    "Duur": "~3 uur",
+    "Opmerkingen": "Inhalatievorm; werkt zeer snel",
+    "Fabrikant": "Mannkind"
+  },
+  {
+    "Merknaam": "Novolog (NovoRapid)",
+    "Generieke naam": "Insulin aspart",
+    "Type": "Rapid-acting",
+    "Duur": "3–5 uur",
+    "Opmerkingen": "Snelle maaltijdinsuline",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Fiasp",
+    "Generieke naam": "Faster-acting insulin aspart",
+    "Type": "Ultra-rapid",
+    "Duur": "3–5 uur",
+    "Opmerkingen": "Snellere opname dan Novolog",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Novolin R",
+    "Generieke naam": "Regular human insulin",
+    "Type": "Short-acting",
+    "Duur": "5–8 uur",
+    "Opmerkingen": "Idem als Humulin R",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Novolin N",
+    "Generieke naam": "NPH",
+    "Type": "Intermediate",
+    "Duur": "12–18 uur",
+    "Opmerkingen": "Zelfde als Humulin N",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Levemir",
+    "Generieke naam": "Insulin detemir",
+    "Type": "Long-acting",
+    "Duur": "12–24 uur",
+    "Opmerkingen": "Soms 2×/dag nodig bij hogere dosering",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Tresiba",
+    "Generieke naam": "Insulin degludec",
+    "Type": "Ultra-long acting",
+    "Duur": ">42 uur",
+    "Opmerkingen": "Flexibel injectieschema mogelijk",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Awiqli",
+    "Generieke naam": "Insulin icodec",
+    "Type": "Ultra-long acting",
+    "Duur": "1×/week",
+    "Opmerkingen": "Wekelijkse toediening – NIEUW",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Novolog Mix 70/30",
+    "Generieke naam": "70% aspart protamine + 30% aspart",
+    "Type": "Premix",
+    "Duur": "10–24 uur",
+    "Opmerkingen": "Voor tweemaal daags injectiegebruik",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Ryzodeg 70/30",
+    "Generieke naam": "70% degludec + 30% aspart",
+    "Type": "Co-formulated",
+    "Duur": ">24 uur",
+    "Opmerkingen": "Basale + bolus in 1 injectie",
+    "Fabrikant": "Novo Nordisk"
+  },
+  {
+    "Merknaam": "Apidra",
+    "Generieke naam": "Insulin glulisine",
+    "Type": "Rapid-acting",
+    "Duur": "3–4 uur",
+    "Opmerkingen": "Kortste piek van de rapids",
+    "Fabrikant": "Sanofi"
+  },
+  {
+    "Merknaam": "Lantus",
+    "Generieke naam": "Insulin glargine U100",
+    "Type": "Long-acting",
+    "Duur": "20–24 uur",
+    "Opmerkingen": "Geen piek, 1×/dag",
+    "Fabrikant": "Sanofi"
+  },
+  {
+    "Merknaam": "Toujeo",
+    "Generieke naam": "Insulin glargine U300",
+    "Type": "Ultra-long acting",
+    "Duur": "36 uur",
+    "Opmerkingen": "Minder hyporisco; hoge concentratie",
+    "Fabrikant": "Sanofi"
+  },
+  {
+    "Merknaam": "Semglee",
+    "Generieke naam": "Biosimilar insulin glargine",
+    "Type": "Long-acting",
+    "Duur": "~24 uur",
+    "Opmerkingen": "FDA- & EMA-goedgekeurde biosimilar",
+    "Fabrikant": "Viatris"
+  }
+]

@@ -137,3 +137,56 @@ footer {
   color: var(--color-accent);
   background-color: #111;
 }
+/*Thema*/
+.theme-light {
+  --color-primary: #FF3B3F;
+  --color-accent: #000000;
+  --color-background: #FFFFFF;
+  --color-muted: #444;
+
+  --btn-background: #f0f0f0;
+  --btn-text: #000;
+  --btn-border: #000;
+
+  --navbar-bg: #ffffff;
+  --navbar-link: #000000;
+}
+
+.theme-dark {
+  --color-primary: #FF3B3F;
+  --color-accent: #FFFFFF;
+  --color-background: #000000;
+  --color-muted: #BCB2B4;
+
+  --btn-background: #333;
+  --btn-text: #fff;
+  --btn-border: #f00;
+
+  --navbar-bg: #000000;
+  --navbar-link: #ffffff;
+}
+
+
+body,
+.app {
+  background-color: var(--color-background);
+  color: var(--color-accent);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--btn-text);
+}
+
+.btn-secondary {
+  background: var(--btn-background);
+  color: var(--btn-text);
+}
+
+input,
+textarea,
+select {
+  background-color: var(--color-background);
+  color: var(--color-accent);
+  border: 2px solid var(--btn-border);
+}

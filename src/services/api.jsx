@@ -1,3 +1,17 @@
-import axios from 'axios';
-const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL || 'https://api.dico.com', headers: { 'Content-Type': 'application/json' }});
-export default api;
+const API_BASE = import.meta.env.VITE_API_URL;
+
+export async function registerUser(userData) {
+    const response = await fetch(`${API_BASE}/users/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Registratie mislukt');
+    }
+
+    return await response.json();
+}

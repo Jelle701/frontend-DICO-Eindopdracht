@@ -209,8 +209,6 @@
 .hero-section {
     border: #FFFFFF dotted 5px;
     z-index: 1;
-    padding-bottom: 4rem;
-    min-height: 80vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -224,7 +222,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding-top: 8rem;
+    /*padding-top: 8rem;*/
 }
 
 .features-grid {
@@ -312,42 +310,7 @@
     font-size: 0.9rem;
 }
 
-.navbar-center {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-    flex-wrap: nowrap;
-    justify-content: center;
-}
 
-.navbar-center li {
-    margin: 0;
-}
-
-.navbar-center a {
-    color: white;
-    font-weight: 600;
-    padding: 0.5rem;
-    transition: opacity 0.2s ease;
-}
-
-.navbar-center a:hover {
-    opacity: 0.8;
-    color: var(--color-primary);
-}
-
-.navbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navbar-left img {
-    height: 40px;
-    max-height: 40px;
-    object-fit: contain;
-}
 
 @media (max-width: 768px) {
     .hero-content h1 {
