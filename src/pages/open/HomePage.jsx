@@ -3,7 +3,7 @@ import './HomePage.css';
 import 'src/index.css';
 import Navbar from "../../components/Navbar.jsx";
 import { Link } from "react-router-dom";
-import { ThemeContext } from 'src/services/ThemeContext.jsx'; // ✅ correct pad
+import { ThemeContext } from 'src/contexts/ThemeContext.jsx'; // ✅ correct pad
 
 
 const HomePage = () => {
@@ -87,11 +87,7 @@ const HomePage = () => {
                     <p>Ervaar de voordelen van inzicht in je gezondheid.</p>
                     <Link to="/register" className="btn btn-secondary">
                         Maak een account aan
-                    </Link>>
-
-
-
-
+                    </Link>
 
                 </div>
             </section>

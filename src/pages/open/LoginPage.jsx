@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext.jsx';
 import '../../App.css';
 import Navbar from "../../components/Navbar.jsx";
+
+
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

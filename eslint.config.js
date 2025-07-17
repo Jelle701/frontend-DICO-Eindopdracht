@@ -27,3 +27,13 @@ export default defineConfig([
     },
   },
 ])
+// module.exports = {
+//   settings: {
+//     'import/resolver': {
+//       alias: {
+//         map: [['src', './src']],
+//         extensions: ['.js', '.jsx', '.ts', '.tsx'],
+//       },
+//     },
+//   },
+// };

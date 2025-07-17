@@ -1,7 +1,8 @@
+// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import jwt_decode from 'jwt-decode';
-import axios from 'src/components/axios.jsx';
+import { jwtDecode as jwt_decode } from 'jwt-decode';
+
 
 export const AuthContext = createContext({});
 
@@ -43,7 +44,7 @@ function AuthContextProvider({ children }) {
             },
             status: 'done',
         });
-        console.log("Gebruiker is ingelogd!");
+        console.log('Gebruiker is ingelogd!');
         navigate('/profile'); // Stuur gebruiker naar profielpagina na inloggen
     }
 
@@ -54,7 +55,7 @@ function AuthContextProvider({ children }) {
             user: null,
             status: 'done',
         });
-        console.log("Gebruiker is uitgelogd!");
+        console.log('Gebruiker is uitgelogd!');
         navigate('/');
     }
 

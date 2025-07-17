@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { ThemeContext } from 'src/services/ThemeContext.jsx';
+import { ThemeContext } from 'src/contexts/ThemeContext.jsx';
 import { AuthContext } from 'src/contexts/AuthContext.jsx'; // Zorg dat het pad klopt!
 import './NavBar.css';
 
