@@ -1,76 +1,29 @@
-// src/contexts/AuthContext.jsx
-import React, { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode as jwt_decode } from 'jwt-decode';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useUser } from './UserContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
+const AuthContext = createContext();
 
-export const AuthContext = createContext({});
-
-function AuthContextProvider({ children }) {
-    const [authState, setAuthState] = useState({
-        isAuth: false,
-        user: null,
-        status: 'pending',
-    });
+export function AuthContextProvider({ children }) {
+    const { user } = useUser();
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // Effect om te checken of er al een token is bij het laden van de app
+    // Redirect to login if not authenticated
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decodedToken = jwt_decode(token);
-            // Hier kun je een check toevoegen of de token niet verlopen is
-            login(token);
-        } else {
-            setAuthState({
-                isAuth: false,
-                user: null,
-                status: 'done',
-            });
+        if (!user) {
+            const from = location.state?.from?.pathname || '/login';
+            navigate(from, { replace: true });
         }
-    }, []);
-
-    async function login(token) {
-        localStorage.setItem('token', token);
-        const decodedToken = jwt_decode(token);
-
-        // Hier zou je een request kunnen doen om de volledige user data op te halen
-        // Voor nu gebruiken we de data uit de token
-        setAuthState({
-            isAuth: true,
-            user: {
-                email: decodedToken.sub, // 'sub' is vaak de username/email in een JWT
-                // rollen etc. kun je ook uit de token halen
-            },
-            status: 'done',
-        });
-        console.log('Gebruiker is ingelogd!');
-        navigate('/profile'); // Stuur gebruiker naar profielpagina na inloggen
-    }
-
-    function logout() {
-        localStorage.removeItem('token');
-        setAuthState({
-            isAuth: false,
-            user: null,
-            status: 'done',
-        });
-        console.log('Gebruiker is uitgelogd!');
-        navigate('/');
-    }
-
-    const contextData = {
-        isAuth: authState.isAuth,
-        user: authState.user,
-        login: login,
-        logout: logout,
-    };
+    }, [user, navigate, location]);
 
     return (
-        <AuthContext.Provider value={contextData}>
-            {authState.status === 'pending' ? <p>Loading...</p> : children}
+        <AuthContext.Provider value={{ user }}>
+            {children}
         </AuthContext.Provider>
     );
 }
 
-export default AuthContextProvider;
+export function useAuth() {
+    return useContext(AuthContext);
+}

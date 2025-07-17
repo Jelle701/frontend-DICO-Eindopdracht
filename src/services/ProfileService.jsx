@@ -1,10 +1,14 @@
-// src/services/ProfileService.jsx
 import apiClient from './ApiClient';
 
 export async function fetchProfile() {
-    // Roept nu GET http://localhost:8000/users/profile
-    const response = await apiClient.get('/users/profile');
-    return response.data;
+    // Roept GET http://localhost:8000/api/users/profile
+    const { data } = await apiClient.get('/users/profile');
+    return data;
 }
+export default  fetchProfile;
 
-export default { fetchProfile };
+export async function register(userData) {
+    // POST naar http://localhost:8000/api/users/register
+    const {data} = await apiClient.post('/users/register', userData);
+    return data;
+}

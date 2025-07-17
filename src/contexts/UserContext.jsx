@@ -1,42 +1,57 @@
-// contexts/UserContext.jsx
+// src/context/UserContext.jsx
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import apiClient from '../services/ApiClient';
 
-import React, { createContext, useState, useContext } from 'react';
-
-const UserContext = createContext(null);
+const UserContext = createContext();
 
 export function UserProvider({ children }) {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const login = ({ email, password }) => {
-        if (import.meta.env.DEV) {
-            setUser({ id: 'dev', name: 'Dev User', email });
-            return true;
+    // Initialize from stored token
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            fetchProfile();
+        } else {
+            setLoading(false);
         }
+    }, []);
 
-        if (email === 'user@test.com' && password === 'Password123') {
-            setUser({ id: '1', name: 'Test User', email });
-            return true;
+    async function login({ email, password }) {
+        const { data } = await apiClient.post('/auth/login', { email, password });
+        const token = data.token;
+        localStorage.setItem('token', token);
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        await fetchProfile();
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        delete apiClient.defaults.headers.common['Authorization'];
+        setUser(null);
+    }
+
+    async function fetchProfile() {
+        try {
+            const { data } = await apiClient.get('/users/profile');
+            setUser(data);
+        } catch (error) {
+            console.error('Profile fetch failed', error);
+            setUser(null);
+        } finally {
+            setLoading(false);
         }
-
-        alert('Ongeldige inloggegevens');
-        return false;
-    };
-
-
-    const register = (details) => {
-        // Bijv. alleen opslaan in localStorage of context-buffer
-        localStorage.setItem('registrationData', JSON.stringify(details));
-        // setUser(null); // niks doen
-    };
-
-
-    const logout = () => setUser(null);
+    }
 
     return (
-        <UserContext.Provider value={{ user, login, register, logout }}>
+        <UserContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </UserContext.Provider>
     );
 }
 
-export const useUser = () => useContext(UserContext);
+export function useUser() {
+    return useContext(UserContext);
+}
