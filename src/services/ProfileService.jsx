@@ -1,24 +1,10 @@
-// src/services/profileService.js
-import apiClient from './apiClient';
+// src/services/ProfileService.jsx
+import apiClient from './ApiClient';
 
-/**
- * Haalt het profiel op van een gebruiker.
- * @param {string} userId
- * @returns {Promise<object>} profielgegevens
- */
-export async function fetchProfile(userId) {
-    const response = await apiClient.get(`/users/${userId}/profile`);
+export async function fetchProfile() {
+    // Roept nu GET http://localhost:8000/users/profile
+    const response = await apiClient.get('/users/profile');
     return response.data;
 }
 
-/**
- * Werkt het profiel bij van een gebruiker.
- * @param {string} userId
- * @param {object} profileData
- * @returns {Promise<object>} bijgewerkte profielgegevens
- */
-export async function updateProfile(userId, profileData) {
-    const response = await apiClient.put(`/users/${userId}/profile`, profileData);
-    return response.data;
-}
-
+export default { fetchProfile };
