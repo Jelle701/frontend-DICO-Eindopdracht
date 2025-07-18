@@ -3,15 +3,17 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Publieke Pagina's
+// Publieke Pagina's (toegankelijk voor iedereen)
 import HomePage from './pages/open/HomePage.jsx';
 import LoginPage from './pages/open/LoginPage.jsx';
 import RegisterPage from './pages/open/register/RegisterPage.jsx';
 import VerifyEmailPage from './pages/open/register/VerifyEmailPage.jsx';
 
-// Beveiligde Pagina's (Dashboard & Onboarding)
+// Beveiligde Pagina's (vereisen login)
 import DashboardPage from './pages/Authorization/DashboardPage.jsx';
 import GlucosePage from './pages/Authorization/GlucosePage.jsx';
+
+// Beveiligde Onboarding Pagina's
 import RegisterDetailsPage from './pages/open/register/RegisterPage2.jsx';
 import OnboardingPreferences from './pages/open/register/RegisterPage3.jsx';
 import MedicineInfo from './pages/open/register/MedicineInfo.jsx';
@@ -24,7 +26,7 @@ import PublicRoute from './components/PublicRoute.jsx';
 function App() {
     return (
         <Routes>
-            {/* --- Publieke Routes --- */}
+            {/* --- Publieke Routes (Alleen als NIET ingelogd) --- */}
             <Route path="/" element={<HomePage />} />
 
             <Route path="/login" element={
@@ -46,8 +48,7 @@ function App() {
             } />
 
 
-            {/* --- Beveiligde Routes (vereisen login) --- */}
-            {/* Het dashboard is alleen voor ingelogde gebruikers */}
+            {/* --- Beveiligde Routes (Alleen als WEL ingelogd) --- */}
             <Route path="/dashboard" element={
                 <PrivateRoute>
                     <DashboardPage />
@@ -60,11 +61,7 @@ function App() {
                 </PrivateRoute>
             } />
 
-            {/*
-              VERBETERING: De volgende stappen in de onboarding horen achter een PrivateRoute.
-              Een gebruiker moet ingelogd zijn om zijn/haar profiel af te maken.
-              Dit maakt het ook mogelijk om deze pagina's later opnieuw te bezoeken om gegevens aan te passen.
-            */}
+            {/* De volledige onboarding-flow is beveiligd. */}
             <Route path="/register-details" element={
                 <PrivateRoute>
                     <RegisterDetailsPage />

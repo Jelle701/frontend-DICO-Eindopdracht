@@ -1,7 +1,8 @@
+// src/pages/open/register/RegisterPage3.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from 'src/contexts/UserContext.jsx';
-import DevBypassValidation from '../../../components/devtools/BypassRequiredFields.jsx';
+import Navbar from '../../../components/Navbar.jsx';
+import './RegisterPage.css';
 
 function OnboardingPreferences() {
     const [system, setSystem] = useState('metric');
@@ -9,9 +10,7 @@ function OnboardingPreferences() {
     const [weight, setWeight] = useState('');
     const [height, setHeight] = useState('');
     const [bmi, setBmi] = useState(null);
-
     const navigate = useNavigate();
-    const { login } = useUser();
 
     useEffect(() => {
         const h = parseFloat(height);
@@ -26,47 +25,19 @@ function OnboardingPreferences() {
         }
     }, [weight, height, system]);
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //
-    //     const preferences = {
-    //         system,
-    //         gender,
-    //         weight,
-    //         height,
-    //         bmi,
-    //     };
-    //
-    //     localStorage.setItem('userPreferences', JSON.stringify(preferences));
-    //     login({ email: 'dev@dico.app', password: 'test1234' }); // tijdelijk
-    //     navigate('/medicine-info');
-    // };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const preferences = {
-            system,
-            gender,
-            weight,
-            height,
-            bmi,
-        };
-
+        const preferences = { system, gender, weight, height, bmi };
         localStorage.setItem('userPreferences', JSON.stringify(preferences));
-
-        // login() NIET hier uitvoeren!
         navigate('/medicine-info');
     };
 
     return (
         <>
-            <DevBypassValidation active={true} />
-
+            <Navbar />
             <div className="auth-page container">
                 <h1>Persoonlijke instellingen</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-
                     <label>Meeteenheid:</label>
                     <select value={system} onChange={(e) => setSystem(e.target.value)} required>
                         <option value="metric">Metrisch (kg / cm)</option>
@@ -82,24 +53,14 @@ function OnboardingPreferences() {
                     </select>
 
                     <label>Gewicht ({system === 'metric' ? 'kg' : 'lbs'}):</label>
-                    <input
-                        type="number"
-                        value={weight}
-                        onChange={(e) => setWeight(e.target.value)}
-                        required
-                    />
+                    <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} required />
 
                     <label>Lengte ({system === 'metric' ? 'cm' : 'inch'}):</label>
-                    <input
-                        type="number"
-                        value={height}
-                        onChange={(e) => setHeight(e.target.value)}
-                        required
-                    />
+                    <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} required />
 
                     {bmi && <p><strong>BMI:</strong> {bmi}</p>}
 
-                    <button type="submit">Start met DICO</button>
+                    <button type="submit">Volgende</button>
                 </form>
             </div>
         </>
