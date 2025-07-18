@@ -1,17 +1,17 @@
-const API_BASE = import.meta.env.VITE_API_URL;
+// src/services/api.jsx
+import apiClient from './ApiClient'; // Gebruik de geconfigureerde apiClient
 
 export async function registerUser(userData) {
-    const response = await fetch(`${API_BASE}/users/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-        throw new Error('Registratie mislukt');
-    }
-
-    return await response.json();
+    // userData bevat nu: { firstName, lastName, dob, email, password }
+    const { data } = await apiClient.post('/users/register', userData);
+    return data;
 }
+
+// Hier kunnen in de toekomst andere API-calls komen,
+// zoals het opslaan van onboarding-data.
+/*
+export async function saveOnboardingData(onboardingData) {
+    const { data } = await apiClient.post('/users/onboarding', onboardingData);
+    return data;
+}
+*/

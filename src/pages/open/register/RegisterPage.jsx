@@ -1,61 +1,48 @@
+// src/pages/open/register/RegisterPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from 'src/contexts/UserContext.jsx';
+import { registerUser } from 'src/services/api.jsx'; // Directe import van de API-functie
 import Navbar from '../../../components/Navbar.jsx';
 import './RegisterPage.css';
 
-/**
- * Pagina voor het aanmaken van een nieuw account.
- *
- * Verzamelt gebruikersgegevens, valideert invoer,
- * roept de registratie-logica aan en navigeert na succes.
- */
 function RegisterPage() {
-    const { register } = useUser();
     const navigate = useNavigate();
 
-    // Formuliervelden
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [dob, setDob] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        dob: '',
+        email: '',
+        password: '',
+    });
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    /**
-     * Verwerkt inputveranderingen.
-     */
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        switch (name) {
-            case 'firstName': setFirstName(value); break;
-            case 'lastName': setLastName(value); break;
-            case 'dob': setDob(value); break;
-            case 'email': setEmail(value); break;
-            case 'password': setPassword(value); break;
-            case 'confirmPassword': setConfirmPassword(value); break;
-            default: break;
-        }
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    /**
-     * Verstuurt het registratieformulier.
-     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
-        if (password !== confirmPassword) {
+        if (formData.password !== confirmPassword) {
             setError('Wachtwoorden komen niet overeen.');
+            setLoading(false);
             return;
         }
 
         try {
-            await register({ firstName, lastName, dob, email, password });
-            navigate('/verify');
+            // Roep de API-service direct aan met het correcte data-object
+            await registerUser(formData);
+            // Stuur gebruiker naar de verificatiepagina met het e-mailadres
+            navigate('/verify', { state: { email: formData.email } });
         } catch (err) {
-            setError(err.message || 'Registratie mislukt, probeer opnieuw.');
+            setError(err.message || 'Registratie mislukt. Het e-mailadres is mogelijk al in gebruik.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -65,87 +52,41 @@ function RegisterPage() {
             <div className="auth-page container">
                 <h1 className="text-center">Account aanmaken</h1>
                 <form onSubmit={handleSubmit} className="form flex flex-col gap-4">
+                    {/* Voornaam */}
                     <div className="form-group">
                         <label htmlFor="firstName">Voornaam</label>
-                        <input
-                            id="firstName"
-                            name="firstName"
-                            type="text"
-                            value={firstName}
-                            onChange={handleChange}
-                            placeholder="Vul je voornaam in"
-                            required
-                        />
+                        <input id="firstName" name="firstName" type="text" value={formData.firstName} onChange={handleChange} required />
                     </div>
-
+                    {/* Achternaam */}
                     <div className="form-group">
                         <label htmlFor="lastName">Achternaam</label>
-                        <input
-                            id="lastName"
-                            name="lastName"
-                            type="text"
-                            value={lastName}
-                            onChange={handleChange}
-                            placeholder="Vul je achternaam in"
-                            required
-                        />
+                        <input id="lastName" name="lastName" type="text" value={formData.lastName} onChange={handleChange} required />
                     </div>
-
+                    {/* Geboortedatum */}
                     <div className="form-group">
                         <label htmlFor="dob">Geboortedatum</label>
-                        <input
-                            id="dob"
-                            name="dob"
-                            type="date"
-                            value={dob}
-                            onChange={handleChange}
-                            required
-                        />
+                        <input id="dob" name="dob" type="date" value={formData.dob} onChange={handleChange} required />
                     </div>
-
+                    {/* E-mail */}
                     <div className="form-group">
                         <label htmlFor="email">E-mailadres</label>
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={email}
-                            onChange={handleChange}
-                            placeholder="Vul je e-mailadres in"
-                            required
-                        />
+                        <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
                     </div>
-
+                    {/* Wachtwoord */}
                     <div className="form-group">
                         <label htmlFor="password">Wachtwoord</label>
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            value={password}
-                            onChange={handleChange}
-                            placeholder="Kies een wachtwoord"
-                            required
-                        />
+                        <input id="password" name="password" type="password" value={formData.password} onChange={handleChange} required />
                     </div>
-
+                    {/* Herhaal wachtwoord */}
                     <div className="form-group">
                         <label htmlFor="confirmPassword">Herhaal wachtwoord</label>
-                        <input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type="password"
-                            value={confirmPassword}
-                            onChange={handleChange}
-                            placeholder="Herhaal je wachtwoord"
-                            required
-                        />
+                        <input id="confirmPassword" name="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
                     </div>
 
                     {error && <p className="error-text">{error}</p>}
 
-                    <button type="submit" className="btn btn-primary">
-                        Registreer
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                        {loading ? 'Registreren...' : 'Registreer'}
                     </button>
                 </form>
             </div>

@@ -1,29 +1,39 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { ThemeContext } from 'src/contexts/ThemeContext.jsx';
-import { AuthContext } from 'src/contexts/AuthContext.jsx'; // Zorg dat het pad klopt!
+// src/components/Navbar.jsx
+
+import React from 'react';
+import { NavLink, Link } from 'react-router-dom';
+import { useAuth } from 'src/contexts/AuthContext.jsx';
+import { useTheme } from 'src/contexts/ThemeContext.jsx'; // Deze import werkt nu
 import './NavBar.css';
 
-
 function Navbar() {
-    const { theme, toggleTheme } = useContext(ThemeContext);
-    const { isAuth, logout } = useContext(AuthContext); // Haal de auth-status en logout functie op
+    // Haal de authenticatie status en functies op via de custom hook
+    const { isAuth, logout } = useAuth();
+    // Haal de thema status en functie op via de custom hook
+    const { theme, toggleTheme } = useTheme();
 
     return (
         <header className="hero-section">
             <nav className="hero-nav">
                 <div className="container navbar">
+
                     <div className="navbar-left">
-                        <Link to="/public" className="logo">
-                            <img src='src/content/DicoLogowitV1.svg' alt="DICO Logo" height="35" />
+                        <Link to="/" className="logo">
+                            <img src='/src/content/DicoLogowitV1.svg' alt="DICO Logo" />
                         </Link>
                     </div>
+
+
                     <ul className="navbar-center">
-                        <li><a href="#membership">Lidmaatschap</a></li>
-                        <li><a href="#how">Hoe werkt het</a></li>
-                        <li><a href="#why">Waarom DICO</a></li>
-                        <li><a href="#accessories">Accessoires</a></li>
+                        <li><NavLink to="/">Home</NavLink></li>
+                        <li><NavLink to="/how-it-works">Hoe werkt het</NavLink></li>
+                        <li><NavLink to="/why-dico">Waarom DICO</NavLink></li>
+                        {isAuth && (
+                            <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+                        )}
                     </ul>
+
+
                     <div className="navbar-right">
                         {isAuth ? (
                             <>
@@ -38,15 +48,17 @@ function Navbar() {
                             </>
                         ) : (
                             <>
-                                <Link to="/register" className="btn btn-light">JOIN NU</Link>
+                                <Link to="/login" className="btn btn-light">Login</Link>
+                                <Link to="/register" className="btn btn-primary">JOIN NU</Link>
                             </>
                         )}
                         <button
                             className="btn btn-outline"
                             onClick={toggleTheme}
-                            style={{ marginLeft: '1rem' }}
+                            style={{ marginLeft: '1rem', padding: '0.5rem' }}
+                            aria-label="Toggle thema"
                         >
-                            {theme === 'light' ? '🌙 Donker' : '☀️ Licht'}
+                            {theme === 'light' ? '🌙' : '☀️'}
                         </button>
                     </div>
                 </div>

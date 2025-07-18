@@ -1,15 +1,22 @@
-import React, { useContext } from 'react';
+// src/pages/open/HomePage.jsx
+
+import React from 'react';
+import { Link } from "react-router-dom";
+
+// Importeer de custom hook in plaats van de context
+import { useTheme } from 'src/contexts/ThemeContext.jsx';
+
+// Importeer de Navbar component en de stylesheets
+import Navbar from "../../components/Navbar.jsx";
 import './HomePage.css';
 import 'src/index.css';
-import Navbar from "../../components/Navbar.jsx";
-import { Link } from "react-router-dom";
-import { ThemeContext } from 'src/contexts/ThemeContext.jsx'; // ✅ correct pad
-
 
 const HomePage = () => {
-    const { theme } = useContext(ThemeContext); // haal huidige thema op
+    // Gebruik de custom hook om het thema op te halen.
+    const { theme } = useTheme();
 
     return (
+        // De className wordt hier toegepast om de themakleuren correct weer te geven
         <div className={`homepage theme-${theme}`}>
             {/* TOP BANNER */}
             <div className="top-banner">
@@ -19,6 +26,7 @@ const HomePage = () => {
                 </p>
             </div>
 
+            {/* De Navbar is hier teruggeplaatst, zoals het hoort. */}
             <Navbar />
 
             <header className="hero-section">
@@ -31,7 +39,6 @@ const HomePage = () => {
                         playsInline
                         className="hero-video"
                     />
-
                     <div className="hero-context">
                         <h1>Optimaliseer je gezondheid.</h1>
                         <p>Beheer je glucose, medicatie en lifestyle met de DICO app.</p>
@@ -50,13 +57,12 @@ const HomePage = () => {
                         <p>Registreer metingen, bekijk trends, en deel inzichten met je zorgverleners in realtime.</p>
                     </div>
                     <div>
-                        <img className="feature-img1" src="src/content/Man%20met%20sensor.png" alt="Glucose visualisatie" />
+                        <img className="feature-img1" src="src/content/Man%20met%20sensor.png" alt="Man met een glucose sensor" />
                     </div>
                 </div>
-
                 <div className="features-grid reverse">
                     <div>
-                        <img className="feature-img2" src="src/content/Grafiek.png" alt="Lifestyle visualisatie" />
+                        <img className="feature-img2" src="src/content/Grafiek.png" alt="Grafiek van glucosewaarden" />
                     </div>
                     <div className="feature-text">
                         <h2>Alles-in-één app</h2>
@@ -88,7 +94,6 @@ const HomePage = () => {
                     <Link to="/register" className="btn btn-secondary">
                         Maak een account aan
                     </Link>
-
                 </div>
             </section>
 
