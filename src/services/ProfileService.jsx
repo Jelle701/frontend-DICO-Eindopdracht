@@ -1,32 +1,35 @@
-import { apiClient } from './api'; // We importeren de bestaande api-client
+// src/services/profileService.jsx
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 /**
- * Functie om de profielgegevens van de ingelogde gebruiker op te halen.
- * @returns {Promise<object>} De profielgegevens van de gebruiker.
- * @throws {Error} Gooit een error als het ophalen van de gegevens mislukt.
+ * Haalt het profiel van de ingelogde gebruiker op
  */
-export const getProfile = async () => {
+export async function fetchUserProfile() {
     try {
-        // We halen de token op uit de lokale opslag, die nodig is voor autorisatie
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('Geen token gevonden. Log opnieuw in.');
-        }
-
-        // We sturen een GET-verzoek naar het '/profile' endpoint van je backend
-        // De 'Authorization' header is nodig zodat de backend weet wie je bent
-        const response = await apiClient.get('/profile', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.get(`${API_URL}/profile`, {
+            withCredentials: true,
         });
-
-        // We geven de data uit het antwoord terug
         return response.data;
-    } catch (error) {
-        // Als er iets misgaat (bijv. netwerkfout of ongeldige token), loggen we de fout
-        // en gooien we deze door, zodat de component die de functie aanroept weet dat het misging.
-        console.error("Fout bij het ophalen van het profiel:", error);
-        throw error;
+    } catch (err) {
+        console.error('Error fetching profile:', err);
+        throw err;
     }
-};
+}
+
+/**
+ * Update profielgegevens van de gebruiker
+ * @param {Object} profileData
+ */
+export async function updateUserProfile(profileData) {
+    try {
+        const response = await axios.put(`${API_URL}/profile`, profileData, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (err) {
+        console.error('Error updating profile:', err);
+        throw err;
+    }
+}
