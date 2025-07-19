@@ -1,7 +1,7 @@
 // src/pages/open/LoginPage.jsx
 
 import React, { useState } from 'react';
-import { useUser } from 'src/contexts/UserContext.jsx';
+import { useUser } from './contexts/UserContext.jsx';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 // --- VERBETERING ---

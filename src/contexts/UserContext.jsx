@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const UserContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUser = () => useContext(UserContext);
 
 export function UserProvider({ children }) {

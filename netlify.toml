@@ -1,0 +1,15 @@
+# ───────────────────────────────────────────────────────────────────
+# Bestand: netlify.toml
+# Plaats: /<project-root>/netlify.toml
+#───────────────────────────────────────────────────────────────────
+
+[build]
+  command     = "npm run build"
+  publish     = "dist"
+  environment = { NODE_ENV = "production" }
+
+# (optioneel) als je client‑side routing hebt:
+# [[redirects]]
+#   from   = "/*"
+#   to     = "/index.html"
+#   status = 200
