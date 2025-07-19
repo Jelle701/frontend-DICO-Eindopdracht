@@ -1,7 +1,7 @@
 // src/pages/Authorization/DashboardPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../../contexts/UserContext.jsx';
-import { fetchUserProfile, updateUserProfile } from '../../services/profileService.jsx';
+import { fetchUserProfile, updateUserProfile } from '../../services/ProfileService.jsx';
 
 export default function DashboardPage() {
     const { user } = useUser();
@@ -20,7 +20,6 @@ export default function DashboardPage() {
                 setLoading(false);
             }
         }
-
         loadProfile();
     }, []);
 
@@ -62,7 +61,6 @@ export default function DashboardPage() {
                         onChange={e => setProfile({ ...profile, age: e.target.value })}
                     />
                 </label>
-                {/* Voeg hier eventuele extra velden toe */}
                 <button onClick={handleSave} disabled={loading}>
                     {loading ? 'Opslaan…' : 'Opslaan'}
                 </button>
