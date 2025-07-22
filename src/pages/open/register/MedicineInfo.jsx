@@ -1,83 +1,78 @@
-// src/pages/open/register/MedicineInfo.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import medicatieOpties from '../../../Data/MedicatieDataSet.json';
-import Navbar from '../../../components/Navbar.jsx';
+// CORRECTIE: Importeer de stylesheet direct.
 import './RegisterPage.css';
 
-function MedicineInfo() {
-    const [usesMedication, setUsesMedication] = useState('');
-    const [manufacturer1, setManufacturer1] = useState('');
-    const [manufacturer2, setManufacturer2] = useState('');
-    const [med1, setMed1] = useState('');
-    const [med2, setMed2] = useState('');
+function RegisterPage3() {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        eenheid: 'mmol/L',
+        geslacht: '',
+        gewicht: '',
+        lengte: ''
+    });
+    const [bmi, setBmi] = useState(null);
 
-    const uniqueManufacturers = [...new Set(medicatieOpties.map(med => med.Fabrikant))].sort();
-    const getMedicinesByManufacturer = (man) => medicatieOpties.filter((med) => med.Fabrikant === man);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    useEffect(() => {
+        const { gewicht, lengte } = formData;
+        if (gewicht > 0 && lengte > 0) {
+            const lengteInMeters = lengte / 100;
+            const calculatedBmi = (gewicht / (lengteInMeters * lengteInMeters)).toFixed(1);
+            setBmi(calculatedBmi);
+        } else {
+            setBmi(null);
+        }
+    }, [formData.gewicht, formData.lengte]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const medicineData = {
-            usesMedication,
-            medicationDetails: [
-                manufacturer1 && med1 ? { fabrikant: manufacturer1, merknaam: med1 } : null,
-                manufacturer2 && med2 ? { fabrikant: manufacturer2, merknaam: med2 } : null,
-            ].filter(Boolean),
-        };
-        localStorage.setItem('medicineInfo', JSON.stringify(medicineData));
-        navigate('/devices');
+        try {
+            localStorage.setItem('onboardingPreferences', JSON.stringify(formData));
+            navigate('/medicine-info');
+        } catch (error) {
+            console.error("Kon voorkeuren niet opslaan in localStorage", error);
+        }
     };
 
     return (
-        <>
-            <Navbar />
-            <div className="auth-page container">
-                <h1>Medicatie</h1>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-                    <label>Gebruik je momenteel medicatie voor diabetes?</label>
-                    <select value={usesMedication} onChange={(e) => setUsesMedication(e.target.value)} required>
-                        <option value="">Maak een keuze</option>
-                        <option value="ja">Ja</option>
-                        <option value="nee">Nee</option>
+        <div className="auth-page">
+            <form onSubmit={handleSubmit}>
+                <h1>Persoonlijke voorkeuren</h1>
+                <div className="input-group">
+                    <label>Eenheid voor glucosemeting</label>
+                    <select name="eenheid" value={formData.eenheid} onChange={handleChange}>
+                        <option value="mmol/L">mmol/L</option>
+                        <option value="mg/dL">mg/dL</option>
                     </select>
-                    {usesMedication === 'ja' && (
-                        <>
-                            <label>Fabrikant van eerste medicijn:</label>
-                            <select value={manufacturer1} onChange={(e) => { setManufacturer1(e.target.value); setMed1(''); }} required>
-                                <option value="">Selecteer fabrikant</option>
-                                {uniqueManufacturers.map((name) => (<option key={name} value={name}>{name}</option>))}
-                            </select>
-                            {manufacturer1 && (
-                                <>
-                                    <label>Medicijn 1:</label>
-                                    <select value={med1} onChange={(e) => setMed1(e.target.value)} required>
-                                        <option value="">Selecteer medicijn</option>
-                                        {getMedicinesByManufacturer(manufacturer1).map((m) => (<option key={m.Merknaam} value={m.Merknaam}>{m.Merknaam} – {m.Type}</option>))}
-                                    </select>
-                                </>
-                            )}
-                            <label>Fabrikant van tweede medicijn (optioneel):</label>
-                            <select value={manufacturer2} onChange={(e) => { setManufacturer2(e.target.value); setMed2(''); }}>
-                                <option value="">Selecteer fabrikant</option>
-                                {uniqueManufacturers.map((name) => (<option key={name} value={name}>{name}</option>))}
-                            </select>
-                            {manufacturer2 && (
-                                <>
-                                    <label>Medicijn 2:</label>
-                                    <select value={med2} onChange={(e) => setMed2(e.target.value)}>
-                                        <option value="">Selecteer medicijn</option>
-                                        {getMedicinesByManufacturer(manufacturer2).map((m) => (<option key={m.Merknaam} value={m.Merknaam}>{m.Merknaam} – {m.Type}</option>))}
-                                    </select>
-                                </>
-                            )}
-                        </>
-                    )}
-                    <button type="submit">Volgende</button>
-                </form>
-            </div>
-        </>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="geslacht">Geslacht</label>
+                    <select id="geslacht" name="geslacht" value={formData.geslacht} onChange={handleChange} required>
+                        <option value="">Kies een optie</option>
+                        <option value="Man">Man</option>
+                        <option value="Vrouw">Vrouw</option>
+                        <option value="Anders">Anders</option>
+                        <option value="Zeg ik liever niet">Zeg ik liever niet</option>
+                    </select>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="gewicht">Gewicht (kg)</label>
+                    <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="lengte">Lengte (cm)</label>
+                    <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required />
+                </div>
+                {bmi && <p>Je berekende BMI is: <strong>{bmi}</strong></p>}
+                <button type="submit">Volgende stap</button>
+            </form>
+        </div>
     );
 }
 
-export default MedicineInfo;
+export default RegisterPage3;

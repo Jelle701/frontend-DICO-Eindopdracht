@@ -2,22 +2,27 @@
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext.jsx';
+// VERBETERING: We gebruiken nu de geconsolideerde useAuth hook.
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 function PublicRoute({ children }) {
-    const { isAuth, loading } = useUser();
+    // Haal de authenticatiestatus en laadstatus op uit onze AuthContext.
+    const { isAuth, loading } = useAuth();
 
-    // Als we nog aan het laden zijn, toon een laadbericht.
+    // 1. Als de authenticatiestatus nog wordt bepaald, toon een laadindicator.
+    //    Dit voorkomt dat een ingelogde gebruiker kort een publieke pagina ziet
+    //    voordat hij wordt doorgestuurd.
     if (loading) {
-        return <div>Aan het laden...</div>;
+        return <div>Authenticatie controleren...</div>;
     }
 
-    // Als het laden klaar is en de gebruiker WEL is ingelogd, stuur door naar het dashboard.
+    // 2. Als het laden klaar is en de gebruiker WEL is ingelogd, stuur hem weg
+    //    van de publieke pagina (zoals /login) naar het dashboard.
     if (isAuth) {
-        return <Navigate to="/dashboard" />;
+        return <Navigate to="/dashboard" replace />;
     }
 
-    // Als het laden klaar is en de gebruiker NIET is ingelogd, toon de publieke pagina.
+    // 3. Als het laden klaar is en de gebruiker NIET is ingelogd, toon de publieke pagina.
     return children;
 }
 

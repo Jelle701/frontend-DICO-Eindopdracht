@@ -1,70 +1,78 @@
-// src/pages/open/register/RegisterPage3.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../../components/Navbar.jsx';
+// CORRECTIE: Importeer de stylesheet direct.
 import './RegisterPage.css';
 
-function OnboardingPreferences() {
-    const [system, setSystem] = useState('metric');
-    const [gender, setGender] = useState('');
-    const [weight, setWeight] = useState('');
-    const [height, setHeight] = useState('');
-    const [bmi, setBmi] = useState(null);
+function RegisterPage3() {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        eenheid: 'mmol/L',
+        geslacht: '',
+        gewicht: '',
+        lengte: ''
+    });
+    const [bmi, setBmi] = useState(null);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({ ...prevState, [name]: value }));
+    };
 
     useEffect(() => {
-        const h = parseFloat(height);
-        const w = parseFloat(weight);
-        if (w > 0 && h > 0) {
-            const calculatedBmi = system === 'metric'
-                ? w / ((h / 100) ** 2)
-                : (w / (h ** 2)) * 703;
-            setBmi(calculatedBmi.toFixed(1));
+        const { gewicht, lengte } = formData;
+        if (gewicht > 0 && lengte > 0) {
+            const lengteInMeters = lengte / 100;
+            const calculatedBmi = (gewicht / (lengteInMeters * lengteInMeters)).toFixed(1);
+            setBmi(calculatedBmi);
         } else {
             setBmi(null);
         }
-    }, [weight, height, system]);
+    }, [formData.gewicht, formData.lengte]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const preferences = { system, gender, weight, height, bmi };
-        localStorage.setItem('userPreferences', JSON.stringify(preferences));
-        navigate('/medicine-info');
+        try {
+            localStorage.setItem('onboardingPreferences', JSON.stringify(formData));
+            navigate('/medicine-info');
+        } catch (error) {
+            console.error("Kon voorkeuren niet opslaan in localStorage", error);
+        }
     };
 
     return (
-        <>
-            <Navbar />
-            <div className="auth-page container">
-                <h1>Persoonlijke instellingen</h1>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-                    <label>Meeteenheid:</label>
-                    <select value={system} onChange={(e) => setSystem(e.target.value)} required>
-                        <option value="metric">Metrisch (kg / cm)</option>
-                        <option value="imperial">Imperiaal (lbs / inch)</option>
+        <div className="auth-page">
+            <form onSubmit={handleSubmit}>
+                <h1>Persoonlijke voorkeuren</h1>
+                <div className="input-group">
+                    <label>Eenheid voor glucosemeting</label>
+                    <select name="eenheid" value={formData.eenheid} onChange={handleChange}>
+                        <option value="mmol/L">mmol/L</option>
+                        <option value="mg/dL">mg/dL</option>
                     </select>
-
-                    <label>Geslacht:</label>
-                    <select value={gender} onChange={(e) => setGender(e.target.value)} required>
-                        <option value="">Selecteer geslacht</option>
-                        <option value="man">Man</option>
-                        <option value="vrouw">Vrouw</option>
-                        <option value="anders">Anders</option>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="geslacht">Geslacht</label>
+                    <select id="geslacht" name="geslacht" value={formData.geslacht} onChange={handleChange} required>
+                        <option value="">Kies een optie</option>
+                        <option value="Man">Man</option>
+                        <option value="Vrouw">Vrouw</option>
+                        <option value="Anders">Anders</option>
+                        <option value="Zeg ik liever niet">Zeg ik liever niet</option>
                     </select>
-
-                    <label>Gewicht ({system === 'metric' ? 'kg' : 'lbs'}):</label>
-                    <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} required />
-
-                    <label>Lengte ({system === 'metric' ? 'cm' : 'inch'}):</label>
-                    <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} required />
-
-                    {bmi && <p><strong>BMI:</strong> {bmi}</p>}
-
-                    <button type="submit">Volgende</button>
-                </form>
-            </div>
-        </>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="gewicht">Gewicht (kg)</label>
+                    <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="lengte">Lengte (cm)</label>
+                    <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required />
+                </div>
+                {bmi && <p>Je berekende BMI is: <strong>{bmi}</strong></p>}
+                <button type="submit">Volgende stap</button>
+            </form>
+        </div>
     );
 }
 
-export default OnboardingPreferences;
+export default RegisterPage3;

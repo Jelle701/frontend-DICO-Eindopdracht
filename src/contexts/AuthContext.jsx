@@ -1,32 +1,46 @@
 // src/contexts/AuthContext.jsx
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import apiClient from 'src/services/ApiClient'; // Gebruik je apiClient
 
-// 1. Maak de Context aan (niet exporteren, we gebruiken een hook)
 const AuthContext = createContext(null);
 
-// 2. Exporteer de Provider Component
 export function AuthProvider({ children }) {
-    // Hier zou je de logica voor login, logout, etc. plaatsen
-    // Voor nu gebruiken we een simpele state
-    const [user, setUser] = useState(null); // Voorbeeld: null als niet ingelogd
+    const [user, setUser] = useState(null);
+    const [isAuth, setIsAuth] = useState(false);
+    const [loading, setLoading] = useState(true); // Belangrijk voor initiële check
 
-    const login = (userData) => {
-        // Hier zou je de API aanroepen en de user-data instellen
-        setUser(userData);
+    // Check of er al een sessie is bij het laden van de app
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                // Probeer een beveiligd endpoint aan te roepen (bv. user profiel)
+                const { data } = await apiClient.get('/profile');
+                setUser(data);
+                setIsAuth(true);
+            } catch (error) {
+                setUser(null);
+                setIsAuth(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkLoginStatus();
+    }, []);
+
+    const login = async (credentials) => {
+        const { data } = await apiClient.post('/login', credentials); // API call
+        setUser(data.user);
+        setIsAuth(true);
+        // Token wordt idealiter in een httpOnly cookie gezet door de backend
     };
 
     const logout = () => {
-        // Hier zou je het token verwijderen en de user-state resetten
+        apiClient.post('/logout'); // API call
         setUser(null);
+        setIsAuth(false);
     };
 
-    // De 'value' die alle consumers van de context kunnen gebruiken
-    const value = {
-        user,
-        isLoggedIn: !!user, // Converteer user object naar een boolean
-        login,
-        logout,
-    };
+    const value = { user, isAuth, loading, login, logout };
 
     return (
         <AuthContext.Provider value={value}>
@@ -35,10 +49,10 @@ export function AuthProvider({ children }) {
     );
 }
 
-// 3. Exporteer de Custom Hook. Dit is de aanbevolen manier om de context te gebruiken.
+// Custom hook blijft hetzelfde
 export function useAuth() {
     const context = useContext(AuthContext);
-    if (context === undefined) {
+    if (!context) {
         throw new Error('useAuth moet binnen een AuthProvider gebruikt worden');
     }
     return context;

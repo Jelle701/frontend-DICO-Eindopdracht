@@ -1,36 +1,34 @@
-// src/pages/open/register/DiabeticDevices.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import deviceData from '../../../Data/DiabeticDevices.json';
-import { saveOnboardingData } from 'src/services/api.jsx';
-import Navbar from '../../../components/Navbar.jsx';
+import { saveOnboardingData } from '../../../services/api'; // Zorg dat dit pad klopt
+// CORRECTIE: Importeer de stylesheet direct.
 import './RegisterPage.css';
 
 function DiabeticDevices() {
     const navigate = useNavigate();
-    const allDeviceTypes = ['Bloedglucosemeters', 'CGM', 'Insulinepompen'];
-    const [selectedTypes, setSelectedTypes] = useState([]);
-    const [selectedManufacturers, setSelectedManufacturers] = useState({});
-    const [selectedModels, setSelectedModels] = useState({});
+    const [devices, setDevices] = useState({
+        cgm: { used: false, brand: '', model: '' },
+        pomp: { used: false, brand: '', model: '' },
+        meter: { used: false, brand: '', model: '' },
+    });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleToggleType = (type) => {
-        if (selectedTypes.includes(type)) {
-            setSelectedTypes(selectedTypes.filter(t => t !== type));
-            // ... (rest of the logic is correct)
-        } else {
-            setSelectedTypes([...selectedTypes, type]);
-        }
+    const handleCheckboxChange = (e) => {
+        const { name, checked } = e.target;
+        setDevices(prev => ({
+            ...prev,
+            [name]: { ...prev[name], used: checked }
+        }));
     };
 
-    const handleManufacturerChange = (type, manufacturer) => {
-        setSelectedManufacturers({ ...selectedManufacturers, [type]: manufacturer });
-        setSelectedModels({ ...selectedModels, [type]: '' });
-    };
-
-    const handleModelChange = (type, model) => {
-        setSelectedModels({ ...selectedModels, [type]: model });
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        const [device, field] = name.split('-');
+        setDevices(prev => ({
+            ...prev,
+            [device]: { ...prev[device], [field]: value }
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -39,26 +37,26 @@ function DiabeticDevices() {
         setError('');
 
         try {
-            const diabeticDevices = selectedTypes.map((type) => ({
-                categorie: type,
-                fabrikant: selectedManufacturers[type] || '',
-                model: selectedModels[type] || '',
-            }));
+            const role = localStorage.getItem('onboardingRole');
+            const preferences = JSON.parse(localStorage.getItem('onboardingPreferences'));
+            const medicine = JSON.parse(localStorage.getItem('onboardingMedicine'));
 
-            const role = JSON.parse(localStorage.getItem('onboardingRole'));
-            const preferences = JSON.parse(localStorage.getItem('userPreferences'));
-            const medicineInfo = JSON.parse(localStorage.getItem('medicineInfo'));
+            const fullOnboardingPayload = {
+                role,
+                ...preferences,
+                ...medicine,
+                devices
+            };
 
-            const fullOnboardingPayload = { role, preferences, medicineInfo, diabeticDevices };
             await saveOnboardingData(fullOnboardingPayload);
 
             localStorage.removeItem('onboardingRole');
-            localStorage.removeItem('userPreferences');
-            localStorage.removeItem('medicineInfo');
+            localStorage.removeItem('onboardingPreferences');
+            localStorage.removeItem('onboardingMedicine');
 
             navigate('/dashboard');
         } catch (err) {
-            setError('Er is iets misgegaan bij het opslaan van uw gegevens. Probeer het opnieuw.');
+            setError('Er is iets misgegaan bij het opslaan van je gegevens.');
             console.error(err);
         } finally {
             setLoading(false);
@@ -66,49 +64,50 @@ function DiabeticDevices() {
     };
 
     return (
-        <>
-            <Navbar />
-            <div className="auth-page container">
-                <h1>Diabeteshulpmiddelen</h1>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                    <p>Welke hulpmiddelen gebruik je?</p>
-                    {allDeviceTypes.map((type) => (
-                        <label key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <input type="checkbox" checked={selectedTypes.includes(type)} onChange={() => handleToggleType(type)} />
-                            {type}
-                        </label>
-                    ))}
-                    {selectedTypes.map((type) => {
-                        const fabrikanten = deviceData[type]?.map(d => d.Merk) || [];
-                        const selectedFabrikant = selectedManufacturers[type];
-                        const modellen = deviceData[type]?.find(d => d.Merk === selectedFabrikant)?.Modellen || [];
-                        return (
-                            <div key={type} className="device-selection" style={{ marginTop: '1rem', borderTop: '1px solid #333', paddingTop: '1rem' }}>
-                                <h4>{type}</h4>
-                                <label>Fabrikant:</label>
-                                <select value={selectedFabrikant || ''} onChange={(e) => handleManufacturerChange(type, e.target.value)} required>
-                                    <option value="">Selecteer fabrikant</option>
-                                    {fabrikanten.map(fab => (<option key={fab} value={fab}>{fab}</option>))}
-                                </select>
-                                {selectedFabrikant && (
-                                    <>
-                                        <label style={{ marginTop: '0.5rem' }}>Model:</label>
-                                        <select value={selectedModels[type] || ''} onChange={(e) => handleModelChange(type, e.target.value)} required>
-                                            <option value="">Selecteer model</option>
-                                            {modellen.map(mod => (<option key={mod} value={mod}>{mod}</option>))}
-                                        </select>
-                                    </>
-                                )}
-                            </div>
-                        );
-                    })}
-                    {error && <p className="error-text" style={{ color: '#ff8888', marginTop: '1rem' }}>{error}</p>}
-                    <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: '2rem' }}>
-                        {loading ? 'Bezig met opslaan...' : 'Afronden'}
-                    </button>
-                </form>
-            </div>
-        </>
+        <div className="auth-page">
+            <form onSubmit={handleSubmit}>
+                <h1>Hulpmiddelen</h1>
+                <p>Geef aan welke hulpmiddelen je gebruikt.</p>
+
+                <div className="device-section">
+                    <input type="checkbox" id="cgm" name="cgm" checked={devices.cgm.used} onChange={handleCheckboxChange} />
+                    <label htmlFor="cgm">Continue Glucose Monitor (CGM)</label>
+                    {devices.cgm.used && (
+                        <div className="device-inputs">
+                            <input type="text" name="cgm-brand" placeholder="Merk" onChange={handleInputChange} />
+                            <input type="text" name="cgm-model" placeholder="Model" onChange={handleInputChange} />
+                        </div>
+                    )}
+                </div>
+
+                <div className="device-section">
+                    <input type="checkbox" id="pomp" name="pomp" checked={devices.pomp.used} onChange={handleCheckboxChange} />
+                    <label htmlFor="pomp">Insulinepomp</label>
+                    {devices.pomp.used && (
+                        <div className="device-inputs">
+                            <input type="text" name="pomp-brand" placeholder="Merk" onChange={handleInputChange} />
+                            <input type="text" name="pomp-model" placeholder="Model" onChange={handleInputChange} />
+                        </div>
+                    )}
+                </div>
+
+                <div className="device-section">
+                    <input type="checkbox" id="meter" name="meter" checked={devices.meter.used} onChange={handleCheckboxChange} />
+                    <label htmlFor="meter">Bloedglucosemeter</label>
+                    {devices.meter.used && (
+                        <div className="device-inputs">
+                            <input type="text" name="meter-brand" placeholder="Merk" onChange={handleInputChange} />
+                            <input type="text" name="meter-model" placeholder="Model" onChange={handleInputChange} />
+                        </div>
+                    )}
+                </div>
+
+                {error && <p className="error-message">{error}</p>}
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Bezig met opslaan...' : 'Voltooien en naar dashboard'}
+                </button>
+            </form>
+        </div>
     );
 }
 

@@ -1,39 +1,34 @@
-// src/pages/open/register/RegisterPage2.jsx
-import { useNavigate } from "react-router-dom";
-import Navbar from "../../../components/Navbar.jsx";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+// CORRECTIE: Importeer de stylesheet direct.
 import './RegisterPage.css';
 
-function RegisterDetailsPage() {
+function RegisterPage2() {
     const navigate = useNavigate();
 
-    const handleSelect = (selectedRole) => {
-        localStorage.setItem('onboardingRole', JSON.stringify(selectedRole));
-        navigate('/onboarding');
+    const handleRoleSelect = (role) => {
+        try {
+            localStorage.setItem('onboardingRole', role);
+            navigate('/onboarding');
+        } catch (error) {
+            console.error("Kon rol niet opslaan in localStorage", error);
+        }
     };
 
     return (
-        <>
-            <Navbar />
-            <div className="auth-page container">
-                <h1>Kies je rol</h1>
-                <p>Selecteer de rol die het beste bij jou past:</p>
-                <div className="flex flex-col gap-1" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <button type="button" onClick={() => handleSelect('patient')} className="btn btn-primary">
-                        Patiënt met diabetes
-                    </button>
-                    <button type="button" onClick={() => handleSelect('zorgverlener')} className="btn btn-primary">
-                        Zorgverlener
-                    </button>
-                    <button type="button" onClick={() => handleSelect('ouder')} className="btn btn-primary">
-                        Ouder/verzorger
-                    </button>
-                    <button type="button" onClick={() => handleSelect('geen')} className="btn btn-outline">
-                        Gebruiker zonder diabetes
-                    </button>
+        <div className="auth-page">
+            <div className="form-content">
+                <h1>Wat is jouw rol?</h1>
+                <p>Kies de rol die het beste bij je past. Dit helpt ons de ervaring op jou af te stemmen.</p>
+                <div className="role-selection">
+                    <button onClick={() => handleRoleSelect('Patient')} className="role-button">Ik ben een Patiënt</button>
+                    <button onClick={() => handleRoleSelect('Zorgverlener')} className="role-button">Ik ben een Zorgverlener</button>
+                    <button onClick={() => handleRoleSelect('Ouder/Verzorger')} className="role-button">Ik ben een Ouder/Verzorger</button>
+                    <button onClick={() => handleRoleSelect('Onderzoeker')} className="role-button">Ik ben een Onderzoeker</button>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
-export default RegisterDetailsPage;
+export default RegisterPage2;
