@@ -1,16 +1,12 @@
 // src/services/profileService.jsx
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+import apiClient from './ApiClient';
 
 /**
  * Haalt het profiel van de ingelogde gebruiker op
  */
 export async function fetchUserProfile() {
     try {
-        const response = await axios.get(`${API_URL}/profile`, {
-            withCredentials: true,
-        });
+        const response = await apiClient.get('/profile');
         return response.data;
     } catch (err) {
         console.error('Error fetching profile:', err);
@@ -24,9 +20,7 @@ export async function fetchUserProfile() {
  */
 export async function updateUserProfile(profileData) {
     try {
-        const response = await axios.put(`${API_URL}/profile`, profileData, {
-            withCredentials: true,
-        });
+        const response = await apiClient.put('/profile', profileData);
         return response.data;
     } catch (err) {
         console.error('Error updating profile:', err);

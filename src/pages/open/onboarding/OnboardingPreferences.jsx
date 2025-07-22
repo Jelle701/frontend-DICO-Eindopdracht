@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // CORRECTIE: Importeer de stylesheet direct.
 import './RegisterPage.css';
 
-function RegisterPage3() {
+function OnboardingPreferences() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         eenheid: 'mmol/L',
@@ -75,4 +75,4 @@ function RegisterPage3() {
     );
 }
 
-export default RegisterPage3;
+export default OnboardingPreferences;

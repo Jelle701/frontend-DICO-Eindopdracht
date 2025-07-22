@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // CORRECTIE: Importeer de stylesheet direct.
 import './RegisterPage.css';
 
-function RegisterPage2() {
+function RegisterDetailsPage() {
     const navigate = useNavigate();
 
     const handleRoleSelect = (role) => {
@@ -31,4 +31,4 @@ function RegisterPage2() {
     );
 }
 
-export default RegisterPage2;
+export default RegisterDetailsPage;

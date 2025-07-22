@@ -1,59 +1,87 @@
-// src/contexts/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import apiClient from 'src/services/ApiClient'; // Gebruik je apiClient
+import { createContext, useState, useEffect } from "react";
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from "react-router-dom";
+import apiClient from "../services/ApiClient";
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext({});
 
-export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
-    const [isAuth, setIsAuth] = useState(false);
-    const [loading, setLoading] = useState(true); // Belangrijk voor initiële check
+function AuthContextProvider({ children }) {
+    const [isAuth, setIsAuth] = useState({
+        isAuthenticated: false,
+        user: null,
+        status: "pending",
+    });
+    const navigate = useNavigate();
 
-    // Check of er al een sessie is bij het laden van de app
     useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                // Probeer een beveiligd endpoint aan te roepen (bv. user profiel)
-                const { data } = await apiClient.get('/profile');
-                setUser(data);
-                setIsAuth(true);
-            } catch (error) {
-                setUser(null);
-                setIsAuth(false);
-            } finally {
-                setLoading(false);
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decoded = jwtDecode(token);
+            if (Math.floor(Date.now() / 1000) < decoded.exp) {
+                login(token);
+            } else {
+                logout();
             }
-        };
-        checkLoginStatus();
+        } else {
+            setIsAuth({
+                ...isAuth,
+                status: 'done',
+            });
+        }
     }, []);
 
-    const login = async (credentials) => {
-        const { data } = await apiClient.post('/login', credentials); // API call
-        setUser(data.user);
-        setIsAuth(true);
-        // Token wordt idealiter in een httpOnly cookie gezet door de backend
-    };
+    async function login(token) {
+        localStorage.setItem('token', token);
+        const decodedToken = jwtDecode(token);
 
-    const logout = () => {
-        apiClient.post('/logout'); // API call
-        setUser(null);
-        setIsAuth(false);
-    };
+        try {
+            // Hier zou je een request kunnen doen om user details op te halen
+            // Voor nu gebruiken we de data uit de token
+            setIsAuth({
+                isAuthenticated: true,
+                user: {
+                    email: decodedToken.email,
+                    id: decodedToken.sub,
+                    // Voeg andere velden toe die in je token zitten
+                },
+                status: "done",
+            });
+            console.log("Gebruiker is succesvol ingelogd!");
+            navigate('/dashboard');
+        } catch (e) {
+            console.error("Fout bij ophalen van gebruikersdata na inloggen", e);
+            // Zelfs bij een fout de state updaten om UI niet te blokkeren
+            setIsAuth({
+                isAuthenticated: false,
+                user: null,
+                status: 'done',
+            });
+        }
+    }
 
-    const value = { user, isAuth, loading, login, logout };
+    function logout() {
+        localStorage.removeItem('token');
+        setIsAuth({
+            isAuthenticated: false,
+            user: null,
+            status: "done",
+        });
+        console.log("Gebruiker is succesvol uitgelogd!");
+        navigate('/');
+    }
+
+    const contextData = {
+        isAuth: isAuth.isAuthenticated,
+        user: isAuth.user,
+        login,
+        logout,
+    };
 
     return (
-        <AuthContext.Provider value={value}>
-            {children}
+        <AuthContext.Provider value={contextData}>
+            {isAuth.status === 'pending' ? <p>Loading...</p> : children}
         </AuthContext.Provider>
     );
 }
 
-// Custom hook blijft hetzelfde
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth moet binnen een AuthProvider gebruikt worden');
-    }
-    return context;
-}
+export { AuthContextProvider };
