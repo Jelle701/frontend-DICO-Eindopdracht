@@ -1,77 +1,53 @@
-// src/pages/open/HomePage.jsx
-
 import React from 'react';
 import { Link } from "react-router-dom";
-
-// Importeer de custom hook in plaats van de context
-import { useTheme } from 'src/contexts/ThemeContext.jsx';
-
-// Importeer de Navbar component en de stylesheets
-import Navbar from "../../components/Navbar.jsx";
+import Navbar from 'src/components/Navbar.jsx';
 import './HomePage.css';
-import 'src/index.css';
 
-const HomePage = () => {
-    // Gebruik de custom hook om het thema op te halen.
-    const { theme } = useTheme();
+// Importeer je afbeeldingen en video's hier
+// import heroVideo from 'src/content/Test-Video.mp4';
+// import manWithSensor from 'src/content/Man met sensor.png';
+// import graphImage from 'src/content/Grafiek.png';
 
+function HomePage() {
     return (
-        // De className wordt hier toegepast om de themakleuren correct weer te geven
-        <div className={`homepage theme-${theme}`}>
-            {/* TOP BANNER */}
+        <div className="homepage">
             <div className="top-banner">
                 <p>
-                    De nieuwe DICO ervaring is hier.{' '}
+                    De nieuwe DICO ervaring is hier!{' '}
                     <a href="#" className="top-banner-link">Bekijk de video</a>
                 </p>
             </div>
 
-            {/* De Navbar is hier teruggeplaatst, zoals het hoort. */}
             <Navbar />
 
             <header className="hero-section">
-                <div className="hero-content container">
-                    <video
-                        src="src/content/Test-Video.mp4"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        className="hero-video"
-                    />
-                    <div className="hero-context">
-                        <h1>Optimaliseer je gezondheid.</h1>
-                        <p>Beheer je glucose, medicatie en lifestyle met de DICO app.</p>
-                        <Link to="/register" className="btn btn-primary">
-                            Probeer DICO
-                        </Link>
-                    </div>
+                {/* <video src={heroVideo} autoPlay muted loop className="hero-video" /> */}
+                <div className="hero-content">
+                    <h1>Optimaliseer je gezondheid.</h1>
+                    <p>Beheer je glucose, medicatie en lifestyle met de DICO app.</p>
+                    <Link to="/register" className="btn btn-primary">
+                        Probeer DICO
+                    </Link>
                 </div>
             </header>
 
-            {/* FEATURES */}
             <section id="features" className="features-section container">
                 <div className="features-grid">
                     <div className="feature-text">
                         <h2>Volledige controle over je glucosewaarden</h2>
                         <p>Registreer metingen, bekijk trends, en deel inzichten met je zorgverleners in realtime.</p>
                     </div>
-                    <div>
-                        <img className="feature-img1" src="src/content/Man%20met%20sensor.png" alt="Man met een glucose sensor" />
-                    </div>
+                    {/* <img className="feature-img1" src={manWithSensor} alt="Man met een glucose sensor" /> */}
                 </div>
                 <div className="features-grid reverse">
-                    <div>
-                        <img className="feature-img2" src="src/content/Grafiek.png" alt="Grafiek van glucosewaarden" />
-                    </div>
                     <div className="feature-text">
                         <h2>Alles-in-één app</h2>
                         <p>Monitor voeding, beweging, slaap en medicatie – allemaal op één plek.</p>
                     </div>
+                    {/* <img className="feature-img2" src={graphImage} alt="Grafiek van glucosewaarden" /> */}
                 </div>
             </section>
 
-            {/* TESTIMONIALS */}
             <section className="testimonials-section">
                 <h2>Wat gebruikers zeggen</h2>
                 <div className="testimonials-grid container">
@@ -86,9 +62,8 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* CTA */}
             <section className="cta-section">
-                <div className="container text-center">
+                <div className="container">
                     <h2>Start vandaag nog met DICO</h2>
                     <p>Ervaar de voordelen van inzicht in je gezondheid.</p>
                     <Link to="/register" className="btn btn-secondary">
@@ -97,7 +72,6 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* FOOTER */}
             <footer className="main-footer">
                 <div className="container">
                     <p>&copy; {new Date().getFullYear()} DICO – Alle rechten voorbehouden</p>
@@ -105,6 +79,6 @@ const HomePage = () => {
             </footer>
         </div>
     );
-};
+}
 
 export default HomePage;

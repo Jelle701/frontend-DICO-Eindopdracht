@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveOnboardingData } from 'src/services/api.jsx';
 import diabeticDevices from 'src/Data/DiabeticDevices.json';
-import '../open/register/RegisterPage.css';
+import './RegisterPage.css'; // <-- CORRECTED PATH
 
 function DiabeticDevices() {
     const [selectedDevices, setSelectedDevices] = useState([]);
@@ -31,7 +31,7 @@ function DiabeticDevices() {
             };
 
             // Stuur de data naar de backend
-            await saveOnboardingData(onboardingData);
+            // await saveOnboardingData(onboardingData); // Tijdelijk uitgecommentarieerd voor testen
 
             // Ruim localStorage op na succesvolle submit
             localStorage.removeItem('onboardingRole');

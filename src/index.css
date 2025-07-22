@@ -1,7 +1,77 @@
+/* Globale stijlen en variabelen */
+:root {
+    --color-primary: #FF3B3F;
+    --color-accent: #FFFFFF;
+    --color-background: #000000;
+    --color-muted: #BCB2B4;
+
+    --font-family-sans: 'Inter', sans-serif;
+    --font-size-base: 16px;
+    --line-height-base: 1.5;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-html {
+
+body {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-accent);
+    background-color: var(--color-background);
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+/* Standaard knopstijlen */
+.btn {
+    display: inline-block;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.2;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+}
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+}
+.btn-outline:hover {
+    background: var(--color-primary);
+    color: #fff;
 }

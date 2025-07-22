@@ -1,13 +1,13 @@
-import { createContext, useState, useEffect } from "react";
-import { jwtDecode } from 'jwt-decode';
+import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import apiClient from "../services/ApiClient";
+import { jwtDecode } from 'jwt-decode';
+import apiClient from 'src/services/ApiClient.jsx';
 
 export const AuthContext = createContext({});
 
 function AuthContextProvider({ children }) {
-    const [isAuth, setIsAuth] = useState({
-        isAuthenticated: false,
+    const [auth, setAuth] = useState({
+        isAuth: false,
         user: null,
         status: "pending",
     });
@@ -15,73 +15,71 @@ function AuthContextProvider({ children }) {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+
         if (token) {
-            const decoded = jwtDecode(token);
-            if (Math.floor(Date.now() / 1000) < decoded.exp) {
-                login(token);
+            const decodedToken = jwtDecode(token);
+            if (decodedToken.exp * 1000 > Date.now()) {
+                fetchUserData(token);
             } else {
-                logout();
+                // Token is verlopen
+                setAuth({ isAuth: false, user: null, status: 'done' });
             }
         } else {
-            setIsAuth({
-                ...isAuth,
-                status: 'done',
-            });
+            // Geen token gevonden
+            setAuth({ isAuth: false, user: null, status: 'done' });
         }
     }, []);
 
-    async function login(token) {
-        localStorage.setItem('token', token);
-        const decodedToken = jwtDecode(token);
-
+    async function fetchUserData(token) {
         try {
-            // Hier zou je een request kunnen doen om user details op te halen
-            // Voor nu gebruiken we de data uit de token
-            setIsAuth({
-                isAuthenticated: true,
-                user: {
-                    email: decodedToken.email,
-                    id: decodedToken.sub,
-                    // Voeg andere velden toe die in je token zitten
-                },
-                status: "done",
+            const response = await apiClient.get('/profile', {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             });
-            console.log("Gebruiker is succesvol ingelogd!");
-            navigate('/dashboard');
-        } catch (e) {
-            console.error("Fout bij ophalen van gebruikersdata na inloggen", e);
-            // Zelfs bij een fout de state updaten om UI niet te blokkeren
-            setIsAuth({
-                isAuthenticated: false,
-                user: null,
+            setAuth({
+                isAuth: true,
+                user: response.data,
                 status: 'done',
             });
+        } catch (e) {
+            console.error("Ophalen van gebruikersdata mislukt", e);
+            // Als ophalen mislukt, loggen we de gebruiker uit
+            localStorage.removeItem('token');
+            setAuth({ isAuth: false, user: null, status: 'done' });
         }
+    }
+
+    function login(jwt) {
+        localStorage.setItem('token', jwt);
+        const decodedToken = jwtDecode(jwt);
+        // Na het opslaan van de token, haal de volledige user data op
+        fetchUserData(jwt).then(() => {
+            navigate('/dashboard');
+        });
     }
 
     function logout() {
         localStorage.removeItem('token');
-        setIsAuth({
-            isAuthenticated: false,
-            user: null,
-            status: "done",
-        });
-        console.log("Gebruiker is succesvol uitgelogd!");
+        setAuth({ isAuth: false, user: null, status: 'done' });
         navigate('/');
     }
 
     const contextData = {
-        isAuth: isAuth.isAuthenticated,
-        user: isAuth.user,
-        login,
-        logout,
+        isAuth: auth.isAuth,
+        user: auth.user,
+        login: login,
+        logout: logout,
     };
 
     return (
         <AuthContext.Provider value={contextData}>
-            {isAuth.status === 'pending' ? <p>Loading...</p> : children}
+            {auth.status === 'pending'
+                ? <p>Loading...</p>
+                : children
+            }
         </AuthContext.Provider>
     );
 }
 
-export { AuthContextProvider };
+export default AuthContextProvider;

@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import apiClient from '../../../services/ApiClient';
-import { AuthContext } from '../../../context/AuthContext';
-import '../register/RegisterPage.css'; // Hergebruik van CSS is efficiënt
+import apiClient from 'src/services/ApiClient.jsx'; // <-- CORRECTED PATH
+import { AuthContext } from 'src/contexts/AuthContext.jsx'; // <-- CORRECTED PATH
+import './onboarding/RegisterPage.css'; // Corrected path to shared CSS
 
 function LoginPage() {
     const [formData, setFormData] = useState({
@@ -22,10 +22,18 @@ function LoginPage() {
         e.preventDefault();
         setError('');
 
+        if (!formData.email || !formData.password) {
+            setError('Vul alsjeblieft zowel je e-mailadres als wachtwoord in.');
+            return;
+        }
+
         try {
             const response = await apiClient.post('/login', formData);
-            login(response.data.token); // Geef de token door aan de login functie
-            navigate('/dashboard');
+            if (response.data && response.data.token) {
+                login(response.data.token); // The login function in AuthContext will handle navigation
+            } else {
+                setError('Inloggen mislukt. Geen token ontvangen.');
+            }
         } catch (err) {
             setError(err.response?.data?.message || 'Inloggen is mislukt. Controleer je gegevens.');
             console.error('Login error:', err);
@@ -45,6 +53,7 @@ function LoginPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        autoComplete="email"
                     />
                 </div>
                 <div className="input-group">
@@ -56,6 +65,7 @@ function LoginPage() {
                         value={formData.password}
                         onChange={handleChange}
                         required
+                        autoComplete="current-password"
                     />
                 </div>
                 {error && <p className="error-message">{error}</p>}

@@ -1,62 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../open/register/RegisterPage.css';
+import { AuthContext } from 'src/contexts/AuthContext';
+import apiClient from 'src/services/ApiClient';
+import './RegisterPage.css';
 
-function OnboardingPreferences() {
-    const [formData, setFormData] = useState({
-        geboortedatum: '',
-        gewicht: '',
-        lengte: ''
-    });
-    const [bmi, setBmi] = useState(null);
+function VerifyEmailPage() {
+    const [verificationCode, setVerificationCode] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({ ...prevState, [name]: value }));
-    };
-
-    useEffect(() => {
-        if (formData.gewicht > 0 && formData.lengte > 0) {
-            const lengteInMeters = formData.lengte / 100;
-            const berekendeBmi = (formData.gewicht / (lengteInMeters * lengteInMeters)).toFixed(1);
-            setBmi(berekendeBmi);
-        } else {
-            setBmi(null);
-        }
-    }, [formData.gewicht, formData.lengte]);
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        localStorage.setItem('onboardingPreferences', JSON.stringify(formData));
-        navigate('/medicine-info');
+        setError('');
+        const email = localStorage.getItem('userEmail');
+
+        // DIT IS EEN TIJDELIJKE OPLOSSING VOOR DE DEMO
+        // In een echte applicatie zou je het email & de code naar de backend sturen voor validatie
+        const password = "password123"; // Dummy wachtwoord omdat de backend dit nodig heeft voor de /login route
+
+        if (verificationCode === '123456') { // Dummy code
+            try {
+                const response = await apiClient.post('/login', { email, password });
+                login(response.data.token);
+                localStorage.removeItem('userEmail');
+                navigate('/register-details');
+            } catch (err) {
+                setError('Verificatie gelukt, maar inloggen mislukt. Probeer later opnieuw in te loggen.');
+                console.error('Login na verificatie error:', err);
+            }
+        } else {
+            setError('De ingevoerde code is onjuist.');
+        }
     };
 
     return (
         <div className="auth-page">
             <form onSubmit={handleSubmit}>
-                <h1>Persoonlijke gegevens</h1>
-                <p>Deze gegevens helpen ons om je een persoonlijkere ervaring te geven.</p>
-
+                <h1>Verifieer je e-mailadres</h1>
+                <p>We hebben een code gestuurd naar <strong>{localStorage.getItem('userEmail')}</strong>. Voer de 6-cijferige code in (tip: 123456).</p>
                 <div className="input-group">
-                    <label htmlFor="geboortedatum">Geboortedatum</label>
-                    <input type="date" id="geboortedatum" name="geboortedatum" value={formData.geboortedatum} onChange={handleChange} required />
+                    <label htmlFor="verificationCode">Verificatiecode</label>
+                    <input
+                        type="text"
+                        id="verificationCode"
+                        name="verificationCode"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        maxLength="6"
+                        required
+                    />
                 </div>
-                <div className="input-group">
-                    <label htmlFor="gewicht">Gewicht (in kg)</label>
-                    <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required />
-                </div>
-                <div className="input-group">
-                    <label htmlFor="lengte">Lengte (in cm)</label>
-                    <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required />
-                </div>
-
-                {bmi && <p>Je berekende BMI is: <strong>{bmi}</strong></p>}
-
-                <button type="submit">Volgende stap</button>
+                {error && <p className="error-message">{error}</p>}
+                <button type="submit">Verifiëren en doorgaan</button>
             </form>
         </div>
     );
 }
 
-export default OnboardingPreferences;
+export default VerifyEmailPage;

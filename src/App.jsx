@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthContext } from './contexts/AuthContext.jsx'; // <-- PAD AANGEPAST
+import { AuthContext } from './contexts/AuthContext.jsx';
 
 import HomePage from './pages/open/HomePage.jsx';
 import LoginPage from './pages/open/LoginPage.jsx';
@@ -20,13 +20,13 @@ function App() {
 
     return (
         <Routes>
-            {/* Open Routes */}
+            {/* Publieke Routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={!isAuth ? <LoginPage /> : <Navigate to="/dashboard" />} />
             <Route path="/register" element={!isAuth ? <RegisterPage /> : <Navigate to="/dashboard" />} />
             <Route path="/verify" element={!isAuth ? <VerifyEmailPage /> : <Navigate to="/dashboard" />} />
 
-            {/* Authorised Routes */}
+            {/* Beveiligde Routes */}
             <Route path="/dashboard" element={isAuth ? <DashboardPage /> : <Navigate to="/login" />} />
             <Route path="/glucose/:id" element={isAuth ? <GlucosePage /> : <Navigate to="/login" />} />
 
@@ -36,7 +36,7 @@ function App() {
             <Route path="/medicine-info" element={isAuth ? <MedicineInfo /> : <Navigate to="/login" />} />
             <Route path="/devices" element={isAuth ? <DiabeticDevices /> : <Navigate to="/login" />} />
 
-            {/* Catch-all Route */}
+            {/* Fallback Route */}
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

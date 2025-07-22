@@ -1,29 +1,32 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import DicoLogo from '../assets/Dico Logo V1.svg';
-import './Navbar.css';
+import { Link } from 'react-router-dom';
+import { AuthContext } from 'src/contexts/AuthContext.jsx';
+import DicoLogo from 'src/assets/react.svg'; // Placeholder, vervang dit met je eigen logo
+import './NavBar.css';
+
 
 function Navbar() {
     const { isAuth, logout } = useContext(AuthContext);
-    const navigate = useNavigate();
 
     return (
         <nav className="navbar">
-            <Link to="/" className="navbar-logo">
-                <img src={DicoLogo} alt="Dico Logo" />
-            </Link>
-            <ul className="navbar-links">
+            <div className="navbar-left"> {/* Correcte class-naam */}
+                <Link to="/">
+                    <img src={DicoLogo} alt="Dico Logo" />
+                </Link>
+            </div>
+
+            <ul className="navbar-center"> {/* Correcte class-naam */}
                 {isAuth ? (
                     <>
                         <li><Link to="/dashboard">Dashboard</Link></li>
-                        <li><button type="button" onClick={logout}>Uitloggen</button></li>
+                        <li><button type="button" className="btn btn-outline" onClick={logout}>Uitloggen</button></li>
                     </>
                 ) : (
                     <>
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/login">Inloggen</Link></li>
-                        <li><Link to="/register" className="register-button">Registreren</Link></li>
+                        <li><Link to="/register" className="btn btn-primary">Registreren</Link></li>
                     </>
                 )}
             </ul>
