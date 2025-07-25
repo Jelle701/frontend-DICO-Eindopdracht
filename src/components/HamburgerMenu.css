@@ -1,0 +1,98 @@
+/* src/components/HamburgerMenu.css */
+
+.hamburger-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.hamburger-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 40px;
+    height: 35px;
+    z-index: 1001; /* Zorgt dat de knop boven andere content staat */
+}
+
+.hamburger-line {
+    width: 100%;
+    height: 3px;
+    background-color: #333; /* Donkergrijze lijnen */
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Animatie voor het kruisje */
+.hamburger-button.open .hamburger-line:nth-child(1) {
+    transform: translateY(11px) rotate(45deg);
+}
+
+.hamburger-button.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-button.open .hamburger-line:nth-child(3) {
+    transform: translateY(-11px) rotate(-45deg);
+}
+
+/* De dropdown zelf */
+.dropdown-content {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 50px; /* Positionering onder de knop */
+    background-color: #bc2e2e;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(135, 42, 42, 0.2);
+    z-index: 1000;
+    border-radius: 8px;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-content ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content ul li a,
+.dropdown-content ul li .logout-button {
+    color: #8f1717;
+    padding: 14px 18px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-content ul li a:hover,
+.dropdown-content ul li .logout-button:hover {
+    background-color: rgba(0, 0, 255, 0.7);
+}
+
+.dropdown-content .separator {
+    height: 1px;
+    background-color: rgba(0, 0, 255, 0.7);
+    margin: 8px 0;
+}

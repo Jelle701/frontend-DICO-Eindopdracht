@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// CORRECTIE: Importeer de stylesheet direct.
+import { useOnboarding } from '../../../contexts/OnboardingContext';
 import './RegisterPage.css';
 
 function OnboardingPreferences() {
     const navigate = useNavigate();
+    const { updateOnboardingData } = useOnboarding();
     const [formData, setFormData] = useState({
         eenheid: 'mmol/L',
         geslacht: '',
@@ -27,16 +28,12 @@ function OnboardingPreferences() {
         } else {
             setBmi(null);
         }
-    }, [formData.gewicht, formData.lengte]);
+    }, [formData]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            localStorage.setItem('onboardingPreferences', JSON.stringify(formData));
-            navigate('/medicine-info');
-        } catch (error) {
-            console.error("Kon voorkeuren niet opslaan in localStorage", error);
-        }
+        updateOnboardingData({ preferences: formData });
+        navigate('/medicine-info');
     };
 
     return (

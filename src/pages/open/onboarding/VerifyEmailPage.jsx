@@ -1,36 +1,63 @@
-import React, { useState, useContext } from 'react';
+// src/pages/open/onboarding/VerifyEmailPage.jsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from 'src/contexts/AuthContext';
-import apiClient from 'src/services/ApiClient';
+// FIX 1: Use the custom hook and a relative path.
+import { useAuth } from '../../../contexts/AuthContext';
+// FIX 2: Use a relative path for the service as well.
+import { verifyEmail } from '../../../services/AuthService/AuthService';
 import './RegisterPage.css';
 
 function VerifyEmailPage() {
     const [verificationCode, setVerificationCode] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
+
+    // FIX 3: Use the custom hook for cleaner code.
+    const { login } = useAuth();
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+
+    // Effect to get the email when the page loads
+    useEffect(() => {
+        const storedEmail = localStorage.getItem('userEmail');
+        if (storedEmail) {
+            setUserEmail(storedEmail);
+        } else {
+            // If there's no email, the user can't do anything here. Send them back.
+            setError('Geen e-mailadres gevonden. U wordt teruggestuurd.');
+            setTimeout(() => navigate('/register'), 3000);
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const email = localStorage.getItem('userEmail');
+        setIsLoading(true);
 
-        // DIT IS EEN TIJDELIJKE OPLOSSING VOOR DE DEMO
-        // In een echte applicatie zou je het email & de code naar de backend sturen voor validatie
-        const password = "password123"; // Dummy wachtwoord omdat de backend dit nodig heeft voor de /login route
+        const verificationData = {
+            email: userEmail,
+            token: verificationCode, // The backend likely expects 'token'
+        };
 
-        if (verificationCode === '123456') { // Dummy code
-            try {
-                const response = await apiClient.post('/login', { email, password });
-                login(response.data.token);
-                localStorage.removeItem('userEmail');
-                navigate('/register-details');
-            } catch (err) {
-                setError('Verificatie gelukt, maar inloggen mislukt. Probeer later opnieuw in te loggen.');
-                console.error('Login na verificatie error:', err);
-            }
+        // Use the robust { data, error } structure from AuthService
+        const { data, error: apiError } = await verifyEmail(verificationData);
+
+        setIsLoading(false);
+
+        if (apiError) {
+            // The error message now comes directly and neatly parsed from the service
+            setError(apiError.message);
+            console.error('Email verification error:', apiError);
+        } else if (data && data.token) {
+            // Success! Log the user in with the received token.
+            await login(data.token); // It's good practice to await the login function
+            localStorage.removeItem('userEmail');
+            // The login function in AuthContext now handles navigation,
+            // but we can keep this as a fallback if needed.
+            // navigate('/register-details');
         } else {
-            setError('De ingevoerde code is onjuist.');
+            // Catch an unexpected but successful response from the server
+            setError('Verificatie mislukt. Onverwacht antwoord van de server.');
         }
     };
 
@@ -38,7 +65,9 @@ function VerifyEmailPage() {
         <div className="auth-page">
             <form onSubmit={handleSubmit}>
                 <h1>Verifieer je e-mailadres</h1>
-                <p>We hebben een code gestuurd naar <strong>{localStorage.getItem('userEmail')}</strong>. Voer de 6-cijferige code in (tip: 123456).</p>
+                <p>
+                    We hebben een code gestuurd naar <strong>{userEmail || 'jouw e-mailadres'}</strong>. Voer de 6-cijferige code in.
+                </p>
                 <div className="input-group">
                     <label htmlFor="verificationCode">Verificatiecode</label>
                     <input
@@ -49,10 +78,13 @@ function VerifyEmailPage() {
                         onChange={(e) => setVerificationCode(e.target.value)}
                         maxLength="6"
                         required
+                        disabled={isLoading || !userEmail} // Disable input while loading
                     />
                 </div>
                 {error && <p className="error-message">{error}</p>}
-                <button type="submit">Verifiëren en doorgaan</button>
+                <button type="submit" disabled={isLoading || !userEmail}>
+                    {isLoading ? 'Bezig met verifiëren...' : 'Verifiëren en doorgaan'}
+                </button>
             </form>
         </div>
     );

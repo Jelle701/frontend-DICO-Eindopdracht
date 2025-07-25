@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import apiClient from '../../../services/ApiClient';
+// FIX: Gebruik een relatief pad zodat Vite het bestand kan vinden.
+import { registerUser } from '../../../services/AuthService/AuthService.jsx';
 import './RegisterPage.css';
 
 function RegisterPage() {
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
         firstName: '',
         lastName: '',
+        email: '',
+        dateOfBirth: '', // Keep this name for the form state, it's descriptive
+        password: '',
+        confirmPassword: '',
     });
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -22,14 +25,29 @@ function RegisterPage() {
         e.preventDefault();
         setError('');
 
-        try {
-            await apiClient.post('/register', formData);
-            // Sla e-mail op voor de verificatiepagina
+        if (formData.password !== formData.confirmPassword) {
+            setError('Wachtwoorden komen niet overeen.');
+            return;
+        }
+
+        // Destructure the form data to separate the fields.
+        const { confirmPassword, dateOfBirth, ...rest } = formData;
+
+        // Create the final data object for the API,
+        // mapping `dateOfBirth` from the form to `dob` for the API.
+        const registrationData = {
+            ...rest,
+            dob: dateOfBirth,
+        };
+
+        const { data, error: apiError } = await registerUser(registrationData);
+
+        if (apiError) {
+            setError(apiError.message || 'Registratie mislukt. Probeer het opnieuw.');
+            console.error('Registration error:', apiError);
+        } else {
             localStorage.setItem('userEmail', formData.email);
             navigate('/verify');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Registratie mislukt. Probeer het opnieuw.');
-            console.error('Registration error:', err);
         }
     };
 
@@ -50,8 +68,16 @@ function RegisterPage() {
                     <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
                 </div>
                 <div className="input-group">
+                    <label htmlFor="dateOfBirth">Geboortedatum</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required />
+                </div>
+                <div className="input-group">
                     <label htmlFor="password">Wachtwoord</label>
                     <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="confirmPassword">Herhaal Wachtwoord</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
                 </div>
                 {error && <p className="error-message">{error}</p>}
                 <button type="submit">Registreer</button>

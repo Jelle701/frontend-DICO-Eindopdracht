@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../axios';
 // ... andere imports
 
 function SignUp() {
-    // ... andere useState hooks
-    const [error, setError] = useState(''); // State voor de foutmelding
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,9 +37,28 @@ function SignUp() {
     return (
         // ... je JSX
         <form onSubmit={handleSubmit}>
-            {/* ... je input velden ... */}
-
-            {/* Toon de foutmelding als die er is */}
+            <div className="input-group">
+                <label htmlFor="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+            </div>
+            <div className="input-group">
+                <label htmlFor="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+            </div>
             {error && <p className="error-message">{error}</p>}
 
             <button type="submit">Registreren</button>

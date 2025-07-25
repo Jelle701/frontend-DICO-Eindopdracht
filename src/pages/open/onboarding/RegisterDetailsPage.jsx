@@ -1,18 +1,23 @@
+// src/pages/open/onboarding/RegisterDetailsPage.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-// CORRECTIE: Importeer de stylesheet direct.
+import { useOnboarding } from '../../../contexts/OnboardingContext.jsx';
 import './RegisterPage.css';
 
 function RegisterDetailsPage() {
     const navigate = useNavigate();
+    const { updateOnboardingData } = useOnboarding();
 
     const handleRoleSelect = (role) => {
-        try {
-            localStorage.setItem('onboardingRole', role);
-            navigate('/onboarding');
-        } catch (error) {
-            console.error("Kon rol niet opslaan in localStorage", error);
-        }
+        // FIX: Deze regel was uitgecommentarieerd.
+        // We slaan nu de rol op in de OnboardingContext.
+        // De backend verwacht waarschijnlijk een 'preferences' object.
+        updateOnboardingData({
+            preferences: {
+                role: role // Je kunt hier meer voorkeuren toevoegen
+            }
+        });
+        navigate('/onboarding'); // Ga naar de volgende stap
     };
 
     return (

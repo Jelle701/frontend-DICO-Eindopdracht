@@ -1,81 +1,70 @@
-import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import apiClient from 'src/services/ApiClient.jsx'; // <-- CORRECTED PATH
-import { AuthContext } from 'src/contexts/AuthContext.jsx'; // <-- CORRECTED PATH
-import './onboarding/RegisterPage.css'; // Corrected path to shared CSS
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+// FIX: Use relative paths so Vite can reliably find the files.
+import { useAuth } from '../../contexts/AuthContext';
+import Navbar from '../../components/Navbar';
+import './LoginPage.css'; // We voegen specifieke styling toe
 
-function LoginPage() {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
-    const [error, setError] = useState('');
-    const { login } = useContext(AuthContext);
-    const navigate = useNavigate();
+// REMOVED: This CSS import is redundant and could cause style conflicts.
+// import '../open/onboarding/RegisterPage.css';
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+
+export default function LoginPage() {
+    // The backend and context expect 'email', not 'username'.
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
-
-        if (!formData.email || !formData.password) {
-            setError('Vul alsjeblieft zowel je e-mailadres als wachtwoord in.');
-            return;
-        }
-
+        setError("");
         try {
-            const response = await apiClient.post('/login', formData);
-            if (response.data && response.data.token) {
-                login(response.data.token); // The login function in AuthContext will handle navigation
-            } else {
-                setError('Inloggen mislukt. Geen token ontvangen.');
-            }
+            // Send the correct object to the login function.
+            await login({ email, password });
+            // Navigation is now handled by the AuthContext after a successful login.
         } catch (err) {
-            setError(err.response?.data?.message || 'Inloggen is mislukt. Controleer je gegevens.');
-            console.error('Login error:', err);
+            console.error("Login error:", err);
+            // The AuthContext throws a 'new Error()', so we use 'err.message'.
+            setError(err.message || "Kon niet inloggen, controleer je gegevens.");
         }
     };
 
     return (
-        <div className="auth-page">
-            <form onSubmit={handleSubmit}>
-                <h1>Inloggen</h1>
-                <div className="input-group">
-                    <label htmlFor="email">E-mailadres</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        autoComplete="email"
-                    />
-                </div>
-                <div className="input-group">
-                    <label htmlFor="password">Wachtwoord</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        autoComplete="current-password"
-                    />
-                </div>
-                {error && <p className="error-message">{error}</p>}
-                <button type="submit">Log in</button>
-                <p className="form-footer">
-                    Nog geen account? <Link to="/register">Registreer hier</Link>
-                </p>
-            </form>
-        </div>
+        <>
+            <Navbar />
+            <div className="auth-page">
+                <form onSubmit={handleSubmit}>
+                    <h1>Inloggen</h1>
+                    <div className="input-group">
+                        <label htmlFor="email">E-mailadres</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="password">Wachtwoord</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    {error && <p className="error-message">{error}</p>}
+                    <button type="submit">Inloggen</button>
+                    <p className="form-footer">
+                        Nog geen account? <Link to="/register">Maak er hier een aan</Link>
+                    </p>
+                </form>
+            </div>
+        </>
     );
 }
-
-export default LoginPage;

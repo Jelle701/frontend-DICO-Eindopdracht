@@ -1,15 +1,21 @@
+// src/main.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import './index.css';
 import { BrowserRouter } from 'react-router-dom';
-import AuthContextProvider from './contexts/AuthContext.jsx'; // <-- CORRECTIE: geen accolades
+import App from './App.jsx';
+import { AuthContextProvider } from './contexts/AuthContext.jsx';
+// FIX: De naam van de import moet overeenkomen met de export
+import { OnboardingContextProvider } from './contexts/OnboardingContext.jsx';
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <BrowserRouter>
             <AuthContextProvider>
-                <App />
+                {/* FIX: Gebruik hier ook de juiste componentnaam */}
+                <OnboardingContextProvider>
+                    <App />
+                </OnboardingContextProvider>
             </AuthContextProvider>
         </BrowserRouter>
     </React.StrictMode>

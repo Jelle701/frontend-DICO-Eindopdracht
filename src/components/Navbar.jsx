@@ -1,22 +1,26 @@
-import React, { useContext } from 'react';
+// src/components/Navbar.jsx
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from 'src/contexts/AuthContext.jsx';
-import DicoLogo from 'src/assets/react.svg'; // Placeholder, vervang dit met je eigen logo
+// FIX 1: Gebruik een relatief pad en de 'useAuth' hook.
+import { useAuth } from '../contexts/AuthContext.jsx';
+// FIX 2: Maak dit pad ook relatief voor consistentie.
+import DicoLogo from '../assets/react.svg';
 import './NavBar.css';
 
 
 function Navbar() {
-    const { isAuth, logout } = useContext(AuthContext);
+    // FIX 3: Gebruik de custom hook voor schonere code.
+    const { isAuth, logout } = useAuth();
 
     return (
         <nav className="navbar">
-            <div className="navbar-left"> {/* Correcte class-naam */}
+            <div className="navbar-left">
                 <Link to="/">
                     <img src={DicoLogo} alt="Dico Logo" />
                 </Link>
             </div>
 
-            <ul className="navbar-center"> {/* Correcte class-naam */}
+            <ul className="navbar-center">
                 {isAuth ? (
                     <>
                         <li><Link to="/dashboard">Dashboard</Link></li>

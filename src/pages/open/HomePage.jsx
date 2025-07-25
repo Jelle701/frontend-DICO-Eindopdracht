@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import Navbar from 'src/components/Navbar.jsx';
+import Navbar from '../../components/Navbar.jsx';
 import './HomePage.css';
 
 // Importeer je afbeeldingen en video's hier
@@ -52,11 +52,11 @@ function HomePage() {
                 <h2>Wat gebruikers zeggen</h2>
                 <div className="testimonials-grid container">
                     <blockquote className="testimonial">
-                        <p>"Sinds ik DICO gebruik zijn mijn waardes stabieler dan ooit."</p>
+                        <p>&quot;Sinds ik DICO gebruik zijn mijn waardes stabieler dan ooit.&quot;</p>
                         <footer>- Sophie, 42</footer>
                     </blockquote>
                     <blockquote className="testimonial">
-                        <p>"De app motiveert me dagelijks om gezondere keuzes te maken."</p>
+                        <p>&quot;De app motiveert me dagelijks om gezondere keuzes te maken.&quot;</p>
                         <footer>- Marco, 35</footer>
                     </blockquote>
                 </div>
