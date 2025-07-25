@@ -23,6 +23,7 @@ function Navbar() {
             <ul className="navbar-center">
                 {isAuth ? (
                     <>
+                        <li><Link to="/">Home</Link></li>
                         <li><Link to="/dashboard">Dashboard</Link></li>
                         <li><button type="button" className="btn btn-outline" onClick={logout}>Uitloggen</button></li>
                     </>

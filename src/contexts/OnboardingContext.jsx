@@ -66,26 +66,22 @@ export function OnboardingContextProvider({ children }) {
             bmi = (prefs.gewicht / (lengteInMeters * lengteInMeters)).toFixed(1);
         }
 
-        // --- FIX: Translate frontend values to backend-expected values ---
-
         const mapGenderToSystemValue = (gender) => {
             switch (gender) {
                 case 'Man': return 'male';
                 case 'Vrouw': return 'female';
                 case 'Anders': return 'other';
-                default: return 'prefer_not_to_say'; // Safe default
+                default: return 'prefer_not_to_say';
             }
         };
 
         const mapUnitToSystemValue = (unit) => {
-            // The backend expects the system name, not the unit.
             if (unit === 'mmol/L' || unit === 'mg/dL') {
                 return 'metric';
             }
-            return 'metric'; // Default to metric
+            return 'metric';
         };
 
-        // Create the nested 'preferences' object with the correct field names AND values
         const preferencesPayload = {
             system: mapUnitToSystemValue(prefs.eenheid),
             gender: mapGenderToSystemValue(prefs.geslacht),
@@ -94,17 +90,32 @@ export function OnboardingContextProvider({ children }) {
             bmi: parseFloat(bmi) || 0,
         };
 
-        // Assemble the final payload
+        // Maak een schone kopie van de medicatiegegevens voor de payload.
+        // De 'gebruiktInsuline' eigenschap is alleen voor de frontend UI en wordt hier
+        // verwijderd voordat de data naar de backend wordt gestuurd.
+        const medicineInfoPayload = { ...(combinedData.medicineInfo || {}) };
+        delete medicineInfoPayload.gebruiktInsuline;
+
+        // Stel de uiteindelijke payload samen, inclusief de medische informatie.
         const payload = {
             preferences: preferencesPayload,
+            medicineInfo: medicineInfoPayload, // TOEGEVOEGD
             diabeticDevices: combinedData.diabeticDevices,
         };
 
-        // Validation: check if essential data is present
+        // Validatie: controleer of de essentiële data aanwezig is
         if (!prefs.role) {
             const errorMessage = `Validation failed: 'role' is missing from the onboarding context.`;
             console.error(errorMessage, combinedData);
             throw new Error("Incomplete registration. The role was not selected.");
+        }
+
+        // Client-side validatie voor gewicht en lengte
+        if (payload.preferences.weight <= 0) {
+            throw new Error("Gewicht moet een positief getal zijn.");
+        }
+        if (payload.preferences.height <= 0) {
+            throw new Error("Lengte moet een positief getal zijn.");
         }
 
         console.log("Submitting final onboarding payload:", payload);

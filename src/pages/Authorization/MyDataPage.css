@@ -1,0 +1,71 @@
+/* src/pages/secure/MyDataPage.css */
+.my-data-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+}
+
+.my-data-page h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.data-section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+.data-section h2 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.data-item:last-child {
+    border-bottom: none;
+}
+
+.data-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.data-value {
+    color: #333;
+}
+
+.device-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fafafa;
+}
+
+.device-category {
+    margin-top: 0;
+    color: #444;
+    text-transform: capitalize;
+}
+
+.error-message {
+    color: #d9534f;
+    text-align: center;
+}
