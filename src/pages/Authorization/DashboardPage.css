@@ -87,10 +87,8 @@
     color: var(--color-text-primary);
 }
 
+/* AANGEPAST: De twee-kolommen grid is niet meer nodig voor één input. */
 .quick-add-form .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
     margin-bottom: 1rem;
 }
 
@@ -125,6 +123,54 @@
     color: #4F8A10;
     background-color: #DFF2BF;
     border: 1px solid #4F8A10;
+}
+
+/* --- Tabel met alle metingen --- */
+
+.measurements-table-container {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.measurements-table-container h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: var(--color-text-primary);
+}
+
+.table-wrapper {
+    max-height: 400px; /* Maak de tabel scrollbaar als deze te lang wordt */
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+.measurements-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.measurements-table-container th,
+.measurements-table-container td {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.measurements-table-container thead th {
+    background-color: #f9f9f9;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    position: sticky; /* Houd de header bovenaan bij het scrollen */
+    top: 0;
+    z-index: 1;
+}
+
+.measurements-table-container tbody tr:hover {
+    background-color: #f5faff; /* Lichte blauwe hover voor duidelijkheid */
 }
 
 
