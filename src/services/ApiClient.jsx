@@ -1,13 +1,8 @@
 // src/services/ApiClient.jsx
 import axios from 'axios';
 
-// Creëer een centrale, vooraf geconfigureerde Axios instance voor de hele applicatie.
 const apiClient = axios.create({
-    // Haal de basis-URL van de API uit de environment variables.
-    // Dit maakt het makkelijk om te wisselen tussen ontwikkel-, test- en productieomgevingen.
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
-
-    // Stel standaard headers in die voor de meeste requests gelden.
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -17,25 +12,30 @@ const apiClient = axios.create({
 /**
  * Request Interceptor:
  * Deze functie wordt uitgevoerd VOOR elke uitgaande request.
- * Het doel is om de request te verrijken met de authenticatietoken.
+ * Het doel is om de request te verrijken met de juiste authenticatietoken.
+ * De logica geeft prioriteit aan het tijdelijke token voor zorgverleners.
  */
 apiClient.interceptors.request.use(
     (config) => {
-        // Haal de token op uit localStorage.
-        const token = localStorage.getItem('token');
+        // Prioriteit 1: Het tijdelijke token voor zorgverleners/ouders.
+        // Dit wordt opgeslagen in sessionStorage en is alleen geldig voor de huidige browser-sessie.
+        const delegatedToken = sessionStorage.getItem('delegated_token');
 
-        // Voeg de Authorization header alleen toe als er een token bestaat.
-        // Dit voorkomt het versturen van een ongeldige header zoals 'Bearer null'.
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+        // Prioriteit 2: Het standaard token voor de ingelogde patiënt.
+        const userToken = localStorage.getItem('token');
+
+        // Bepaal welk token gebruikt moet worden.
+        const tokenToUse = delegatedToken || userToken;
+
+        // Voeg de Authorization header alleen toe als er een token is.
+        if (tokenToUse) {
+            config.headers['Authorization'] = `Bearer ${tokenToUse}`;
         }
 
         // Geef de (mogelijk aangepaste) configuratie terug zodat de request kan doorgaan.
         return config;
     },
     (error) => {
-        // Als er een fout optreedt bij het opzetten van de request, wordt deze hier afgevangen.
-        // Dit is zeldzaam, maar kan gebeuren bijv. door een netwerkprobleem.
         console.error("Fout bij opzetten van de request:", error);
         return Promise.reject(error);
     }

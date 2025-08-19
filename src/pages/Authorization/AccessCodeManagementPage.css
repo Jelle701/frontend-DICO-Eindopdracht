@@ -1,0 +1,85 @@
+.access-code-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.info-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.code-display-section {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+.code-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    border: 1px dashed #aaa;
+    border-radius: 4px;
+    background-color: #eee;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.code-box span {
+    margin-right: 15px;
+}
+
+.copy-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+    background-color: #0056b3;
+}
+
+.copy-success-text {
+    color: green;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.generate-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.generate-button:hover {
+    background-color: #218838;
+}
+
+.generate-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.error-text {
+    color: #dc3545;
+}

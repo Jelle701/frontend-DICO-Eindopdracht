@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService';
 import './GlucoseLogPage.css';
 
+// Helper functions to format date and time
+const getCurrentDate = () => new Date().toISOString().slice(0, 10);
+const getCurrentTime = () => new Date().toTimeString().slice(0, 5);
+
 function GlucoseLogPage() {
     const [measurements, setMeasurements] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,7 +15,8 @@ function GlucoseLogPage() {
 
     const [formState, setFormState] = useState({
         value: '',
-        timestamp: new Date().toISOString().slice(0, 16), // Standaard op nu
+        date: getCurrentDate(),
+        time: getCurrentTime(),
     });
 
     const fetchMeasurements = async () => {
@@ -43,9 +48,12 @@ function GlucoseLogPage() {
             return;
         }
 
+        // Combine date and time to a single ISO string
+        const timestamp = new Date(`${formState.date}T${formState.time}`).toISOString();
+
         const payload = {
             value: parseFloat(formState.value),
-            timestamp: new Date(formState.timestamp).toISOString(),
+            timestamp: timestamp,
         };
 
         const { data: newMeasurement, error: addError } = await addGlucoseMeasurement(payload);
@@ -53,12 +61,13 @@ function GlucoseLogPage() {
         if (addError) {
             setFormError(addError.message);
         } else {
-            // Voeg de nieuwe meting bovenaan de lijst toe voor een directe update
+            // Add the new measurement to the top of the list for an immediate update
             setMeasurements(prev => [newMeasurement, ...prev]);
-            // Reset het formulier
+            // Reset the form to current date and time
             setFormState({
                 value: '',
-                timestamp: new Date().toISOString().slice(0, 16),
+                date: getCurrentDate(),
+                time: getCurrentTime(),
             });
         }
     };
@@ -95,12 +104,23 @@ function GlucoseLogPage() {
                             />
                         </div>
                         <div className="input-group">
-                            <label htmlFor="timestamp">Datum en Tijd</label>
+                            <label htmlFor="date">Datum</label>
                             <input
-                                type="datetime-local"
-                                id="timestamp"
-                                name="timestamp"
-                                value={formState.timestamp}
+                                type="date"
+                                id="date"
+                                name="date"
+                                value={formState.date}
+                                onChange={handleFormChange}
+                                required
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="time">Tijd</label>
+                            <input
+                                type="time"
+                                id="time"
+                                name="time"
+                                value={formState.time}
                                 onChange={handleFormChange}
                                 required
                             />

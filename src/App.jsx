@@ -6,7 +6,10 @@ import HomePage from "./pages/open/HomePage";
 import LoginPage from "./pages/open/LoginPage";
 import DashboardPage from "./pages/Authorization/DashboardPage";
 import MyDataPage from "./pages/Authorization/MyDataPage.jsx";
-import GlucoseLogPage from "./pages/Authorization/GlucoseLogPage.jsx"; // This import will now work
+import GlucoseLogPage from "./pages/Authorization/GlucoseLogPage.jsx";
+import ServiceHubPage from "./pages/service/ServiceHubPage.jsx";
+import AccessCodeManagementPage from "./pages/Authorization/AccessCodeManagementPage";
+import GrantAccessPage from "./pages/open/GrantAccessPage";
 
 // Onboarding Page Components
 import RegisterPage from "./pages/open/onboarding/RegisterPage";
@@ -28,11 +31,10 @@ function App() {
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
             <Route path="/verify" element={<PublicRoute><VerifyEmailPage /></PublicRoute>} />
+            <Route path="/grant-access" element={<PublicRoute><GrantAccessPage /></PublicRoute>} />
 
             {/*
               Beveiligde Routes: Vereisen authenticatie.
-              De PrivateRoute component regelt de logica voor zowel de onboarding flow
-              als de toegang tot de hoofdapplicatie.
             */}
             <Route element={<PrivateRoute />}>
                 {/* Onboarding Flow Routes */}
@@ -43,8 +45,10 @@ function App() {
 
                 {/* Main Application Routes (na onboarding) */}
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/glucose-log" element={<GlucoseLogPage />} /> {/* This route is now valid */}
+                <Route path="/glucose-log" element={<GlucoseLogPage />} />
                 <Route path="/my-data" element={<MyDataPage />} />
+                <Route path="/service-hub" element={<ServiceHubPage />} />
+                <Route path="/access-code-management" element={<AccessCodeManagementPage />} />
             </Route>
 
             {/* Fallback Route: Vangt alle niet-gedefinieerde paden op en stuurt door naar de homepage */}

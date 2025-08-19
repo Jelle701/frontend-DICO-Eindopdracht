@@ -2,19 +2,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Een simpele plugin om de CSP header aan te passen voor de dev server
+// Aangepaste plugin om de CSP header correct in te stellen voor de dev server
 const cspPlugin = () => ({
   name: 'csp-plugin',
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
       res.setHeader(
           'Content-Security-Policy',
-          // FIX: Voeg 'connect-src' toe om API-calls naar de backend toe te staan.
-          // Zorg ervoor dat de URL hier overeenkomt met je VITE_API_URL.
           "default-src 'self'; " +
-          "connect-src 'self' http://localhost:8000; " +
+          // CORRECTED: Toestaan van API-calls naar de backend op de juiste poorten
+          "connect-src 'self' http://localhost:8000 http://localhost:3000; " +
           "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
-          "style-src 'self' 'unsafe-inline'; " +
+          // Toestaan van stylesheets van Google Fonts
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+          // Toestaan van lettertypes van Google Fonts
+          "font-src 'self' https://fonts.gstatic.com; " +
           "img-src 'self' data:;"
       );
       next();

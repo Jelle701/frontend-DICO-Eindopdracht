@@ -1,39 +1,167 @@
+/* src/components/Navbar.css */
 .navbar {
+    background-color: var(--color-surface);
+    height: 70px;
     display: flex;
-    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.navbar-container {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--navbar-bg);
-    padding: 1rem 2rem;
-    border-bottom: 1px solid var(--color-muted);
+    height: 100%;
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 2rem;
 }
 
-.navbar-left img {
-    height: 40px;
-    max-height: 40px;
-    object-fit: contain;
-}
-
-.navbar-center {
+.navbar-logo {
+    color: var(--color-text-primary);
     display: flex;
-    gap: 2rem;
-    list-style: none;
-    flex-wrap: nowrap;
-    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
-.navbar-center li {
+.navbar-logo img {
+    height: 32px;
+    margin-right: 12px;
+}
+
+/* --- Desktop Menu --- */
+.nav-menu-desktop {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu-desktop li {
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+    border-bottom: 3px solid transparent;
+    line-height: calc(70px - 1rem - 3px);
+}
+
+.nav-link:hover {
+    color: var(--color-text-primary);
+}
+
+.nav-link.active {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-accent-positive);
+}
+
+/* --- Hamburger & Mobile Menu --- */
+.hamburger-button {
+    display: none; /* Verberg op desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+}
+
+.hamburger-line {
+    width: 25px;
+    height: 2px;
+    background-color: var(--color-text-primary);
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+    margin: 4px 0;
+}
+
+.hamburger-button.open .hamburger-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+.hamburger-button.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+.hamburger-button.open .hamburger-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.nav-menu-mobile {
+    display: none; /* Verberg op desktop */
+    position: absolute;
+    right: 1rem;
+    top: 70px;
+    background-color: var(--color-surface);
+    min-width: 220px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.nav-menu-mobile ul {
+    list-style: none;
+    padding: 0.5rem 0;
     margin: 0;
 }
 
-.navbar-center a {
-    color: var(--navbar-link);
-    font-weight: 600;
-    padding: 0.5rem;
-    transition: opacity 0.2s ease;
+.nav-menu-mobile .nav-link {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.5rem;
+    line-height: normal;
+    border-bottom: none;
+}
+.nav-menu-mobile .nav-link.active {
+    background-color: rgba(0, 168, 120, 0.1);
+    color: var(--color-accent-positive);
 }
 
-.navbar-center a:hover {
-    opacity: 0.8;
-    color: var(--color-primary);
+.nav-menu-mobile .separator {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 8px 0;
+}
+
+.nav-menu-mobile .btn-outline {
+    width: calc(100% - 3rem);
+    margin: 0.5rem 1.5rem 1rem 1.5rem;
+    text-align: center;
+}
+
+/* --- Responsive Breakpoint --- */
+@media screen and (max-width: 768px) {
+    .nav-menu-desktop {
+        display: none; /* Verberg desktop menu */
+    }
+    .hamburger-button {
+        display: flex; /* Toon hamburger */
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    .nav-menu-mobile {
+        display: block; /* Toon mobiel menu indien open */
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

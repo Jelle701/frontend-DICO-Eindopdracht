@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar.jsx';
 import './HomePage.css';
 
 // Importeer je afbeeldingen en video's hier
-// import heroVideo from 'src/content/Test-Video.mp4';
+import heroVideo from '../../content/HomepageVideo.mp4';
 // import manWithSensor from 'src/content/Man met sensor.png';
 // import graphImage from 'src/content/Grafiek.png';
 
@@ -21,7 +21,7 @@ function HomePage() {
             <Navbar />
 
             <header className="hero-section">
-                {/* <video src={heroVideo} autoPlay muted loop className="hero-video" /> */}
+                <video src={heroVideo} autoPlay muted loop className="hero-video" />
                 <div className="hero-content">
                     <h1>Optimaliseer je gezondheid.</h1>
                     <p>Beheer je glucose, medicatie en lifestyle met de DICO app.</p>

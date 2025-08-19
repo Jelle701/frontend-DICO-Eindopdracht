@@ -1,0 +1,107 @@
+/* Algemene container voor de pagina */
+.google-health-page-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+/* Header sectie */
+.google-health-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+}
+
+.google-health-header h1 {
+    font-size: 2.8rem;
+    color: #1a73e8; /* Google Blue */
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #5f6368; /* Google Grey */
+}
+
+/* Algemene content styling */
+.google-health-content section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.google-health-content h2 {
+    font-size: 1.8rem;
+    color: #1a73e8;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+}
+
+/* Lijsten (voor voordelen en stappen) */
+.benefits-section ul, .how-it-works-section ol {
+    padding-left: 2rem;
+    line-height: 1.8;
+}
+
+.benefits-section li, .how-it-works-section li {
+    margin-bottom: 0.8rem;
+}
+
+.benefits-section li strong {
+    color: #333;
+}
+
+/* Connectie sectie */
+.connection-section {
+    text-align: center;
+    background-color: #e8f0fe; /* Lichte Google Blue achtergrond */
+    border-color: #1a73e8;
+}
+
+.btn-primary {
+    background-color: #1a73e8;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    background-color: #1558b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Terug knop */
+.back-button-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline:hover {
+    background-color: #e8f0fe;
+    color: #1558b3;
+}

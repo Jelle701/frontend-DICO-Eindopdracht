@@ -83,6 +83,10 @@ function LoginPage() {
                     <p>
                         Nog geen account? <Link to="/register">Registreer hier</Link>
                     </p>
+                    <p className="divider">of</p>
+                    <p>
+                        Bent u een zorgverlener of ouder/voogd? <Link to="/grant-access">Voer hier een code in</Link>
+                    </p>
                 </div>
             </form>
         </div>
