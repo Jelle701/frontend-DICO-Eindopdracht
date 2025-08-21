@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../../services/ApiClient'; // Import the central client
 import './GrantAccessPage.css';
 
 const GrantAccessPage = () => {
@@ -21,12 +21,16 @@ const GrantAccessPage = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:8000/api/access/grant', { accessCode: code });
-            const { token } = response.data;
+            // Use the central apiClient for the request
+            const response = await apiClient.post('/api/access/grant', { accessCode: code });
+            const { delegatedToken, patientUsername } = response.data;
 
-            if (token) {
+            if (delegatedToken) {
                 // We use sessionStorage so the token is cleared when the tab is closed
-                sessionStorage.setItem('delegated_token', token);
+                sessionStorage.setItem('delegatedToken', delegatedToken);
+                if (patientUsername) {
+                    sessionStorage.setItem('patientUsername', patientUsername);
+                }
                 navigate('/dashboard'); // Redirect to the dashboard
             } else {
                 setError('Geen geldig token ontvangen van de server.');
@@ -34,7 +38,7 @@ const GrantAccessPage = () => {
 
         } catch (err) {
             if (err.response && err.response.status === 404) {
-                setError('De ingevoerde toegangscode is ongeldig.');
+                setError('De ingevoerde toegangscode is ongeldig of verlopen.');
             } else {
                 setError('Er is een fout opgetreden. Probeer het later opnieuw.');
             }
@@ -56,7 +60,7 @@ const GrantAccessPage = () => {
                         type="text"
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        placeholder="bv. ABC-123-XYZ"
+                        placeholder="bv. A7B-X9C-F4G"
                         required
                     />
                 </div>

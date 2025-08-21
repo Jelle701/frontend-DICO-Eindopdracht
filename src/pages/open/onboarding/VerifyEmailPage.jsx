@@ -1,93 +1,95 @@
-// src/pages/open/onboarding/VerifyEmailPage.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-// FIX 1: Use the custom hook and a relative path.
-import { useAuth } from '../../../contexts/AuthContext';
-// FIX 2: Use a relative path for the service as well.
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { verifyEmail } from '../../../services/AuthService/AuthService';
-import './RegisterPage.css';
 
-function VerifyEmailPage() {
-    const [verificationCode, setVerificationCode] = useState('');
-    const [error, setError] = useState('');
+const VerifyEmailPage = () => {
+    const [token, setToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [userEmail, setUserEmail] = useState('');
-
-    // FIX 3: Use the custom hook for cleaner code.
-    const { login } = useAuth();
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+    const location = useLocation();
     const navigate = useNavigate();
 
-    // Effect to get the email when the page loads
+    const isSubmitting = useRef(false);
+
+    const userEmail = location.state?.email;
+
     useEffect(() => {
-        const storedEmail = localStorage.getItem('userEmail');
-        if (storedEmail) {
-            setUserEmail(storedEmail);
-        } else {
-            // If there's no email, the user can't do anything here. Send them back.
-            setError('Geen e-mailadres gevonden. U wordt teruggestuurd.');
-            setTimeout(() => navigate('/register'), 3000);
+        if (!userEmail) {
+            setError('Geen e-mailadres gevonden. Ga terug naar de registratiepagina.');
         }
-    }, [navigate]);
+    }, [userEmail]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+
+        if (isSubmitting.current) {
+            return;
+        }
+
         setIsLoading(true);
+        isSubmitting.current = true;
+        setError('');
+        setMessage('');
 
-        const verificationData = {
-            email: userEmail,
-            token: verificationCode, // The backend likely expects 'token'
-        };
+        try {
+            const { error: apiError } = await verifyEmail({ token });
 
-        // Use the robust { data, error } structure from AuthService
-        const { data, error: apiError } = await verifyEmail(verificationData);
+            if (apiError) {
+                throw apiError;
+            }
 
-        setIsLoading(false);
+            // Aangepast: Stuur de gebruiker na verificatie naar de loginpagina.
+            // De login-logica bepaalt vervolgens de volgende stap (rol kiezen of dashboard).
+            setMessage('Verificatie geslaagd! U wordt nu doorgestuurd om in te loggen.');
+            
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
 
-        if (apiError) {
-            // The error message now comes directly and neatly parsed from the service
-            setError(apiError.message);
-            console.error('Email verification error:', apiError);
-        } else if (data && data.token) {
-            // Success! Log the user in with the received token.
-            await login(data.token); // It's good practice to await the login function
-            localStorage.removeItem('userEmail');
-            // The login function in AuthContext now handles navigation,
-            // but we can keep this as a fallback if needed.
-            // navigate('/register-details');
-        } else {
-            // Catch an unexpected but successful response from the server
-            setError('Verificatie mislukt. Onverwacht antwoord van de server.');
+        } catch (err) {
+            console.error("Email verification error:", err);
+            setError(err.message || 'Er is een onbekende fout opgetreden.');
+        } finally {
+            setIsLoading(false);
+            isSubmitting.current = false;
         }
     };
 
+    if (!userEmail) {
+        return (
+            <div>
+                <h1>Fout</h1>
+                <p>{error}</p>
+                <button onClick={() => navigate('/register')}>Terug naar Registratie</button>
+            </div>
+        );
+    }
+
     return (
-        <div className="auth-page">
+        <div>
+            <h1>Verifieer je e-mailadres</h1>
+            <p>We hebben een verificatiecode gestuurd naar <strong>{userEmail}</strong>.</p>
+            <p>(Voor ontwikkelingsdoeleinden: controleer de backend-console voor de code).</p>
+            
             <form onSubmit={handleSubmit}>
-                <h1>Verifieer je e-mailadres</h1>
-                <p>
-                    We hebben een code gestuurd naar <strong>{userEmail || 'jouw e-mailadres'}</strong>. Voer de 6-cijferige code in.
-                </p>
-                <div className="input-group">
-                    <label htmlFor="verificationCode">Verificatiecode</label>
-                    <input
-                        type="text"
-                        id="verificationCode"
-                        name="verificationCode"
-                        value={verificationCode}
-                        onChange={(e) => setVerificationCode(e.target.value)}
-                        maxLength="6"
-                        required
-                        disabled={isLoading || !userEmail} // Disable input while loading
-                    />
-                </div>
-                {error && <p className="error-message">{error}</p>}
-                <button type="submit" disabled={isLoading || !userEmail}>
-                    {isLoading ? 'Bezig met verifiëren...' : 'Verifiëren en doorgaan'}
+                <input
+                    type="text"
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    placeholder="Voer 6-cijferige code in"
+                    maxLength="6"
+                    required
+                />
+                <button type="submit" disabled={isLoading || token.length < 6}>
+                    {isLoading ? 'Bezig met verifiëren...' : 'Verifieer'}
                 </button>
             </form>
+
+            {message && <p style={{ color: 'green' }}>{message}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
     );
-}
+};
 
 export default VerifyEmailPage;

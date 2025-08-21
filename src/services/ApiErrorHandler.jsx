@@ -27,36 +27,24 @@ const parseApiErrorMessage = (responseData) => {
 };
 
 /**
- * A centralized helper function to handle API errors and format the response.
+ * A centralized helper function to handle API errors and format them.
  * This should be used in the .catch() block of your service functions.
  * @param {Error} error - The error object from the catch block.
- * @returns {{ data: null, error: { message: string, status: number|null } }}
+ * @returns {{ message: string, status: number|null }}
  */
 export const handleApiError = (error) => {
     if (error.response) {
         // The request was made and the server responded with a status code
         console.error("API Error:", error.response.data);
         const message = parseApiErrorMessage(error.response.data);
-        return {
-            data: null,
-            error: {
-                message,
-                status: error.response.status,
-            },
-        };
+        return { message, status: error.response.status };
     } else if (error.request) {
         // The request was made but no response was received
         console.error("Network Error:", error.request);
-        return {
-            data: null,
-            error: { message: 'Network error. Please check your connection.', status: null },
-        };
+        return { message: 'Network error. Please check your connection.', status: null };
     } else {
         // Something happened in setting up the request that triggered an Error
         console.error("Setup Error:", error.message);
-        return {
-            data: null,
-            error: { message: error.message, status: null },
-        };
+        return { message: error.message, status: null };
     }
 };

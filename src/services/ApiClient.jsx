@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000', // Base URL for all requests
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -12,27 +12,29 @@ const apiClient = axios.create({
 /**
  * Request Interceptor:
  * Deze functie wordt uitgevoerd VOOR elke uitgaande request.
- * Het doel is om de request te verrijken met de juiste authenticatietoken.
- * De logica geeft prioriteit aan het tijdelijke token voor zorgverleners.
  */
 apiClient.interceptors.request.use(
     (config) => {
         // Prioriteit 1: Het tijdelijke token voor zorgverleners/ouders.
-        // Dit wordt opgeslagen in sessionStorage en is alleen geldig voor de huidige browser-sessie.
-        const delegatedToken = sessionStorage.getItem('delegated_token');
+        const delegatedToken = sessionStorage.getItem('delegatedToken');
 
-        // Prioriteit 2: Het standaard token voor de ingelogde patiënt.
-        const userToken = localStorage.getItem('token');
-
-        // Bepaal welk token gebruikt moet worden.
-        const tokenToUse = delegatedToken || userToken;
-
-        // Voeg de Authorization header alleen toe als er een token is.
-        if (tokenToUse) {
-            config.headers['Authorization'] = `Bearer ${tokenToUse}`;
+        if (delegatedToken) {
+            config.headers['Authorization'] = `Bearer ${delegatedToken}`;
+        } else {
+            // Prioriteit 2: Het standaard token voor de ingelogde patiënt.
+            const userToken = localStorage.getItem('token');
+            if (userToken) {
+                config.headers['Authorization'] = `Bearer ${userToken}`;
+            }
         }
 
-        // Geef de (mogelijk aangepaste) configuratie terug zodat de request kan doorgaan.
+        // --- DEBUGGING STAP ---
+        // Log de uitgaande request en de headers om te verifiëren dat het token wordt meegestuurd.
+        console.log(`[API Interceptor] Request naar: ${config.url}`, {
+            headers: config.headers
+        });
+        // --- EINDE DEBUGGING STAP ---
+
         return config;
     },
     (error) => {

@@ -1,7 +1,6 @@
-// src/pages/Authorization/DashboardPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom'; // Importeren voor de link
+import { Link } from 'react-router-dom';
 import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './DashboardPage.css';
@@ -11,9 +10,10 @@ const getInitialDateTime = () => {
     const now = new Date();
     const offset = now.getTimezoneOffset();
     const localNow = new Date(now.getTime() - (offset * 60 * 1000));
-    const date = localNow.toISOString().split('T')[0];
-    const time = localNow.toISOString().substring(11, 16);
-    return { date, time };
+    return {
+        date: localNow.toISOString().split('T')[0],
+        time: localNow.toISOString().substring(11, 16),
+    };
 };
 
 function DashboardPage() {
@@ -22,11 +22,10 @@ function DashboardPage() {
     const [rawMeasurements, setRawMeasurements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [patientData, setPatientData] = useState(null);
 
-    // Check if this is a delegated view
-    const delegatedToken = sessionStorage.getItem('delegated_token');
-    const isDelegatedView = !!delegatedToken;
+    // Correctly check for delegated view using the right sessionStorage keys
+    const isDelegatedView = !!sessionStorage.getItem('delegatedToken');
+    const patientUsername = sessionStorage.getItem('patientUsername');
 
     const [formState, setFormState] = useState({ value: '', ...getInitialDateTime() });
     const [formError, setFormError] = useState('');
@@ -35,39 +34,35 @@ function DashboardPage() {
     const fetchMeasurements = async () => {
         setLoading(true);
         setError('');
+        try {
+            const { data } = await getRecentGlucoseMeasurements();
 
-        const { data, error: fetchError, patient } = await getRecentGlucoseMeasurements();
+            if (data && data.length > 0) {
+                setRawMeasurements(data);
+                const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
+                const recentMeasurements = data.filter(m => new Date(m.timestamp) >= sixHoursAgo);
 
-        if (fetchError) {
-            setError(fetchError.message);
+                const chartData = recentMeasurements
+                    .map(m => ({ time: new Date(m.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' }), value: m.value }))
+                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                setGlucoseData(chartData);
+            } else {
+                setRawMeasurements([]);
+                setGlucoseData([]);
+            }
+        } catch (fetchError) {
+            setError(fetchError.message || 'Kon metingen niet ophalen.');
             setGlucoseData([]);
             setRawMeasurements([]);
-        } else if (data && data.length > 0) {
-            setRawMeasurements(data);
-            setPatientData(patient); // Store patient data for display
-
-            const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
-            const recentMeasurements = data.filter(m => new Date(m.timestamp) >= sixHoursAgo);
-
-            const chartData = recentMeasurements
-                .map(m => ({ time: new Date(m.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' }), value: m.value, id: m.id }))
-                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-            setGlucoseData(chartData);
-        } else {
-            setRawMeasurements([]);
-            setGlucoseData([]);
-            if (patient) setPatientData(patient); // Still show patient data if available
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     useEffect(() => {
-        // For delegated view, user object from context might be null, so we fetch immediately.
-        // For normal view, we wait for the user object to be loaded.
         if (isDelegatedView || user) {
             fetchMeasurements();
+            // Only set up the interval for the patient's own view
             if (!isDelegatedView) {
                 const intervalId = setInterval(fetchMeasurements, 60000);
                 return () => clearInterval(intervalId);
@@ -91,28 +86,26 @@ function DashboardPage() {
         }
 
         const timestamp = new Date(`${formState.date}T${formState.time}:00`).toISOString();
-        const payload = { value: parseFloat(formState.value), timestamp: timestamp };
-        const { error: addError } = await addGlucoseMeasurement(payload);
-
-        if (addError) {
-            setFormError(addError.message);
-        } else {
+        const payload = { value: parseFloat(formState.value), timestamp };
+        
+        try {
+            await addGlucoseMeasurement(payload);
             setFormSuccess('Meting succesvol opgeslagen!');
-            fetchMeasurements();
+            fetchMeasurements(); // Refresh data after adding
             setFormState({ value: '', ...getInitialDateTime() });
             setTimeout(() => setFormSuccess(''), 3000);
+        } catch (addError) {
+            setFormError(addError.message || 'Kon meting niet opslaan.');
         }
     };
 
     const formatDate = (isoString) => new Date(isoString).toLocaleString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-    const displayUser = isDelegatedView ? patientData : user;
-
-    if (loading) {
+    if (loading && !user && !isDelegatedView) {
         return (
             <>
                 <Navbar />
-                <div className="dashboard-page"><h1>Dashboard wordt geladen...</h1></div>
+                <div className="dashboard-page"><h1>Authenticatie controleren...</h1></div>
             </>
         );
     }
@@ -122,7 +115,7 @@ function DashboardPage() {
             <Navbar />
             <div className="dashboard-page">
                 <header className="dashboard-header">
-                    <h1>{isDelegatedView ? `Dashboard van ${displayUser?.firstName || 'patiënt'}` : `Welkom terug, ${displayUser?.firstName}!`}</h1>
+                    <h1>{isDelegatedView ? `Dashboard van ${patientUsername}` : `Welkom terug, ${user?.username}!`}</h1>
                     <p>{isDelegatedView ? 'U bekijkt deze gegevens als zorgverlener of ouder/voogd.' : 'Hier is een overzicht van je recente activiteit en gegevens.'}</p>
                 </header>
 
@@ -130,19 +123,21 @@ function DashboardPage() {
                     <div className="chart-container">
                         <h2>Glucoseverloop (laatste 6 uur)</h2>
                         {error && <p className="error-message">{error}</p>}
-                        {!error && glucoseData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={400}>
-                                <LineChart data={glucoseData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-                                    <XAxis dataKey="time" />
-                                    <YAxis domain={['dataMin - 1', 'dataMax + 1']} allowDecimals={false} />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="value" name="Glucose" stroke="var(--color-accent-positive)" strokeWidth={2} activeDot={{ r: 8 }}/>
-                                </LineChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="no-data-placeholder"><p>Geen metingen in de laatste 6 uur.</p></div>
+                        {loading ? <p>Metingen laden...</p> : (
+                            glucoseData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={400}>
+                                    <LineChart data={glucoseData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                                        <XAxis dataKey="time" />
+                                        <YAxis domain={['dataMin - 1', 'dataMax + 1']} allowDecimals={false} />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Line type="monotone" dataKey="value" name="Glucose" stroke="var(--color-accent-positive)" strokeWidth={2} activeDot={{ r: 8 }}/>
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="no-data-placeholder"><p>Geen metingen in de laatste 6 uur.</p></div>
+                            )
                         )}
 
                         {!isDelegatedView && (
@@ -175,19 +170,7 @@ function DashboardPage() {
                     </div>
 
                     <aside className="widgets-container">
-                        {displayUser && (
-                            <div className="widget-card">
-                                <h3>Persoonlijke Gegevens</h3>
-                                <ul>
-                                    <li><span>Voornaam:</span><strong>{displayUser.firstName || 'N/A'}</strong></li>
-                                    <li><span>Achternaam:</span><strong>{displayUser.lastName || 'N/A'}</strong></li>
-                                    <li><span>Email:</span><strong>{displayUser.email || 'N/A'}</strong></li>
-                                    <li><span>Geboortedatum:</span><strong>{displayUser.dob || 'N/A'}</strong></li>
-                                </ul>
-                            </div>
-                        )}
-                        
-                        {!isDelegatedView && (
+                        {!isDelegatedView && user && (
                              <div className="widget-card">
                                 <h3>Accountbeheer</h3>
                                 <Link to="/access-code-management" className="management-link">Toegang voor zorgverleners beheren</Link>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/ApiClient'; // Import the central client
 import './AccessCodeManagementPage.css';
 
 const AccessCodeManagementPage = () => {
@@ -12,13 +12,13 @@ const AccessCodeManagementPage = () => {
         setLoading(true);
         setError('');
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8000/api/user/access-code', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.get('/api/patient/access-code'); // Updated endpoint
             setAccessCode(response.data.accessCode);
         } catch (err) {
-            setError('Fout bij het ophalen van de toegangscode. Probeer het later opnieuw.');
+            // Don't show an error if the code just doesn't exist yet (404)
+            if (err.response && err.response.status !== 404) {
+                setError('Fout bij het ophalen van de toegangscode.');
+            }
         } finally {
             setLoading(false);
         }
@@ -28,10 +28,7 @@ const AccessCodeManagementPage = () => {
         setLoading(true);
         setError('');
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:8000/api/user/generate-access-code', {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.post('/api/patient/access-code/generate'); // Updated endpoint
             setAccessCode(response.data.accessCode);
         } catch (err) {
             setError('Fout bij het genereren van de code. Probeer het later opnieuw.');

@@ -12,7 +12,8 @@ export async function registerUser(userData) {
         const { data } = await apiClient.post('/auth/register', userData);
         return { data, error: null };
     } catch (error) {
-        return handleApiError(error); // Gebruik de centrale handler
+        const formattedError = handleApiError(error);
+        return { data: null, error: formattedError }; // Correctly wrap the error
     }
 }
 
@@ -26,7 +27,8 @@ export async function loginUser(credentials) {
         const { data } = await apiClient.post('/auth/login', credentials);
         return { data, error: null };
     } catch (error) {
-        return handleApiError(error); // Gebruik de centrale handler
+        const formattedError = handleApiError(error);
+        return { data: null, error: formattedError }; // Correctly wrap the error
     }
 }
 
@@ -40,6 +42,7 @@ export async function verifyEmail(verificationData) {
         const { data } = await apiClient.post('/auth/verify-email', verificationData);
         return { data, error: null };
     } catch (error) {
-        return handleApiError(error); // Gebruik de centrale handler
+        const formattedError = handleApiError(error);
+        return { data: null, error: formattedError }; // Correctly wrap the error
     }
 }

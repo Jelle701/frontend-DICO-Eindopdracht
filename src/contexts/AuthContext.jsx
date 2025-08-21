@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getMyProfile } from '../services/ProfileService.jsx'; // FIX: Correct import name
+import { getMyProfile } from '../services/ProfileService.jsx';
 
 const AuthContext = createContext(null);
 
@@ -13,38 +13,58 @@ export function AuthContextProvider({ children }) {
     useEffect(() => {
         const initializeAuth = async () => {
             if (token) {
-                setIsAuth(true);
-                // Fetch user profile when the app loads and a token exists
                 const { data, error } = await getMyProfile();
                 if (error) {
-                    console.error("Failed to fetch user on initial load, logging out.", error);
-                    // If the token is invalid, clear it and log out
-                    localStorage.removeItem('token');
-                    setToken(null);
-                    setIsAuth(false);
+                    console.error("Token is invalid, logging out.", error);
+                    logout();
                 } else {
                     setUser(data);
+                    setIsAuth(true);
                 }
             }
             setLoading(false);
         };
 
         initializeAuth();
-    }, [token]); // This effect runs only when the token changes
+    }, [token]);
 
-    const login = (jwtResponse) => {
-        // De login-functie accepteert nu het volledige object van de API.
-        // Dit voorkomt een extra API-call om de gebruiker op te halen.
-        const { token: responseToken, ...userData } = jwtResponse;
-
-        localStorage.setItem('token', responseToken);
-        setToken(responseToken);
+    const login = async (jwt, navigate) => {
+        localStorage.setItem('token', jwt);
+        setToken(jwt);
         setIsAuth(true);
 
-        // We hebben de gebruikersdata al, dus we kunnen deze direct instellen.
-        // De 'user' state wordt bijgewerkt met de data van de login-response.
-        // Aanname: de login response bevat nog geen 'flags'. Die komen pas na het ophalen van het volledige profiel.
-        setUser(userData);
+        const { data: profile, error } = await getMyProfile();
+
+        if (error) {
+            console.error("Failed to fetch profile after login:", error);
+            logout();
+            navigate('/login?error=profile_fetch_failed');
+            return;
+        }
+
+        setUser(profile);
+
+        // De nieuwe, intelligente navigatielogica.
+        if (profile && profile.role) {
+            // Als de gebruiker een rol heeft, stuur naar de juiste pagina.
+            switch (profile.role) {
+                case 'PATIENT':
+                    navigate('/dashboard');
+                    break;
+                case 'GUARDIAN':
+                    // TODO: Moet naar een specifieke guardian-pagina.
+                    navigate('/dashboard'); // Tijdelijk
+                    break;
+                case 'PROVIDER':
+                    navigate('/patient-management');
+                    break;
+                default:
+                    navigate('/login'); // Fallback
+            }
+        } else {
+            // Als de gebruiker nog geen rol heeft, stuur naar de rol-selectie pagina.
+            navigate('/register-details');
+        }
     };
 
     const logout = () => {
@@ -61,7 +81,7 @@ export function AuthContextProvider({ children }) {
         loading,
         login,
         logout,
-        setUser, // Expose setUser for updates after onboarding
+        setUser,
     };
 
     return (
