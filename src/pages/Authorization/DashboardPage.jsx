@@ -1,3 +1,26 @@
+/**
+ * @file DashboardPage.jsx
+ * @description This is the main dashboard for an authenticated user. It displays recent glucose measurements,
+ * provides a form for quick manual entry of new data, and shows a table of all recent measurements.
+ * The page also supports a "delegated view" for caregivers or guardians, which provides a read-only view
+ * of the patient's data.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered dashboard component.
+ *
+ * @functions
+ * - `getInitialDateTime()`: A helper function that returns the current local date and time, formatted for use in the
+ *   "quick add" form's default state.
+ * - `DashboardPage()`: The main functional component that orchestrates the fetching, display, and submission of glucose data.
+ * - `fetchMeasurements()`: An asynchronous function that calls the `getRecentGlucoseMeasurements` service to retrieve
+ *   the latest data, processes it for the chart and table, and updates the component's state.
+ * - `useEffect()`: A React hook that triggers `fetchMeasurements` when the component mounts. For the patient's own view,
+ *   it also sets up a one-minute interval to automatically refresh the data.
+ * - `handleFormChange(e)`: Updates the state of the "quick add" form fields as the user types.
+ * - `handleFormSubmit(e)`: Handles the submission of the "quick add" form. It validates the input, calls the
+ *   `addGlucoseMeasurement` service, provides user feedback (success or error), and refreshes the data.
+ * - `formatDate(isoString)`: A utility function to format an ISO timestamp into a user-friendly, localized date and time string.
+ */
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';

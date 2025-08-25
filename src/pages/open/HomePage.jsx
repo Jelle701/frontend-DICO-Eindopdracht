@@ -1,3 +1,15 @@
+/**
+ * @file HomePage.jsx
+ * @description This is the main landing page of the DICO application. It provides an overview of the app's features,
+ * benefits, and user testimonials to attract new users. The page includes a hero section with a call-to-action
+ * to register, sections detailing key features, user testimonials, and a final call-to-action to create an account.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered homepage component.
+ *
+ * @functions
+ * - `HomePage()`: The main functional component that renders the entire landing page. It is a static page and does not contain any complex logic or state management.
+ */
 import React from 'react';
 import { Link } from "react-router-dom";
 import Navbar from '../../components/Navbar.jsx';
@@ -17,8 +29,6 @@ function HomePage() {
                     <a href="#" className="top-banner-link">Bekijk de video</a>
                 </p>
             </div>
-
-            <Navbar />
 
             <header className="hero-section">
                 <video src={heroVideo} autoPlay muted loop className="hero-video" />

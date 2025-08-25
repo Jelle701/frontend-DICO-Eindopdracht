@@ -1,0 +1,155 @@
+/* =================================================================== */
+/* Unified Onboarding & Authentication Styling (WHOOP Theme) */
+/* =================================================================== */
+
+/* --- Page Centering Container --- */
+/* This container uses Flexbox to center its direct child vertically and horizontally. */
+.onboarding-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertical centering */
+    align-items: center;     /* Horizontal centering */
+    min-height: calc(100vh - 80px); /* Adjust for navbar height */
+    padding: var(--space-6);
+    width: 100%;
+}
+
+/* --- General Content Box Layout --- */
+/* These are the content boxes that will be centered by the container. */
+.auth-page, .role-selection-container, .diabetic-devices-container {
+    width: 100%;
+    max-width: 550px;
+    margin: 0; /* Margin is handled by the flex container, so we reset it. */
+    padding: var(--space-8);
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+}
+
+/* --- Typography & Spacing --- */
+.auth-page h1, .role-selection-container h1, .diabetic-devices-container h1 {
+    text-align: center;
+    margin-bottom: var(--space-5);
+    font-size: 28px;
+    color: var(--color-white);
+}
+
+.auth-page > form > p, .auth-page > p, .role-selection-container > p, .diabetic-devices-container > form > p {
+    text-align: center;
+    color: var(--gray-200);
+    margin-top: 0;
+    margin-bottom: var(--space-8);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* --- Form Structure --- */
+.auth-page form, .diabetic-devices-container form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.input-group label {
+    font-weight: 700;
+    color: var(--gray-100);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.auth-page input,
+.auth-page select,
+.diabetic-devices-container select {
+    background-color: var(--gray-800);
+    color: var(--color-white);
+    border: 1px solid var(--gray-600);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-page input:focus,
+.auth-page select:focus,
+.diabetic-devices-container select:focus {
+    border-color: var(--color-teal);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 241, 159, 0.2);
+}
+
+/* =================================================================== */
+/* --- Unified Button System --- */
+/* =================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition: transform .1s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.btn:active { transform: translateY(0); box-shadow: var(--shadow-1); }
+
+.btn--primary { background: var(--color-teal); color: #07261C; }
+.btn--primary:hover { background: #00F19F; }
+
+.btn--danger { background-color: var(--color-danger); color: var(--color-white); }
+.btn--danger:hover { background-color: #e04a59; }
+
+.btn--sm { padding: 8px 12px; font-size: 13px; width: auto; }
+
+.btn:disabled { background-color: var(--gray-700); color: var(--gray-500); cursor: not-allowed; transform: none; box-shadow: none; }
+
+.form-action-button { margin-top: var(--space-5); }
+
+/* =================================================================== */
+/* --- Component-Specific Adjustments --- */
+/* =================================================================== */
+
+.role-selection-container { max-width: 600px; }
+.role-options { display: grid; gap: var(--space-5); margin-top: var(--space-5); }
+.role-card { border: 1px solid var(--gray-600); padding: var(--space-6); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.2s ease-in-out; position: relative; background-color: var(--gray-800); }
+.role-card:hover { border-color: var(--color-teal); transform: translateY(-2px); }
+.role-card.selected { border-color: var(--color-teal); background-color: rgba(0, 241, 159, 0.05); }
+.role-card h3 { font-size: 18px; margin-bottom: var(--space-2); color: var(--color-white); }
+.role-card p { font-size: 15px; color: var(--gray-200); text-align: left; margin-bottom: 0; text-transform: none; letter-spacing: 0; font-weight: 500; }
+.role-card .checkbox-icon { position: absolute; top: var(--space-4); right: var(--space-4); width: 24px; height: 24px; border: 2px solid var(--gray-500); border-radius: 50%; transition: all 0.2s ease-in-out; }
+.role-card.selected .checkbox-icon { background-color: var(--color-teal); border-color: var(--color-teal); }
+.role-card.selected .checkbox-icon::after { content: ''; position: absolute; left: 8px; top: 4px; width: 5px; height: 10px; border: solid var(--color-black); border-width: 0 3px 3px 0; transform: rotate(45deg); }
+
+.diabetic-devices-container { max-width: 700px; }
+.device-category-box { background-color: var(--gray-800); border: 1px solid var(--gray-700); border-radius: var(--radius-lg); padding: var(--space-6); margin-top: var(--space-5); }
+.device-category-box:first-of-type { margin-top: 0; }
+.device-category-box h2 { font-size: 22px; color: var(--color-white); margin-top: 0; margin-bottom: var(--space-5); padding-bottom: var(--space-4); border-bottom: 1px solid var(--gray-700); }
+
+.my-devices-list { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--gray-700); }
+.my-devices-list h4 { font-size: 20px; color: var(--color-white); margin-bottom: var(--space-4); }
+.my-devices-list ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.my-devices-list li { display: flex; justify-content: space-between; align-items: center; padding: var(--space-4); background-color: var(--gray-800); border: 1px solid var(--gray-700); border-radius: var(--radius-md); color: var(--color-white); }
+.my-devices-list li span span { color: var(--gray-400); font-size: 14px; margin-left: var(--space-2); }
+
+/* --- Error & Footer --- */
+.error-message { color: var(--color-white); background-color: rgba(255, 0, 38, 0.2); border: 1px solid var(--color-danger); padding: var(--space-4); border-radius: var(--radius-md); text-align: center; font-weight: 600; }
+.form-footer { text-align: center; margin-top: var(--space-6); color: var(--gray-300); }
+.form-footer a { color: var(--color-teal); text-decoration: none; font-weight: 600; }
+.form-footer a:hover { text-decoration: underline; }

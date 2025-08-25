@@ -1,3 +1,12 @@
+/**
+ * @file RegisterDetailsPage.jsx
+ * @description DEPRECATED: This file appears to be an old or redundant version of the role selection page.
+ * The component defined within is named `SelectRolePage`, and its functionality is duplicated in
+ * `src/pages/open/onboarding/SelectRolePage.jsx`. This file should likely be removed from the project to avoid confusion.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered role selection component.
+ */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { updateUserRole } from '../../../services/ProfileService'; // Deze service moeten we later aanmaken/aanpassen

@@ -1,124 +1,107 @@
-// src/pages/open/onboarding/DiabeticDevices.jsx
-import React, { useState, useMemo } from 'react';
+/**
+ * @file DiabeticDevices.jsx
+ * @description This is the final step of the user onboarding process. It allows the user to optionally select the
+ * diabetic devices they use, such as Continuous Glucose Monitors (CGMs), insulin pumps, and blood glucose meters,
+ * from a predefined list loaded from a local JSON file.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered diabetic device selection form.
+ *
+ * @functions
+ * - `DiabeticDevices()`: The main functional component that manages the state for the device selections.
+ * - `handleChange(category, field, value)`: Updates the state for a specific device category (e.g., `cgm`). When a
+ *   brand is selected, it resets the model selection to ensure data consistency.
+ * - `handleSubmit(e)`: The final submission function for the onboarding process. It gathers all selected device data,
+ *   updates the `OnboardingContext`, and then calls the `submitOnboardingData` function to send the complete onboarding
+ *   dataset to the backend. On success, it navigates the user to their new dashboard.
+ * - `renderDeviceSelector(categoryKey, categoryName)`: A reusable function that renders the brand and model dropdowns
+ *   for a given device category, reducing code duplication and improving maintainability.
+ */
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
-import diabeticDevicesData from '../../../Data/DiabeticDevices.json';
-import './RegisterPage.css';
+import devicesData from '../../../Data/DiabeticDevices.json';
+import Navbar from '../../../components/Navbar.jsx';
+import './Onboarding.css'; // Gebruik de nieuwe gedeelde CSS
 
 function DiabeticDevices() {
+    const { onboardingData, updateOnboardingData, submitOnboardingData } = useOnboarding();
     const navigate = useNavigate();
-    const { submitOnboardingData } = useOnboarding();
 
-    const [formData, setFormData] = useState({
-        usesPump: 'nee',
-        pump: { manufacturer: '', model: '' },
-        usesCGM: 'nee',
-        cgm: { manufacturer: '', model: '' },
-        usesMeter: 'nee',
-        meter: { manufacturer: '', model: '' },
-    });
-    const [error, setError] = useState('');
-
-    const deviceData = useMemo(() => {
-        const getManufacturers = (devices) => [...new Set(devices.map(d => d.Merk))].sort();
-        return {
-            pumps: {
-                data: diabeticDevicesData.Insulinepompen,
-                manufacturers: getManufacturers(diabeticDevicesData.Insulinepompen),
-            },
-            cgms: {
-                data: diabeticDevicesData.CGM,
-                manufacturers: getManufacturers(diabeticDevicesData.CGM),
-            },
-            meters: {
-                data: diabeticDevicesData.Bloedglucosemeters,
-                manufacturers: getManufacturers(diabeticDevicesData.Bloedglucosemeters),
-            },
-        };
-    }, []);
-
-    const handleUsageChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+    const initialState = {
+        cgm: { brand: '', model: '' },
+        insulinPump: { brand: '', model: '' },
+        bloodGlucoseMeter: { brand: '', model: '' },
+        ...onboardingData.diabeticDevices,
     };
 
-    const handleDeviceChange = (e, categoryKey, field) => {
-        const { value } = e.target;
-        setFormData(prev => {
-            const updatedCategory = { ...prev[categoryKey], [field]: value };
-            if (field === 'manufacturer') {
-                updatedCategory.model = '';
+    const [selections, setSelections] = useState(initialState);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (category, field, value) => {
+        setSelections(prev => ({
+            ...prev,
+            [category]: {
+                ...prev[category],
+                [field]: value,
+                ...(field === 'brand' && { model: '' })
             }
-            return { ...prev, [categoryKey]: updatedCategory };
-        });
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         setError('');
 
-        const devicesToSubmit = [];
-        if (formData.usesPump === 'ja' && formData.pump.model) {
-            devicesToSubmit.push({
-                categorie: 'pomp', // FIX: Aangepast naar backend specificatie
-                fabrikant: formData.pump.manufacturer,
-                model: formData.pump.model,
-            });
-        }
-        if (formData.usesCGM === 'ja' && formData.cgm.model) {
-            devicesToSubmit.push({
-                categorie: 'cgm', // FIX: Aangepast naar backend specificatie
-                fabrikant: formData.cgm.manufacturer,
-                model: formData.cgm.model,
-            });
-        }
-        if (formData.usesMeter === 'ja' && formData.meter.model) {
-            devicesToSubmit.push({
-                categorie: 'meter', // FIX: Aangepast naar backend specificatie
-                fabrikant: formData.meter.manufacturer,
-                model: formData.meter.model,
-            });
-        }
-
-        const finalOnboardingData = { diabeticDevices: devicesToSubmit };
+        const selectedDevices = Object.entries(selections)
+            .map(([key, value]) => ({ ...value, category: key }))
+            .filter(device => device.brand && device.model);
 
         try {
-            await submitOnboardingData(finalOnboardingData);
+            updateOnboardingData({ diabeticDevices: selectedDevices });
+            const finalData = { ...onboardingData, diabeticDevices: selectedDevices };
+            await submitOnboardingData(finalData);
             navigate('/dashboard');
         } catch (err) {
-            setError(err.message || 'Er is iets misgegaan bij het opslaan. Probeer het opnieuw.');
-            console.error("Fout bij opslaan onboarding data:", err);
+            setError(err.message || 'Er is een onbekende fout opgetreden.');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const renderDeviceSelector = (categoryKey, label, data) => {
-        const selectedManufacturer = formData[categoryKey].manufacturer;
+    const renderDeviceSelector = (categoryKey, categoryName) => {
+        const categoryData = devicesData[categoryName] || [];
+        const currentSelection = selections[categoryKey] || { brand: '', model: '' };
+        const models = currentSelection.brand
+            ? categoryData.find(b => b.Merk === currentSelection.brand)?.Modellen || []
+            : [];
+
         return (
-            <div className="device-selector-group">
+            <div className="device-category-box">
+                <h2>{categoryName}</h2>
                 <div className="input-group">
-                    <label htmlFor={`${categoryKey}-manufacturer`}>Fabrikant {label}</label>
+                    <label htmlFor={`${categoryKey}-brand`}>Merk</label>
                     <select
-                        id={`${categoryKey}-manufacturer`}
-                        value={selectedManufacturer}
-                        onChange={(e) => handleDeviceChange(e, categoryKey, 'manufacturer')}
+                        id={`${categoryKey}-brand`}
+                        value={currentSelection.brand}
+                        onChange={(e) => handleChange(categoryKey, 'brand', e.target.value)}
                     >
-                        <option value="">Kies een fabrikant</option>
-                        {data.manufacturers.map(m => <option key={m} value={m}>{m}</option>)}
+                        <option value="">Kies een merk</option>
+                        {categoryData.map(b => <option key={b.Merk} value={b.Merk}>{b.Merk}</option>)}
                     </select>
                 </div>
                 <div className="input-group">
-                    <label htmlFor={`${categoryKey}-model`}>Model {label}</label>
+                    <label htmlFor={`${categoryKey}-model`}>Model</label>
                     <select
                         id={`${categoryKey}-model`}
-                        value={formData[categoryKey].model}
-                        onChange={(e) => handleDeviceChange(e, categoryKey, 'model')}
-                        disabled={!selectedManufacturer}
+                        value={currentSelection.model}
+                        onChange={(e) => handleChange(categoryKey, 'model', e.target.value)}
+                        disabled={!currentSelection.brand}
                     >
                         <option value="">Kies een model</option>
-                        {selectedManufacturer && data.data
-                            .filter(d => d.Merk === selectedManufacturer)
-                            .flatMap(d => d.Modellen)
-                            .map(model => <option key={model} value={model}>{model}</option>)}
+                        {models.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
                 </div>
             </div>
@@ -126,48 +109,27 @@ function DiabeticDevices() {
     };
 
     return (
-        <div className="auth-page">
-            <form onSubmit={handleSubmit}>
-                <h1>Welke hulpmiddelen gebruik je?</h1>
-                <p>Selecteer de apparaten die je gebruikt. Dit helpt ons om data te synchroniseren.</p>
+        <>
+            <Navbar />
+            <div className="onboarding-page-container">
+                <div className="diabetic-devices-container">
+                    <form onSubmit={handleSubmit}>
+                        <h1>Hulpmiddelen</h1>
+                        <p>Selecteer de hulpmiddelen die u gebruikt. Dit is niet verplicht.</p>
 
-                <div className="input-group">
-                    <label>Gebruik je een insulinepomp?</label>
-                    <div>
-                        <input type="radio" id="usesPumpJa" name="usesPump" value="ja" checked={formData.usesPump === 'ja'} onChange={handleUsageChange} />
-                        <label htmlFor="usesPumpJa" style={{ marginRight: '1rem' }}>Ja</label>
-                        <input type="radio" id="usesPumpNee" name="usesPump" value="nee" checked={formData.usesPump === 'nee'} onChange={handleUsageChange} />
-                        <label htmlFor="usesPumpNee">Nee</label>
-                    </div>
+                        {renderDeviceSelector('cgm', 'CGM')}
+                        {renderDeviceSelector('insulinPump', 'Insulinepompen')}
+                        {renderDeviceSelector('bloodGlucoseMeter', 'Bloedglucosemeters')}
+
+                        {error && <p className="error-message">{error}</p>}
+
+                        <button type="submit" disabled={loading} className="btn btn--primary form-action-button">
+                            {loading ? 'Bezig met opslaan...' : 'Voltooien'}
+                        </button>
+                    </form>
                 </div>
-                {formData.usesPump === 'ja' && renderDeviceSelector('pump', 'Insulinepomp', deviceData.pumps)}
-
-                <div className="input-group">
-                    <label>Gebruik je een Continue Glucose Monitor (CGM)?</label>
-                    <div>
-                        <input type="radio" id="usesCGMJa" name="usesCGM" value="ja" checked={formData.usesCGM === 'ja'} onChange={handleUsageChange} />
-                        <label htmlFor="usesCGMJa" style={{ marginRight: '1rem' }}>Ja</label>
-                        <input type="radio" id="usesCGMNee" name="usesCGM" value="nee" checked={formData.usesCGM === 'nee'} onChange={handleUsageChange} />
-                        <label htmlFor="usesCGMNee">Nee</label>
-                    </div>
-                </div>
-                {formData.usesCGM === 'ja' && renderDeviceSelector('cgm', 'CGM', deviceData.cgms)}
-
-                <div className="input-group">
-                    <label>Gebruik je een bloedglucosemeter?</label>
-                    <div>
-                        <input type="radio" id="usesMeterJa" name="usesMeter" value="ja" checked={formData.usesMeter === 'ja'} onChange={handleUsageChange} />
-                        <label htmlFor="usesMeterJa" style={{ marginRight: '1rem' }}>Ja</label>
-                        <input type="radio" id="usesMeterNee" name="usesMeter" value="nee" checked={formData.usesMeter === 'nee'} onChange={handleUsageChange} />
-                        <label htmlFor="usesMeterNee">Nee</label>
-                    </div>
-                </div>
-                {formData.usesMeter === 'ja' && renderDeviceSelector('meter', 'Bloedglucosemeter', deviceData.meters)}
-
-                {error && <p className="error-message">{error}</p>}
-                <button type="submit">Voltooi registratie</button>
-            </form>
-        </div>
+            </div>
+        </>
     );
 }
 

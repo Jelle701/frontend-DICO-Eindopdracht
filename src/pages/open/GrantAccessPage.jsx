@@ -1,3 +1,18 @@
+/**
+ * @file GrantAccessPage.jsx
+ * @description This page allows a third party, such as a caregiver or guardian, to gain temporary, read-only access
+ * to a patient's dashboard by entering a valid access code. Upon successful validation of the code, a delegated
+ * session token is stored in sessionStorage, and the user is redirected to the patient's dashboard.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered grant access page component.
+ *
+ * @functions
+ * - `GrantAccessPage()`: The main functional component that renders the access code form and manages its state.
+ * - `handleSubmit(e)`: Triggered on form submission. It validates the provided access code by calling the
+ *   `/api/access/grant` endpoint. If the code is valid, it stores the received `delegatedToken` and `patientUsername`
+ *   in `sessionStorage` and navigates the user to the dashboard. It displays an error for invalid or expired codes.
+ */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../services/ApiClient'; // Import the central client

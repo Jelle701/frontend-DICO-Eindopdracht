@@ -1,4 +1,16 @@
-// src/pages/Services/ServicesHubPage.jsx
+/**
+ * @file ServicesHubPage.jsx
+ * @description This page serves as a hub for connecting the DICO application with external health and wellness services.
+ * It displays a grid of available or upcoming service integrations, such as Google Fit, Samsung Health, Dexcom, and
+ * FreeStyle Libre. Currently, all integrations are marked as "coming soon" and are disabled.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered services hub page component.
+ *
+ * @functions
+ * - `ServicesHubPage()`: The main functional component that renders the layout for service integrations. It is a static
+ *   page that displays placeholders for future functionality and does not contain any interactive logic.
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';

@@ -1,3 +1,16 @@
+/**
+ * @file GlucosePage.jsx
+ * @description This page is a placeholder intended to display detailed information about a single glucose measurement.
+ * It would typically be accessed via a dynamic route like `/glucose/:id`, where `:id` is the unique identifier for the
+ * measurement. The page would fetch and display specific data for that entry, such as a detailed chart, notes, or context.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered placeholder page for glucose details.
+ *
+ * @functions
+ * - `GlucosePage()`: The main functional component that renders the static placeholder content. It currently does not
+ *   fetch or display any dynamic data. The use of `useParams` is suggested in comments for future implementation.
+ */
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import '../../App.css'; // Zorg dat de algemene stijlen hier ook gelden

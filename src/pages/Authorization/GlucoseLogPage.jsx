@@ -1,3 +1,24 @@
+/**
+ * @file GlucoseLogPage.jsx
+ * @description This page provides a comprehensive logbook for a user's glucose measurements. It displays a list of all
+ * recent measurements and includes a form to manually add new entries. This provides a more detailed historical view
+ * compared to the main dashboard.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered glucose logbook page.
+ *
+ * @functions
+ * - `getCurrentDate()`: A helper function that returns the current date in `YYYY-MM-DD` format.
+ * - `getCurrentTime()`: A helper function that returns the current time in `HH:MM` format.
+ * - `GlucoseLogPage()`: The main functional component that manages the state for the measurements list and the input form.
+ * - `fetchMeasurements()`: An asynchronous function that retrieves all recent glucose measurements using the `getRecentGlucoseMeasurements` service.
+ * - `useEffect()`: A React hook that calls `fetchMeasurements` once when the component mounts.
+ * - `handleFormChange(e)`: Updates the state of the input form fields (value, date, time).
+ * - `handleFormSubmit(e)`: Handles the submission of the new measurement form. It validates the input, combines the date
+ *   and time into a timestamp, calls the `addGlucoseMeasurement` service, and provides user feedback. On success, it adds
+ *   the new measurement to the top of the list for immediate UI feedback.
+ * - `formatDate(isoString)`: A utility function to format an ISO timestamp into a user-friendly, localized date and time string.
+ */
 // src/pages/Authorization/GlucoseLogPage.jsx
 import React, { useState, useEffect } from 'react';
 import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService';

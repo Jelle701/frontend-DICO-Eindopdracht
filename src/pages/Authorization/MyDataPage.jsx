@@ -1,3 +1,21 @@
+/**
+ * @file MyDataPage.jsx
+ * @description This page allows an authenticated user to view and update their personal profile information.
+ * It fetches the user's current data from the backend and pre-fills a form. The user can then modify their
+ * personal details, preferences (like gender and weight), and medical information (like diabetes type and insulin).
+ *
+ * @component
+ * @returns {JSX.Element} The rendered user data and profile editing page.
+ *
+ * @functions
+ * - `MyDataPage()`: The main functional component that manages the state for the form, loading, errors, and success messages.
+ * - `useEffect()`: A React hook that calls `fetchProfile` once when the component mounts to load the user's data.
+ * - `fetchProfile()`: An asynchronous function that retrieves the user's profile using the `getMyProfile` service and sets the initial form state.
+ * - `handleInputChange(e)`: A flexible handler that updates the component's `formState`. It can handle both top-level
+ *   properties (e.g., `firstName`) and nested properties (e.g., `preferences.weight`) based on the input's `name` attribute.
+ * - `handleSubmit(e)`: An asynchronous function triggered on form submission. It calls the `updateUserProfile` service
+ *   to save the changes to the backend and provides the user with feedback on the outcome.
+ */
 // src/pages/Authorization/MyDataPage.jsx
 import React, { useState, useEffect } from 'react';
 import { getMyProfile, updateUserProfile } from '../../services/ProfileService';

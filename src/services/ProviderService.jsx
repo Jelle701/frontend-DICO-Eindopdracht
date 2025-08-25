@@ -1,30 +1,38 @@
+/**
+ * @file ProviderService.jsx
+ * @description This service provides functions specifically for the 'Provider' (healthcare professional) user role.
+ * It handles API communications for actions a provider can perform, such as linking patients and retrieving their list of linked patients.
+ *
+ * @module ProviderService
+ */
 import apiClient from './ApiClient';
 import { handleApiError } from './ApiErrorHandler';
 
 /**
- * Koppelt een patiënt aan de ingelogde zorgverlener via een toegangscode.
- * @param {string} accessCode De door de patiënt verstrekte code.
- * @returns {Promise<{data: object|null, error: object|null}>}
+ * Links a patient to the logged-in healthcare provider using an access code provided by the patient.
+ * @param {string} accessCode The access code provided by the patient.
+ * @returns {Promise<{data: object|null, error: object|null}>} A promise that resolves to an object containing the success response or an error object.
  */
 export async function linkPatientToProvider(accessCode) {
     try {
-        // De backend moet een beveiligd endpoint hebben dat deze request afhandelt.
         const { data } = await apiClient.post('/api/provider/link-patient', { accessCode });
         return { data, error: null };
     } catch (error) {
-        return { data: null, error: handleApiError(error) };
+        const formattedError = handleApiError(error);
+        return { data: null, error: formattedError };
     }
 }
 
 /**
- * Haalt de lijst op van alle patiënten die gekoppeld zijn aan de ingelogde zorgverlener.
- * @returns {Promise<{data: Array|null, error: object|null}>}
+ * Retrieves the list of all patients currently linked to the logged-in healthcare provider.
+ * @returns {Promise<{data: Array|null, error: object|null}>} A promise that resolves to an object containing an array of linked patients or an error object.
  */
 export async function getLinkedPatients() {
     try {
         const { data } = await apiClient.get('/api/provider/patients');
         return { data, error: null };
     } catch (error) {
-        return { data: null, error: handleApiError(error) };
+        const formattedError = handleApiError(error);
+        return { data: null, error: formattedError };
     }
 }

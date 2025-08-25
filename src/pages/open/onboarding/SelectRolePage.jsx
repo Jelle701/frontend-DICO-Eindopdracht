@@ -1,13 +1,36 @@
+/**
+ * @file SelectRolePage.jsx
+ * @description This is a key step in the onboarding process where the user selects their primary role within the
+ * application: Patient, Guardian, or Healthcare Provider. The chosen role determines the subsequent steps in the
+ * onboarding flow and the user's overall experience.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered role selection page.
+ *
+ * @functions
+ * - `SelectRolePage()`: The main functional component that manages the state for the selected role, loading, and errors.
+ * - `handleRoleSelection(role)`: Updates the `selectedRole` state when a user clicks on one of the role cards.
+ * - `handleSubmit()`: An asynchronous function that is triggered when the user proceeds. It validates that a role has
+ *   been selected, persists the role to the backend via the `updateUserProfile` service, updates the `OnboardingContext`,
+ *   and then navigates the user to the appropriate next page based on their choice.
+ */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateUserProfile } from '../../../services/ProfileService'; // Importeer de profielservice
-import './RegisterPage.css'; // We hergebruiken de styling
+import { updateUserProfile } from '../../../services/ProfileService';
+import { useOnboarding } from '../../../contexts/OnboardingContext';
+import Navbar from '../../../components/Navbar.jsx';
+import './Onboarding.css'; // Gebruik de nieuwe gedeelde CSS
 
 function SelectRolePage() {
     const [selectedRole, setSelectedRole] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { updateOnboardingData } = useOnboarding();
+
+    const handleRoleSelection = (role) => {
+        setSelectedRole(role);
+    };
 
     const handleSubmit = async () => {
         if (!selectedRole) {
@@ -19,70 +42,85 @@ function SelectRolePage() {
         setError('');
 
         try {
-            // OPGELOST: Roep de backend aan om de rol van de gebruiker op te slaan.
+            // 1. Update the user profile role in the backend immediately.
+            // This is a good practice to persist the core choice early.
             const { error: apiError } = await updateUserProfile({ role: selectedRole });
+            if (apiError) throw apiError;
 
-            if (apiError) {
-                // Als er een fout is bij het opslaan van de rol, gooi deze dan.
-                throw apiError;
-            }
+            // 2. Store the role in the onboarding context for the final submission.
+            updateOnboardingData({ role: selectedRole });
 
-            // Navigeer naar de juiste flow op basis van de gekozen rol.
+            // 3. Navigate to the correct next step based on the role.
             switch (selectedRole) {
                 case 'PATIENT':
-                    navigate('/onboarding'); 
+                    navigate('/onboarding/preferences');
                     break;
                 case 'GUARDIAN':
-                    navigate('/link-patient'); // Deze pagina moeten we nog aanmaken.
+                    navigate('/link-patient');
                     break;
                 case 'PROVIDER':
-                    navigate('/patient-management'); // Deze pagina moeten we nog aanmaken.
+                    navigate('/patient-management');
                     break;
                 default:
                     setError('Ongeldige rol geselecteerd.');
+                    break;
             }
         } catch (apiError) {
             setError(apiError.message || 'Er is een fout opgetreden bij het opslaan van uw rol.');
-            console.error('Role selection error:', apiError);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="auth-page">
-            <div className="role-selection-container" style={{ maxWidth: '500px', margin: 'auto' }}>
-                <h1>Kies uw rol</h1>
-                <p>Stap 2: Selecteer hoe u deze applicatie wilt gebruiken.</p>
-                
-                <div className="input-group">
-                    <label htmlFor="role-select">Uw rol</label>
-                    <select 
-                        id="role-select"
-                        value={selectedRole}
-                        onChange={(e) => setSelectedRole(e.target.value)}
-                        required
+        <>
+            <Navbar />
+            <div className="onboarding-page-container">
+                <div className="role-selection-container">
+                    <h1>Kies uw rol</h1>
+                    <p>Vertel ons wie u bent om uw ervaring te personaliseren.</p>
+
+                    <div className="role-options">
+                        <div
+                            className={`role-card ${selectedRole === 'PATIENT' ? 'selected' : ''}`}
+                            onClick={() => handleRoleSelection('PATIENT')}
+                        >
+                            <div className="checkbox-icon"></div>
+                            <h3>Patiënt</h3>
+                            <p>Ik wil mijn eigen gezondheidsdata bijhouden en beheren.</p>
+                        </div>
+
+                        <div
+                            className={`role-card ${selectedRole === 'GUARDIAN' ? 'selected' : ''}`}
+                            onClick={() => handleRoleSelection('GUARDIAN')}
+                        >
+                            <div className="checkbox-icon"></div>
+                            <h3>Ouder / Voogd</h3>
+                            <p>Ik wil de data van een gezinslid (bv. mijn kind) bekijken.</p>
+                        </div>
+
+                        <div
+                            className={`role-card ${selectedRole === 'PROVIDER' ? 'selected' : ''}`}
+                            onClick={() => handleRoleSelection('PROVIDER')}
+                        >
+                            <div className="checkbox-icon"></div>
+                            <h3>Zorgverlener</h3>
+                            <p>Ik wil de data van meerdere patiënten beheren.</p>
+                        </div>
+                    </div>
+
+                    {error && <p className="error-message" style={{ marginTop: 'var(--space-5)' }}>{error}</p>}
+
+                    <button
+                        onClick={handleSubmit}
+                        disabled={loading || !selectedRole}
+                        className="btn btn--primary form-action-button"
                     >
-                        <option value="" disabled>-- Maak een keuze --</option>
-                        <option value="PATIENT">Patiënt</option>
-                        <option value="GUARDIAN">Ouder/Voogd</option>
-                        <option value="PROVIDER">Zorgverlener</option>
-                    </select>
+                        {loading ? 'Bezig met opslaan...' : 'Volgende'}
+                    </button>
                 </div>
-
-                <div className="role-description">
-                    {selectedRole === 'PATIENT' && <p>U kunt uw eigen gezondheidsdata bijhouden en beheren.</p>}
-                    {selectedRole === 'GUARDIAN' && <p>U kunt de data van één gezinslid (bv. uw kind) bekijken na het invoeren van een koppelcode.</p>}
-                    {selectedRole === 'PROVIDER' && <p>U kunt de data van meerdere patiënten beheren die u toegang hebben verleend.</p>}
-                </div>
-
-                {error && <p className="error-message">{error}</p>}
-
-                <button onClick={handleSubmit} disabled={loading || !selectedRole} className="btn-submit-role">
-                    {loading ? 'Bezig met opslaan...' : 'Volgende'}
-                </button>
             </div>
-        </div>
+        </>
     );
 }
 

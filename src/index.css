@@ -1,143 +1,109 @@
-/* src/index.css */
-
-/* Importeer een modern, strak lettertype zoals 'Inter' van Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* WHOOP Styling - Foundation in Pixels */
 
 :root {
-    /*
-      WHOOP-geïnspireerd kleurenpalet
-      We gebruiken subtiele tinten voor een premium gevoel.
-    */
-    --color-background: #111111; /* Off-black achtergrond, rustiger voor de ogen */
-    --color-surface: #1D1D1F;    /* Kleur voor kaarten en modules, creëert diepte */
-    --color-border: #2d2d2f;     /* Subtiele randen voor scheiding */
+  /* Brand core */
+  --color-black: #000000;
+  --color-white: #FFFFFF;
 
-    /* Tekstkleuren voor hiërarchie */
-    --color-text-primary: #FFFFFF;
-    --color-text-secondary: #a1a1a6;
-    --color-text-muted: #6e6e73;
+  /* Primary action + positive accents */
+  --color-teal: #00F19F;
 
-    /* Semantische accentkleuren voor data-visualisatie */
-    --color-accent-positive: #00A878; /* Groen voor succes/positief */
-    --color-accent-warning: #FFD166; /* Geel voor waarschuwing */
-    --color-accent-danger: #EF476F;  /* Rood/Roze voor gevaar/hoog */
+  /* Data-colors */
+  --color-strain: #0093E7;
+  --color-recovery-high: #16EC06;
+  --color-recovery-med:  #FFDE00;
+  --color-recovery-low:  #FF0026;
+  --color-sleep:  #7BA1BB;
+  --color-recovery-blue: #67AEE6;
 
-    /* Algemene interactiekleur */
-    --color-primary-action: #007AFF;
-    --color-primary-action-hover: #0056b3;
+  /* Backgrounds */
+  --gradient-bg-start: #283339;
+  --gradient-bg-end:   #101518;
 
-    /* Typografie */
-    --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-size-base: 16px;
-    --line-height-base: 1.6;
+  /* Neutrals */
+  --gray-900: #0E1215;
+  --gray-800: #151A1F;
+  --gray-700: #1B2128;
+  --gray-600: #242B33;
+  --gray-500: #2E3742;
+  --gray-400: #465363;
+  --gray-300: #6B7A8D;
+  --gray-200: #98A6B6;
+  --gray-100: #C8D1DA;
+
+  /* State */
+  --color-success: var(--color-recovery-high);
+  --color-warning: var(--color-recovery-med);
+  --color-danger:  var(--color-recovery-low);
+
+  /* Opacity helpers */
+  --op-8: 0.08;
+  --op-16: 0.16;
+
+  /* Typography */
+  --font-sans: "Proxima Nova", Inter, "Helvetica Neue", Arial, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-numeric: "DIN Pro", "DIN 2014", "IBM Plex Sans Condensed", Rajdhani, "Segoe UI", Arial, sans-serif;
+
+  /* --- Spacing & Radius in Pixels --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px; /* Extra stap voor grotere secties */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Shadows */
+  --shadow-1: 0 2px 6px rgba(0,0,0,0.24);
+  --shadow-2: 0 8px 24px rgba(0,0,0,0.28);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* Global Styles */
 body {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-base);
-    color: var(--color-text-primary);
-    background-color: var(--color-background);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: antialiased;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600; /* semibold */
+  background: linear-gradient(180deg, var(--gradient-bg-start), var(--gradient-bg-end));
+  color: var(--color-white);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.1em; /* 10% tracking */
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Links */
 a {
-    color: var(--color-primary-action);
-    text-decoration: none;
-    transition: color 0.2s ease;
+  color: var(--color-teal);
+  text-decoration: none;
+  text-underline-offset: 3px;
 }
+
 a:hover {
-    color: var(--color-primary-action-hover);
+  text-decoration: underline;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: var(--color-text-primary);
-    line-height: 1.3;
+/* Numeric styles */
+.numeric, .stat, .score {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  letter-spacing: normal;
 }
-
-h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-h2 { font-size: 2rem; margin-bottom: 0.75rem; }
-h3 { font-size: 1.75rem; margin-bottom: 0.5rem; }
-p { margin-bottom: 1rem; }
-
-
-/* Standaard knopstijlen, nu gebruikmakend van de nieuwe variabelen */
-.btn {
-    display: inline-block;
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.2;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s ease;
-}
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.btn-primary {
-    background-color: var(--color-primary-action);
-    color: #fff;
-}
-.btn-primary:hover {
-    background-color: var(--color-primary-action-hover);
-}
-
-.btn-outline {
-    background: transparent;
-    border-color: var(--color-border);
-    color: var(--color-text-secondary);
-}
-.btn-outline:hover {
-    background-color: var(--color-surface);
-    border-color: var(--color-text-secondary);
-    color: var(--color-text-primary);
-}
-
-/* Algemene input stijlen */
-input,
-textarea,
-select {
-    background-color: var(--color-background);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    border-color: var(--color-primary-action);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
-}
-
-input::placeholder,
-textarea::placeholder {
-    color: var(--color-text-muted);
-}
-
-/* Helper classes (overgenomen uit App.css) */
-.hidden { display: none !important; }
-.text-center { text-align: center; }
-.mt-1 { margin-top: 1rem; }
-.mb-1 { margin-bottom: 1rem; }
-.p-1 { padding: 1rem; }

@@ -1,3 +1,18 @@
+/**
+ * @file LinkPatientPage.jsx
+ * @description This page is designed for a logged-in guardian or caregiver to link their account to a patient's
+ * account. By entering the unique access code provided by the patient, a permanent link is established, allowing the
+ * guardian to view the patient's data through their own dashboard.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component for linking a patient.
+ *
+ * @functions
+ * - `LinkPatientPage()`: The main functional component that renders the form and manages its state (code, error, loading).
+ * - `handleSubmit(e)`: Triggered on form submission. It calls the `linkPatientByCode` service to validate the code
+ *   and establish the account link on the backend. On success, it navigates the guardian to their dashboard. It displays
+ *   an error message if the linking process fails.
+ */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { linkPatientByCode } from '../../services/GuardianService'; // Importeer de nieuwe service

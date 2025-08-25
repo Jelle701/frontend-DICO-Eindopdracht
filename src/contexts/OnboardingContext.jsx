@@ -1,6 +1,11 @@
-// C:/Users/jelle/Desktop/School/EINDOPDRACHT/frontend/src/contexts/OnboardingContext.jsx
-
-/* eslint-disable react-refresh/only-export-components */
+/**
+ * @file OnboardingContext.jsx
+ * @description This context manages the state and logic for the multi-step user onboarding process. It collects
+ * and persists user-provided data (preferences, medical info, devices) across different onboarding pages
+ * using `sessionStorage`. Finally, it handles the transformation and submission of this data to the backend.
+ *
+ * @module OnboardingContext
+ */
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { submitOnboardingProfile } from '../services/OnboardingService';
 import { useUser } from './AuthContext';
@@ -9,6 +14,13 @@ const OnboardingContext = createContext();
 
 const SESSION_STORAGE_KEY = 'onboarding_data';
 
+/**
+ * The provider component for the OnboardingContext. It manages the onboarding data state,
+ * persists it to sessionStorage, and provides functions to update and submit this data.
+ * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components to be rendered within the provider.
+ * @returns {JSX.Element} The OnboardingContext.Provider component.
+ */
 export function OnboardingContextProvider({ children }) {
     const [onboardingData, setOnboardingData] = useState(() => {
         try {
@@ -30,6 +42,9 @@ export function OnboardingContextProvider({ children }) {
 
     const { setUser } = useUser();
 
+    /**
+     * Persists the current onboarding data to sessionStorage whenever it changes.
+     */
     useEffect(() => {
         try {
             sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(onboardingData));
@@ -38,6 +53,11 @@ export function OnboardingContextProvider({ children }) {
         }
     }, [onboardingData]);
 
+    /**
+     * Updates a specific part of the onboarding data. It intelligently merges new data
+     * with existing data, especially for nested objects.
+     * @param {object} newData - An object containing the new data to be merged into the onboarding state.
+     */
     const updateOnboardingData = (newData) => {
         setOnboardingData(prevData => {
             const updatedData = { ...prevData };
@@ -53,18 +73,19 @@ export function OnboardingContextProvider({ children }) {
         });
     };
 
-    const submitOnboardingData = async (finalData) => {
-        const combinedData = {
-            ...onboardingData,
-            ...finalData,
-        };
-
-        const prefs = combinedData.preferences;
-        let bmi = prefs.bmi;
-        if (!bmi && prefs.gewicht > 0 && prefs.lengte > 0) {
-            const lengteInMeters = prefs.lengte / 100;
-            bmi = (prefs.gewicht / (lengteInMeters * lengteInMeters)).toFixed(1);
-        }
+    /**
+     * Submits the complete onboarding data to the backend. This function performs necessary data
+     * transformations (e.g., mapping gender/unit values, calculating BMI) to match the backend's
+     * expected payload structure. After successful submission, it clears the sessionStorage data
+     * and updates the user state in AuthContext.
+     * @param {object} finalPayload - The complete onboarding data collected from all steps.
+     * @returns {Promise<object>} A promise that resolves with the updated user data from the backend.
+     * @throws {Error} If validation fails or the backend submission encounters an error.
+     */
+    const submitOnboardingData = async (finalPayload) => {
+        // --- DATA TRANSFORMATION ---
+        const prefs = finalPayload.preferences || {};
+        const medInfo = finalPayload.medicineInfo || {};
 
         const mapGenderToSystemValue = (gender) => {
             switch (gender) {
@@ -76,57 +97,48 @@ export function OnboardingContextProvider({ children }) {
         };
 
         const mapUnitToSystemValue = (unit) => {
-            if (unit === 'mmol/L' || unit === 'mg/dL') {
-                return 'metric';
-            }
-            return 'metric';
+            return (unit === 'mmol/L' || unit === 'mg/dL') ? 'metric' : 'metric'; // Assuming 'metric' as default/fallback
         };
 
-        const preferencesPayload = {
+        // 1. Create the flat object for the backend API.
+        const flatProfileData = {
+            role: finalPayload.role,
             system: mapUnitToSystemValue(prefs.eenheid),
             gender: mapGenderToSystemValue(prefs.geslacht),
             weight: parseFloat(prefs.gewicht) || 0,
             height: parseFloat(prefs.lengte) || 0,
-            bmi: parseFloat(bmi) || 0,
+            diabetesType: medInfo.diabetesType,
+            longActingInsulin: medInfo.longActing?.insulin,
+            shortActingInsulin: medInfo.shortActing?.insulin,
+            diabeticDevices: finalPayload.diabeticDevices || [],
         };
 
-        // Maak een schone kopie van de medicatiegegevens voor de payload.
-        // De 'gebruiktInsuline' eigenschap is alleen voor de frontend UI en wordt hier
-        // verwijderd voordat de data naar de backend wordt gestuurd.
-        const medicineInfoPayload = { ...(combinedData.medicineInfo || {}) };
-        delete medicineInfoPayload.gebruiktInsuline;
-
-        // Stel de uiteindelijke payload samen, inclusief de medische informatie.
-        const payload = {
-            preferences: preferencesPayload,
-            medicineInfo: medicineInfoPayload, // TOEGEVOEGD
-            diabeticDevices: combinedData.diabeticDevices,
-        };
-
-        // Validatie: controleer of de essentiële data aanwezig is
-        if (!prefs.role) {
-            const errorMessage = `Validation failed: 'role' is missing from the onboarding context.`;
-            console.error(errorMessage, combinedData);
-            throw new Error("Incomplete registration. The role was not selected.");
+        // 2. Calculate and add BMI.
+        if (flatProfileData.weight > 0 && flatProfileData.height > 0) {
+            const heightInMeters = flatProfileData.height / 100;
+            flatProfileData.bmi = parseFloat((flatProfileData.weight / (heightInMeters * heightInMeters)).toFixed(1));
+        } else {
+            flatProfileData.bmi = 0;
         }
 
-        // Client-side validatie voor gewicht en lengte
-        if (payload.preferences.weight <= 0) {
-            throw new Error("Gewicht moet een positief getal zijn.");
-        }
-        if (payload.preferences.height <= 0) {
-            throw new Error("Lengte moet een positief getal zijn.");
+        // 3. Validate the final, flat payload.
+        if (!flatProfileData.role) {
+            const errorMessage = `Validation failed: 'role' is missing.`;
+            console.error(errorMessage, flatProfileData);
+            throw new Error("Fout bij validatie: De gebruikersrol is niet geselecteerd.");
         }
 
-        console.log("Submitting final onboarding payload:", payload);
+        console.log("Submitting flattened onboarding payload:", flatProfileData);
 
-        const { data, error } = await submitOnboardingProfile(payload);
+        // 4. Submit the data.
+        const { data, error } = await submitOnboardingProfile(flatProfileData);
 
         if (error) {
             console.error("Backend rejected the payload. Full error:", error);
-            throw new Error(error.message || 'Failed to save onboarding data.');
+            throw new Error(error.message || 'Het opslaan van de onboarding-gegevens is mislukt.');
         }
 
+        // 5. Clean up and update user state.
         sessionStorage.removeItem(SESSION_STORAGE_KEY);
         setUser(data);
         return data;
@@ -141,6 +153,11 @@ export function OnboardingContextProvider({ children }) {
     );
 }
 
+/**
+ * Custom hook to consume the OnboardingContext. Provides access to the current onboarding data,
+ * the function to update it, and the function to submit the final data.
+ * @returns {{onboardingData: object, updateOnboardingData: Function, submitOnboardingData: Function}}
+ */
 export const useOnboarding = () => {
     return useContext(OnboardingContext);
 };

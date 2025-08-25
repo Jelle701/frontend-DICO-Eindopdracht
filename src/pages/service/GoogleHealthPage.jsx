@@ -1,3 +1,18 @@
+/**
+ * @file GoogleHealthPage.jsx
+ * @description This page provides detailed information about integrating the DICO application with Google Health.
+ * It explains the benefits of the integration, how the connection process works, and includes a button to initiate
+ * the connection. Currently, the connection logic is a placeholder.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Google Health integration page.
+ *
+ * @functions
+ * - `GoogleHealthPage()`: The main functional component that renders the page content.
+ * - `handleConnect()`: A placeholder function that is called when the user clicks the "Connect with Google Health"
+ *   button. It currently logs a message to the console and shows an alert, but is intended to house the logic for
+ *   the Google Health API authentication and data synchronization process.
+ */
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GoogleHealthPage.css';

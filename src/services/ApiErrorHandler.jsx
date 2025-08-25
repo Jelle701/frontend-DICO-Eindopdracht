@@ -1,7 +1,18 @@
 /**
+ * @file ApiErrorHandler.jsx
+ * @description This file provides a centralized and consistent way to handle errors returned from the API.
+ * It parses different error response formats and standardizes them into a single, predictable format that can be
+ * easily consumed by the UI components.
+ *
+ * @module ApiErrorHandler
+ */
+
+/**
  * A centralized helper to parse different API error message formats.
- * @param {any} responseData - The `error.response.data` from Axios.
- * @returns {string} A user-friendly error message.
+ * It intelligently checks for various common error structures (e.g., an object with a message property,
+ * a validation error object, or a plain string) and extracts the most relevant message.
+ * @param {any} responseData - The `error.response.data` from an Axios error object.
+ * @returns {string} A user-friendly error message string.
  */
 const parseApiErrorMessage = (responseData) => {
     if (!responseData) {
@@ -28,9 +39,10 @@ const parseApiErrorMessage = (responseData) => {
 
 /**
  * A centralized helper function to handle API errors and format them.
- * This should be used in the .catch() block of your service functions.
- * @param {Error} error - The error object from the catch block.
- * @returns {{ message: string, status: number|null }}
+ * This function should be used in the .catch() block of service functions to ensure uniform error handling.
+ * It distinguishes between server response errors, network errors, and request setup errors.
+ * @param {Error} error - The error object from the catch block (typically an Axios error).
+ * @returns {{ message: string, status: number|null }} A standardized error object containing a clean message and the HTTP status code.
  */
 export const handleApiError = (error) => {
     if (error.response) {

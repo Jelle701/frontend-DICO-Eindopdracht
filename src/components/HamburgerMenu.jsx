@@ -1,19 +1,37 @@
-// src/components/HamburgerMenu.jsx
-import React, { useState, useEffect, useRef, useContext } from 'react';
+/**
+ * @file HamburgerMenu.jsx
+ * @description This component provides a self-contained hamburger menu, which is typically used for mobile navigation.
+ * It includes the button, the dropdown menu, and the logic to toggle its visibility and handle user actions.
+ * NOTE: This component's functionality seems to overlap with the mobile menu logic already implemented inside `Navbar.jsx`.
+ * This might be a candidate for refactoring or could be a deprecated component.
+ *
+ * @component
+ * @returns {JSX.Element} A hamburger menu button and its corresponding dropdown panel.
+ */
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './HamburgerMenu.css';
 
+/**
+ * A self-contained hamburger menu component.
+ * It manages its own open/closed state and handles clicks outside the menu to close it.
+ */
 function HamburgerMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const { logout } = useAuth();
-    const menuRef = useRef(null); // Ref naar de menu-container
+    const menuRef = useRef(null); // Ref to the menu container for outside click detection
 
+    /**
+     * Toggles the visibility of the dropdown menu.
+     */
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
 
-    // Sluit het menu als er buiten geklikt wordt
+    /**
+     * Effect to handle clicks outside of the menu to automatically close it.
+     */
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -21,10 +39,8 @@ function HamburgerMenu() {
             }
         };
 
-        // Voeg de event listener toe
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            // Verwijder de event listener bij het opruimen
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [menuRef]);

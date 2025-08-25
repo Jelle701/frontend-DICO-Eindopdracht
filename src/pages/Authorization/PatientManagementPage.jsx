@@ -1,26 +1,67 @@
-import React, { useState } from 'react';
+/**
+ * @file PatientManagementPage.jsx
+ * @description This page serves as a dashboard for healthcare providers. It allows them to view a list of their linked
+ * patients and to add new patients to their roster by entering a unique access code provided by the patient.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered patient management dashboard.
+ *
+ * @functions
+ * - `PatientManagementPage()`: The main functional component. It manages the state for the patient list, loading/error states,
+ *   and the visibility of the "add patient" modal.
+ * - `fetchPatients()`: An asynchronous function (wrapped in `useCallback` for optimization) that retrieves the list of
+ *   linked patients using the `getLinkedPatients` service and updates the component's state.
+ * - `useEffect()`: A React hook that calls `fetchPatients` when the component first mounts to populate the patient list.
+ * - `handleAddPatient(e)`: An asynchronous function that handles the form submission for adding a new patient. It calls
+ *   the `linkPatientToProvider` service with the provided code, refreshes the patient list on success, and closes the modal.
+ *   It also handles and displays errors within the modal for a better user experience.
+ */
+import React, { useState, useEffect, useCallback } from 'react';
+import { linkPatientToProvider, getLinkedPatients } from '../../services/ProviderService';
 import './PatientManagementPage.css'; // We maken later een apart CSS-bestand
-
-// Placeholder data voor de patiëntenlijst
-const initialPatients = [
-    { id: 1, name: 'Jan Jansen', lastSync: 'Vandaag om 14:30' },
-    { id: 2, name: 'Piet Pietersen', lastSync: 'Gisteren om 09:15' },
-];
 
 // Dit is het dashboard voor een ingelogde Zorgverlener.
 function PatientManagementPage() {
-    const [patients, setPatients] = useState(initialPatients);
+    const [patients, setPatients] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [showAddPatientModal, setShowAddPatientModal] = useState(false);
     const [newPatientCode, setNewPatientCode] = useState('');
 
+    const fetchPatients = useCallback(async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const { data, error: apiError } = await getLinkedPatients();
+            if (apiError) throw apiError;
+            setPatients(data || []);
+        } catch (err) {
+            setError(err.message || 'Fout bij het ophalen van patiënten.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchPatients();
+    }, [fetchPatients]);
+
     const handleAddPatient = async (e) => {
         e.preventDefault();
-        // TODO: API-aanroep naar de backend om een patiënt te koppelen met de code.
-        // bv. POST /api/provider/link-patient { accessCode: newPatientCode }
-        console.log(`Patiënt toevoegen met code: ${newPatientCode}`);
-        // Sluit de modal na de poging
-        setShowAddPatientModal(false);
-        setNewPatientCode('');
+        setError('');
+        try {
+            const { error: apiError } = await linkPatientToProvider(newPatientCode);
+            if (apiError) throw apiError;
+            
+            // Refresh de lijst na het toevoegen van een nieuwe patiënt
+            await fetchPatients();
+            setShowAddPatientModal(false);
+            setNewPatientCode('');
+
+        } catch (err) {
+            // Toon de fout binnen de modal voor een betere UX
+            setError(err.message || 'Kan patiënt niet toevoegen. Controleer de code.');
+        }
     };
 
     return (
@@ -32,18 +73,20 @@ function PatientManagementPage() {
                 </button>
             </header>
 
+            {loading && <p>Patiëntenlijst wordt geladen...</p>}
+            {!loading && error && !showAddPatientModal && <p className="error-message">{error}</p>}
+
             <div className="patient-list">
-                {patients.map(patient => (
+                {!loading && patients.map(patient => (
                     <div key={patient.id} className="patient-card">
                         <h3>{patient.name}</h3>
-                        <p>Laatste synchronisatie: {patient.lastSync}</p>
+                        <p>Laatste synchronisatie: {patient.lastSync || 'N.v.t.'}</p>
                         <button className="btn btn-secondary">Bekijk Dashboard</button>
                     </div>
                 ))}
-                 {patients.length === 0 && <p>U heeft nog geen patiënten gekoppeld.</p>}
+                {!loading && patients.length === 0 && <p>U heeft nog geen patiënten gekoppeld.</p>}
             </div>
 
-            {/* Modal voor het toevoegen van een nieuwe patiënt */}
             {showAddPatientModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -61,8 +104,9 @@ function PatientManagementPage() {
                                     required
                                 />
                             </div>
+                            {error && <p className="error-message">{error}</p>}
                             <div className="modal-actions">
-                                <button type="button" onClick={() => setShowAddPatientModal(false)} className="btn btn-secondary">
+                                <button type="button" onClick={() => { setShowAddPatientModal(false); setError(''); }} className="btn btn-secondary">
                                     Annuleren
                                 </button>
                                 <button type="submit" className="btn btn-primary">

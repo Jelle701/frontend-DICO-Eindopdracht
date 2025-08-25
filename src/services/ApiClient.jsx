@@ -1,3 +1,19 @@
+/**
+ * @file ApiClient.jsx
+ * @description This file configures and exports a central Axios instance for all API communications.
+ * It sets the base URL for the API and includes a request interceptor to automatically attach the
+ * appropriate authorization token to the headers of every outgoing request.
+ *
+ * @module ApiClient
+ *
+ * @functions
+ * - `axios.create()`: Creates a new Axios instance with a predefined configuration, including the base URL
+ *   from environment variables and default headers.
+ * - `apiClient.interceptors.request.use()`: This interceptor is the core of the authentication handling.
+ *   Before any request is sent, it checks for a `delegatedToken` (for caregivers) in `sessionStorage` first.
+ *   If found, it's used. If not, it checks for the standard user `token` in `localStorage`. This ensures that
+ *   the correct identity is used for API calls. It also includes a logging statement for debugging purposes.
+ */
 // src/services/ApiClient.jsx
 import axios from 'axios';
 
