@@ -1,40 +1,40 @@
-// src/components/PrivateRoute.jsx
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth, useUser } from '../contexts/AuthContext.jsx';
 
-// Een lijst van alle routes die bij de onboarding horen.
+// DE FIX: Deze lijst bevat nu de JUISTE, moderne onboarding routes.
 const ONBOARDING_ROUTES = [
-    '/register-details',
-    '/onboarding',
-    '/medicine-info',
-    '/devices'
+    '/onboarding/role',
+    '/onboarding/preferences',
+    '/onboarding/medicine',
+    '/onboarding/devices',
+    '/onboarding/link-patient'
 ];
+
+// De eerste stap in de onboarding is altijd het kiezen van een rol.
+const FIRST_ONBOARDING_STEP = '/onboarding/role';
 
 function PrivateRoute() {
     const { isAuth, loading: authLoading } = useAuth();
     const { user, loading: userLoading } = useUser();
     const location = useLocation();
 
-    // Toon een laadstatus terwijl de authenticatie- en gebruikersstatus wordt bepaald.
+    // Wacht tot alle authenticatie-data is geladen.
     if (authLoading || userLoading) {
-        // Je kunt hier een mooiere spinner-component tonen.
         return <div>Laden...</div>;
     }
 
-    // Als de gebruiker niet is ingelogd, stuur ze naar de login-pagina.
+    // Als de gebruiker niet is ingelogd, stuur naar de login-pagina.
     if (!isAuth) {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // Als de gebruiker is ingelogd maar het profiel nog niet is geladen (zeldzaam geval), wacht.
+    // Als de gebruiker is ingelogd, maar het profiel nog niet is geladen, wacht.
     if (!user) {
         return <div>Gebruikersprofiel ophalen...</div>;
     }
 
-    // Bepaal of de gebruiker de onboarding volledig heeft doorlopen.
-    // FIX: Gebruik optional chaining (?.) om veilig 'hasDetails' te benaderen.
-    // Dit voorkomt de crash als 'user.flags' nog niet bestaat na een verse login.
+    // Controleer veilig of de gebruiker de onboarding heeft voltooid.
     const isFullyOnboarded = user?.flags?.hasDetails;
 
     const currentPath = location.pathname;
@@ -46,23 +46,22 @@ function PrivateRoute() {
         if (isTryingToAccessOnboarding) {
             return <Navigate to="/dashboard" replace />;
         }
-        // Anders mogen ze de gevraagde pagina zien.
-        // We gebruiken <Outlet /> in plaats van {children} voor betere compatibiliteit met React Router v6 layouts.
+        // Anders, geef toegang tot de gevraagde pagina.
         return <Outlet />;
     }
 
     // Scenario 2: De gebruiker is NOG NIET volledig onboarded.
     if (!isFullyOnboarded) {
-        // Als ze proberen een pagina buiten de onboarding te bereiken (zoals het dashboard),
-        // stuur ze dan terug naar de eerste stap van de onboarding.
+        // Als ze proberen een pagina buiten de onboarding te bereiken,
+        // stuur ze dan terug naar de eerste stap.
         if (!isTryingToAccessOnboarding) {
-            return <Navigate to={ONBOARDING_ROUTES[0]} replace />;
+            return <Navigate to={FIRST_ONBOARDING_STEP} replace />;
         }
         // Als ze binnen de onboarding flow navigeren, is dat prima.
         return <Outlet />;
     }
 
-    // Fallback, zou niet bereikt moeten worden, maar is goede practice.
+    // Fallback die normaal niet bereikt wordt.
     return <Outlet />;
 }
 

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
-import './RegisterPage.css';
+import Navbar from '../../../components/Navbar.jsx';
+import './RegisterPage.css'; // AANGEPAST: Gebruik nu de juiste CSS
 
 function OnboardingPreferences() {
     const navigate = useNavigate();
-    const { updateOnboardingData } = useOnboarding();
+    const { onboardingData, updateOnboardingData } = useOnboarding();
     const [formData, setFormData] = useState({
-        eenheid: 'mmol/L',
-        geslacht: '',
-        gewicht: '',
-        lengte: ''
+        eenheid: onboardingData.preferences?.eenheid || 'mmol/L',
+        geslacht: onboardingData.preferences?.geslacht || '',
+        gewicht: onboardingData.preferences?.gewicht || '',
+        lengte: onboardingData.preferences?.lengte || ''
     });
     const [bmi, setBmi] = useState(null);
 
@@ -28,47 +29,56 @@ function OnboardingPreferences() {
         } else {
             setBmi(null);
         }
-    }, [formData]);
+    }, [formData.gewicht, formData.lengte]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         updateOnboardingData({ preferences: formData });
-        navigate('/medicine-info');
+        navigate('/onboarding/medicine');
     };
 
     return (
-        <div className="auth-page">
-            <form onSubmit={handleSubmit}>
-                <h1>Persoonlijke voorkeuren</h1>
-                <div className="input-group">
-                    <label>Eenheid voor glucosemeting</label>
-                    <select name="eenheid" value={formData.eenheid} onChange={handleChange}>
-                        <option value="mmol/L">mmol/L</option>
-                        <option value="mg/dL">mg/dL</option>
-                    </select>
+        <>
+            <Navbar />
+            <div className="onboarding-page-container">
+                <div className="auth-page">
+                    <form onSubmit={handleSubmit}>
+                        <h1>Persoonlijke voorkeuren</h1>
+                        <p>Deze gegevens helpen ons om de informatie beter op uw situatie af te stemmen.</p>
+
+                        <div className="input-group">
+                            <label>Eenheid voor glucosemeting</label>
+                            <select name="eenheid" value={formData.eenheid} onChange={handleChange}>
+                                <option value="mmol/L">mmol/L</option>
+                                <option value="mg/dL">mg/dL</option>
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="geslacht">Geslacht</label>
+                            <select id="geslacht" name="geslacht" value={formData.geslacht} onChange={handleChange} required>
+                                <option value="" disabled>-- Maak een keuze --</option>
+                                <option value="Man">Man</option>
+                                <option value="Vrouw">Vrouw</option>
+                                <option value="Anders">Anders</option>
+                                <option value="Zeg ik liever niet">Zeg ik liever niet</option>
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="gewicht">Gewicht (kg)</label>
+                            <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required placeholder="bv. 75" />
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="lengte">Lengte (cm)</label>
+                            <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required placeholder="bv. 180" />
+                        </div>
+
+                        {bmi && <p style={{textAlign: 'center', marginTop: 'calc(-1 * var(--space-5))'}}>Je berekende BMI is: <strong>{bmi}</strong></p>}
+                        
+                        <button type="submit" className="btn btn--primary form-action-button">Volgende stap</button>
+                    </form>
                 </div>
-                <div className="input-group">
-                    <label htmlFor="geslacht">Geslacht</label>
-                    <select id="geslacht" name="geslacht" value={formData.geslacht} onChange={handleChange} required>
-                        <option value="">Kies een optie</option>
-                        <option value="Man">Man</option>
-                        <option value="Vrouw">Vrouw</option>
-                        <option value="Anders">Anders</option>
-                        <option value="Zeg ik liever niet">Zeg ik liever niet</option>
-                    </select>
-                </div>
-                <div className="input-group">
-                    <label htmlFor="gewicht">Gewicht (kg)</label>
-                    <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required />
-                </div>
-                <div className="input-group">
-                    <label htmlFor="lengte">Lengte (cm)</label>
-                    <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required />
-                </div>
-                {bmi && <p>Je berekende BMI is: <strong>{bmi}</strong></p>}
-                <button type="submit">Volgende stap</button>
-            </form>
-        </div>
+            </div>
+        </>
     );
 }
 

@@ -1,5 +1,3 @@
-// C:/Users/jelle/Desktop/School/EINDOPDRACHT/frontend/src/contexts/OnboardingContext.jsx
-
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { submitOnboardingProfile } from '../services/OnboardingService';
@@ -53,82 +51,69 @@ export function OnboardingContextProvider({ children }) {
         });
     };
 
-    const submitOnboardingData = async (finalData) => {
-        const combinedData = {
+    const submitOnboardingData = async (devices) => {
+        const finalData = {
             ...onboardingData,
-            ...finalData,
+            diabeticDevices: devices,
         };
 
-        const prefs = combinedData.preferences;
-        let bmi = prefs.bmi;
-        if (!bmi && prefs.gewicht > 0 && prefs.lengte > 0) {
-            const lengteInMeters = prefs.lengte / 100;
-            bmi = (prefs.gewicht / (lengteInMeters * lengteInMeters)).toFixed(1);
-        }
+        const prefs = finalData.preferences || {};
+        const medInfo = finalData.medicineInfo || {};
 
+        // --- DATA TRANSFORMATION ---
         const mapGenderToSystemValue = (gender) => {
             switch (gender) {
-                case 'Man': return 'male';
-                case 'Vrouw': return 'female';
-                case 'Anders': return 'other';
-                default: return 'prefer_not_to_say';
+                case 'Man': return 'MALE';
+                case 'Vrouw': return 'FEMALE';
+                case 'Anders': return 'OTHER';
+                default: return 'PREFER_NOT_TO_SAY';
             }
         };
 
         const mapUnitToSystemValue = (unit) => {
-            if (unit === 'mmol/L' || unit === 'mg/dL') {
-                return 'metric';
-            }
-            return 'metric';
+            return (unit === 'mmol/L' || unit === 'mg/dL') ? 'METRIC' : 'METRIC';
         };
 
-        const preferencesPayload = {
+        // Functie om de insuline naam om te zetten naar het backend enum formaat (bv. "Humulin R" -> "HUMULIN_R")
+        const toInsulinEnum = (name) => {
+            if (!name) return null;
+            return name.toUpperCase().replace(/ /g, '_');
+        }
+
+        const flatProfileData = {
+            role: finalData.role,
             system: mapUnitToSystemValue(prefs.eenheid),
             gender: mapGenderToSystemValue(prefs.geslacht),
             weight: parseFloat(prefs.gewicht) || 0,
             height: parseFloat(prefs.lengte) || 0,
-            bmi: parseFloat(bmi) || 0,
+            diabetesType: medInfo.diabetesType, // Is al in het juiste formaat (bv. 'TYPE_1')
+            longActingInsulin: toInsulinEnum(medInfo.longActingInsulin),
+            shortActingInsulin: toInsulinEnum(medInfo.shortActingInsulin),
+            diabeticDevices: finalData.diabeticDevices || [],
         };
 
-        // Maak een schone kopie van de medicatiegegevens voor de payload.
-        // De 'gebruiktInsuline' eigenschap is alleen voor de frontend UI en wordt hier
-        // verwijderd voordat de data naar de backend wordt gestuurd.
-        const medicineInfoPayload = { ...(combinedData.medicineInfo || {}) };
-        delete medicineInfoPayload.gebruiktInsuline;
+        if (flatProfileData.weight > 0 && flatProfileData.height > 0) {
+            const heightInMeters = flatProfileData.height / 100;
+            flatProfileData.bmi = parseFloat((flatProfileData.weight / (heightInMeters * heightInMeters)).toFixed(1));
+        } else {
+            flatProfileData.bmi = 0;
+        }
 
-        // Stel de uiteindelijke payload samen, inclusief de medische informatie.
-        const payload = {
-            preferences: preferencesPayload,
-            medicineInfo: medicineInfoPayload, // TOEGEVOEGD
-            diabeticDevices: combinedData.diabeticDevices,
-        };
-
-        // Validatie: controleer of de essentiële data aanwezig is
-        if (!prefs.role) {
-            const errorMessage = `Validation failed: 'role' is missing from the onboarding context.`;
-            console.error(errorMessage, combinedData);
+        if (!flatProfileData.role) {
+            const errorMessage = `Validation failed: 'role' is missing.`;
+            console.error(errorMessage, finalData);
             throw new Error("Incomplete registration. The role was not selected.");
         }
 
-        // Client-side validatie voor gewicht en lengte
-        if (payload.preferences.weight <= 0) {
-            throw new Error("Gewicht moet een positief getal zijn.");
-        }
-        if (payload.preferences.height <= 0) {
-            throw new Error("Lengte moet een positief getal zijn.");
-        }
-
-        console.log("Submitting final onboarding payload:", payload);
-
-        const { data, error } = await submitOnboardingProfile(payload);
+        const { data, error } = await submitOnboardingProfile(flatProfileData);
 
         if (error) {
             console.error("Backend rejected the payload. Full error:", error);
-            throw new Error(error.message || 'Failed to save onboarding data.');
+            throw new Error(error.message || 'Het opslaan van de onboarding-gegevens is mislukt.');
         }
 
-        sessionStorage.removeItem(SESSION_STORAGE_KEY);
         setUser(data);
+        sessionStorage.removeItem(SESSION_STORAGE_KEY);
         return data;
     };
 

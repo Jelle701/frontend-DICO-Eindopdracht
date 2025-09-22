@@ -17,7 +17,6 @@ function HomePage() {
                     <a href="#" className="top-banner-link">Bekijk de video</a>
                 </p>
             </div>
-
             <Navbar />
 
             <header className="hero-section">

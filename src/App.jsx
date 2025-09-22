@@ -2,65 +2,63 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// Route Guard Components (these are small and can be loaded eagerly)
-import PublicRoute from "./components/PublicRoute";
-import PrivateRoute from "./components/PrivateRoute";
+// Component Imports
+import PublicRoute from "./components/PublicRoute.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
-// Lazily load all page components
-const HomePage = lazy(() => import('./pages/open/HomePage'));
-const LoginPage = lazy(() => import('./pages/open/LoginPage'));
-const DashboardPage = lazy(() => import('./pages/Authorization/DashboardPage'));
+// --- Page Imports (Lazily Loaded) ---
+const HomePage = lazy(() => import('./pages/open/HomePage.jsx'));
+const LoginPage = lazy(() => import('./pages/open/LoginPage.jsx'));
+const DashboardPage = lazy(() => import('./pages/Authorization/DashboardPage.jsx'));
 const MyDataPage = lazy(() => import('./pages/Authorization/MyDataPage.jsx'));
 const GlucoseLogPage = lazy(() => import('./pages/Authorization/GlucoseLogPage.jsx'));
 const ServiceHubPage = lazy(() => import('./pages/service/ServiceHubPage.jsx'));
-const AccessCodeManagementPage = lazy(() => import('./pages/Authorization/AccessCodeManagementPage'));
-const GrantAccessPage = lazy(() => import('./pages/open/GrantAccessPage'));
-const LinkPatientPage = lazy(() => import('./pages/open/LinkPatientPage'));
-const PatientManagementPage = lazy(() => import('./pages/Authorization/PatientManagementPage')); // Nieuwe pagina voor Zorgverlener
+const AccessCodeManagementPage = lazy(() => import('./pages/Authorization/AccessCodeManagementPage.jsx'));
+const PatientManagementPage = lazy(() => import('./pages/Authorization/PatientManagementPage.jsx'));
 
-// Onboarding Page Components
-const RegisterPage = lazy(() => import('./pages/open/onboarding/RegisterPage'));
-const VerifyEmailPage = lazy(() => import('./pages/open/onboarding/VerifyEmailPage'));
-const SelectRolePage = lazy(() => import('./pages/open/onboarding/SelectRolePage'));
-const OnboardingPreferences = lazy(() => import('./pages/open/onboarding/OnboardingPreferences'));
-const MedicineInfo = lazy(() => import('./pages/open/onboarding/MedicineInfo'));
-const DiabeticDevices = lazy(() => import('./pages/open/onboarding/DiabeticDevices'));
+// Onboarding Pages
+const RegisterPage = lazy(() => import('./pages/open/onboarding/RegisterPage.jsx'));
+const VerifyEmailPage = lazy(() => import('./pages/open/onboarding/VerifyEmailPage.jsx'));
+const SelectRolePage = lazy(() => import('./pages/open/onboarding/SelectRolePage.jsx'));
+const OnboardingPreferences = lazy(() => import('./pages/open/onboarding/OnboardingPreferences.jsx'));
+const MedicineInfo = lazy(() => import('./pages/open/onboarding/MedicineInfo.jsx'));
+const DiabeticDevices = lazy(() => import('./pages/open/onboarding/DiabeticDevices.jsx'));
+const OnboardingLinkPatientPage = lazy(() => import('./pages/open/onboarding/OnboardingLinkPatientPage.jsx'));
 
-// A simple fallback component to show while pages are loading
 const LoadingFallback = () => <div style={{ textAlign: 'center', marginTop: '50px' }}>Laden...</div>;
 
 function App() {
     return (
         <Suspense fallback={<LoadingFallback />}>
             <Routes>
-                {/* Publieke Routes: Toegankelijk voor iedereen */}
+                {/* --- Public Routes --- */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
                 <Route path="/verify" element={<PublicRoute><VerifyEmailPage /></PublicRoute>} />
-                <Route path="/grant-access" element={<PublicRoute><GrantAccessPage /></PublicRoute>} />
 
-                {/*
-                  Beveiligde Routes: Vereisen authenticatie.
-                */}
+                {/* --- Private Routes (require authentication) --- */}
                 <Route element={<PrivateRoute />}>
-                    {/* Onboarding Flow Routes */}
-                    <Route path="/register-details" element={<SelectRolePage />} />
-                    <Route path="/onboarding" element={<OnboardingPreferences />} />
-                    <Route path="/medicine-info" element={<MedicineInfo />} />
-                    <Route path="/devices" element={<DiabeticDevices />} />
-                    <Route path="/link-patient" element={<LinkPatientPage />} />
+                    {/* Redirect for a legacy route */}
+                    <Route path="/register-details" element={<Navigate to="/onboarding/role" replace />} />
 
-                    {/* Main Application Routes (na onboarding) */}
+                    {/* Onboarding Flow */}
+                    <Route path="/onboarding/role" element={<SelectRolePage />} />
+                    <Route path="/onboarding/preferences" element={<OnboardingPreferences />} />
+                    <Route path="/onboarding/medicine" element={<MedicineInfo />} />
+                    <Route path="/onboarding/devices" element={<DiabeticDevices />} />
+                    <Route path="/onboarding/link-patient" element={<OnboardingLinkPatientPage />} />
+
+                    {/* Core Application */}
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/glucose-log" element={<GlucoseLogPage />} />
                     <Route path="/my-data" element={<MyDataPage />} />
                     <Route path="/service-hub" element={<ServiceHubPage />} />
                     <Route path="/access-code-management" element={<AccessCodeManagementPage />} />
-                    <Route path="/patient-management" element={<PatientManagementPage />} /> {/* Nieuwe route */}
+                    <Route path="/patient-management" element={<PatientManagementPage />} />
                 </Route>
 
-                {/* Fallback Route: Vangt alle niet-gedefinieerde paden op en stuurt door naar de homepage */}
+                {/* --- Catch-all Route --- */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Suspense>

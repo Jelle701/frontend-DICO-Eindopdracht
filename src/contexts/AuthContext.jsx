@@ -1,5 +1,4 @@
-// src/contexts/AuthContext.jsx
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { getMyProfile } from '../services/ProfileService.jsx';
 
 const AuthContext = createContext(null);
@@ -10,12 +9,20 @@ export function AuthContextProvider({ children }) {
     const [isAuth, setIsAuth] = useState(false);
     const [loading, setLoading] = useState(true);
 
+    const logout = useCallback(() => {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('delegatedToken');
+        sessionStorage.removeItem('patientUsername');
+        setToken(null);
+        setUser(null);
+        setIsAuth(false);
+    }, []);
+
     useEffect(() => {
         const initializeAuth = async () => {
             if (token) {
                 const { data, error } = await getMyProfile();
                 if (error) {
-                    console.error("Token is invalid, logging out.", error);
                     logout();
                 } else {
                     setUser(data);
@@ -24,57 +31,15 @@ export function AuthContextProvider({ children }) {
             }
             setLoading(false);
         };
-
         initializeAuth();
-    }, [token]);
+    }, [token, logout]);
 
-    const login = async (jwt, navigate) => {
+    const login = useCallback((jwt) => {
         localStorage.setItem('token', jwt);
         setToken(jwt);
-        setIsAuth(true);
+    }, []);
 
-        const { data: profile, error } = await getMyProfile();
-
-        if (error) {
-            console.error("Failed to fetch profile after login:", error);
-            logout();
-            navigate('/login?error=profile_fetch_failed');
-            return;
-        }
-
-        setUser(profile);
-
-        // De nieuwe, intelligente navigatielogica.
-        if (profile && profile.role) {
-            // Als de gebruiker een rol heeft, stuur naar de juiste pagina.
-            switch (profile.role) {
-                case 'PATIENT':
-                    navigate('/dashboard');
-                    break;
-                case 'GUARDIAN':
-                    // TODO: Moet naar een specifieke guardian-pagina.
-                    navigate('/dashboard'); // Tijdelijk
-                    break;
-                case 'PROVIDER':
-                    navigate('/patient-management');
-                    break;
-                default:
-                    navigate('/login'); // Fallback
-            }
-        } else {
-            // Als de gebruiker nog geen rol heeft, stuur naar de rol-selectie pagina.
-            navigate('/register-details');
-        }
-    };
-
-    const logout = () => {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
-        setIsAuth(false);
-    };
-
-    const contextValue = {
+    const contextValue = useMemo(() => ({
         token,
         isAuth,
         user,
@@ -82,7 +47,7 @@ export function AuthContextProvider({ children }) {
         login,
         logout,
         setUser,
-    };
+    }), [token, isAuth, user, loading, login, logout]);
 
     return (
         <AuthContext.Provider value={contextValue}>
@@ -91,7 +56,7 @@ export function AuthContextProvider({ children }) {
     );
 }
 
-// Custom hook for components that only need authentication status
+// DE FIX: Herstel de custom hooks naar hun oorspronkelijke, correcte staat.
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -105,7 +70,6 @@ export const useAuth = () => {
     };
 };
 
-// Custom hook for components that need the full user object
 export const useUser = () => {
     const context = useContext(AuthContext);
     if (!context) {
