@@ -1,19 +1,24 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext.jsx';
+import { useAuth, useUser } from '../contexts/AuthContext.jsx'; // Importeer useUser
 import DicoLogo from '../assets/react.svg';
-import './Navbar.css'; // Zorg dat de CSS-bestandsnaam overeenkomt
+import './Navbar.css';
 
 function Navbar() {
     const { isAuth, logout } = useAuth();
+    const { user } = useUser(); // Haal de gebruiker op om de rol te bepalen
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
 
+    // Bepaal het juiste dashboard pad op basis van de rol
+    const isProvider = user?.role === 'PROVIDER';
+    const dashboardPath = isProvider ? '/provider-dashboard' : '/dashboard';
+
     const handleLogout = () => {
         logout();
-        setMenuOpen(false); // Sluit menu na uitloggen
+        setMenuOpen(false);
         navigate('/login');
     };
 
@@ -21,7 +26,6 @@ function Navbar() {
         setMenuOpen(!menuOpen);
     };
 
-    // Sluit het menu als er buiten geklikt wordt
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -37,12 +41,11 @@ function Navbar() {
     return (
         <nav className="navbar" ref={menuRef}>
             <div className="navbar-container">
-                <NavLink to={isAuth ? "/dashboard" : "/"} className="navbar-logo" onClick={closeMenu}>
+                <NavLink to={isAuth ? dashboardPath : "/"} className="navbar-logo" onClick={closeMenu}>
                     <img src={DicoLogo} alt="App Logo" />
                     <span>Diabeheer</span>
                 </NavLink>
 
-                {/* Hamburger Button - alleen zichtbaar op mobiel en als ingelogd */}
                 {isAuth && (
                     <button
                         onClick={toggleMenu}
@@ -55,13 +58,23 @@ function Navbar() {
                     </button>
                 )}
 
-                {/* Desktop Menu */}
                 <ul className="nav-menu-desktop">
                     {isAuth ? (
                         <>
-                            <li><NavLink to="/dashboard" className="nav-link">Dashboard</NavLink></li>
-                            <li><NavLink to="/my-data" className="nav-link">Mijn Gegevens</NavLink></li>
-                            <li><NavLink to="/service-hub" className="nav-link">Services</NavLink></li>
+                            <li><NavLink to={dashboardPath} className="nav-link">Dashboard</NavLink></li>
+                            
+                            {/* NIEUW: Link naar patiëntenbeheer voor zorgverleners */}
+                            {isProvider && (
+                                <li><NavLink to="/patient-portal" className="nav-link">Patiënten Beheren</NavLink></li>
+                            )}
+
+                            {!isProvider && (
+                                <>
+                                    <li><NavLink to="/my-data" className="nav-link">Mijn Gegevens</NavLink></li>
+                                    <li><NavLink to="/service-hub" className="nav-link">Services</NavLink></li>
+                                </>
+                            )}
+                            
                             <li><button onClick={handleLogout} className="btn btn-outline">Uitloggen</button></li>
                         </>
                     ) : (
@@ -72,13 +85,23 @@ function Navbar() {
                     )}
                 </ul>
 
-                {/* Mobile Dropdown Menu - alleen als ingelogd en menu open is */}
                 {isAuth && menuOpen && (
                     <div className="nav-menu-mobile">
                         <ul>
-                            <li><NavLink to="/dashboard" className="nav-link" onClick={closeMenu}>Dashboard</NavLink></li>
-                            <li><NavLink to="/my-data" className="nav-link" onClick={closeMenu}>Mijn Gegevens</NavLink></li>
-                            <li><NavLink to="/service-hub" className="nav-link" onClick={closeMenu}>Services</NavLink></li>
+                            <li><NavLink to={dashboardPath} className="nav-link" onClick={closeMenu}>Dashboard</NavLink></li>
+
+                            {/* NIEUW: Link naar patiëntenbeheer voor zorgverleners */}
+                            {isProvider && (
+                                <li><NavLink to="/patient-portal" className="nav-link" onClick={closeMenu}>Patiënten Beheren</NavLink></li>
+                            )}
+
+                            {!isProvider && (
+                                <>
+                                    <li><NavLink to="/my-data" className="nav-link" onClick={closeMenu}>Mijn Gegevens</NavLink></li>
+                                    <li><NavLink to="/service-hub" className="nav-link" onClick={closeMenu}>Services</NavLink></li>
+                                </>
+                            )}
+
                             <li className="separator"></li>
                             <li><button onClick={handleLogout} className="btn btn-outline">Uitloggen</button></li>
                         </ul>

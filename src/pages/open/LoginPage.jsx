@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth, useUser } from '../../contexts/AuthContext'; // Importeer ook useUser
+import { useAuth, useUser } from '../../contexts/AuthContext';
 import { loginUser } from '../../services/AuthService/AuthService';
 import Navbar from '../../components/Navbar.jsx';
 import './Loginpage.css';
+
 function LoginPage() {
     const navigate = useNavigate();
     const { login, isAuth } = useAuth();
-    const { user } = useUser(); // Haal de user op om de rol te kunnen checken
+    const { user } = useUser();
 
     const [formData, setFormData] = useState({
         email: '',
@@ -16,29 +17,27 @@ function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // DE FIX: Deze useEffect handelt de navigatie af ZODRA de gebruiker is ingelogd
     useEffect(() => {
-        // Wacht tot de authenticatie is afgerond en de user-data is geladen.
         if (isAuth && user) {
             if (user.role) {
-                // Als de gebruiker een rol heeft, stuur naar de juiste pagina.
                 switch (user.role) {
                     case 'PATIENT':
                         navigate('/dashboard');
                         break;
                     case 'GUARDIAN':
-                        navigate('/guardian-dashboard'); // Moet later een echt dashboard worden
+                        navigate('/guardian-dashboard');
                         break;
                     case 'PROVIDER':
-                        navigate('/patient-management');
+                        navigate('/provider-dashboard'); // AANGEPAST
                         break;
                     default:
-                        navigate('/'); // Fallback naar homepage
+                        navigate('/');
                 }
             } else {
-                // Als de gebruiker nog geen rol heeft, stuur naar de rol-selectie pagina.
                 navigate('/onboarding/role');
             }
+        } else if (isAuth && user === null) {
+            // Wacht op user data
         }
     }, [isAuth, user, navigate]);
 
@@ -71,7 +70,6 @@ function LoginPage() {
         if (apiError) {
             setError(apiError.message || 'Er is een onbekende fout opgetreden.');
         } else {
-            // De login functie slaat nu alleen het token op. De useEffect hierboven doet de rest.
             login(data.jwt);
         }
         setLoading(false);

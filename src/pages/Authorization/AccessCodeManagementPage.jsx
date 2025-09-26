@@ -12,7 +12,8 @@ const AccessCodeManagementPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await apiClient.get('/api/patient/access-code'); // Updated endpoint
+            // CORRECTIE: De overbodige /api is hier verwijderd.
+            const response = await apiClient.get('/patient/access-code');
             setAccessCode(response.data.accessCode);
         } catch (err) {
             // Don't show an error if the code just doesn't exist yet (404)
@@ -28,7 +29,8 @@ const AccessCodeManagementPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await apiClient.post('/api/patient/access-code/generate'); // Updated endpoint
+            // CORRECTIE: De overbodige /api is hier verwijderd.
+            const response = await apiClient.post('/patient/access-code/generate');
             setAccessCode(response.data.accessCode);
         } catch (err) {
             setError('Fout bij het genereren van de code. Probeer het later opnieuw.');

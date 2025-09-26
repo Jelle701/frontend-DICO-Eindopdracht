@@ -18,7 +18,6 @@ function MedicineInfo() {
     const navigate = useNavigate();
     const { onboardingData, updateOnboardingData } = useOnboarding();
 
-    // DE FIX: De logica leest nu de correcte 'Type' eigenschap en Engelse waarden.
     const { longManufacturers, shortManufacturers, insulinsByManufacturer } = useMemo(() => {
         const long = new Set();
         const short = new Set();
@@ -49,6 +48,7 @@ function MedicineInfo() {
     }, []);
 
     const [formData, setFormData] = useState({
+        eenheid: onboardingData.medicineInfo?.eenheid || 'mmol/L', // NIEUW
         diabetesType: onboardingData.medicineInfo?.diabetesType || '',
         gebruiktInsuline: onboardingData.medicineInfo?.gebruiktInsuline || 'nee',
         longActing: onboardingData.medicineInfo?.longActing || { manufacturer: '', insulin: '' },
@@ -117,6 +117,15 @@ function MedicineInfo() {
                         <h1>Medische Informatie</h1>
                         <p>Deze informatie helpt ons om de app beter op jou af te stemmen.</p>
                         
+                        {/* VERPLAATST VELD */}
+                        <div className="input-group">
+                            <label>Eenheid voor glucosemeting</label>
+                            <select name="eenheid" value={formData.eenheid} onChange={handleTopLevelChange}>
+                                <option value="mmol/L">mmol/L</option>
+                                <option value="mg/dL">mg/dL</option>
+                            </select>
+                        </div>
+
                         <div className="input-group">
                             <label htmlFor="diabetesType">Welk type diabetes heb je?</label>
                             <select id="diabetesType" name="diabetesType" value={formData.diabetesType} onChange={handleTopLevelChange} required>

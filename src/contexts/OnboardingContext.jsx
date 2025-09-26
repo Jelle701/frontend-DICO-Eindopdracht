@@ -26,7 +26,7 @@ export function OnboardingContextProvider({ children }) {
         }
     });
 
-    const { setUser } = useUser();
+    const { setUserData } = useUser();
 
     useEffect(() => {
         try {
@@ -60,7 +60,6 @@ export function OnboardingContextProvider({ children }) {
         const prefs = finalData.preferences || {};
         const medInfo = finalData.medicineInfo || {};
 
-        // --- DATA TRANSFORMATION ---
         const mapGenderToSystemValue = (gender) => {
             switch (gender) {
                 case 'Man': return 'MALE';
@@ -74,21 +73,24 @@ export function OnboardingContextProvider({ children }) {
             return (unit === 'mmol/L' || unit === 'mg/dL') ? 'METRIC' : 'METRIC';
         };
 
-        // Functie om de insuline naam om te zetten naar het backend enum formaat (bv. "Humulin R" -> "HUMULIN_R")
         const toInsulinEnum = (name) => {
             if (!name) return null;
             return name.toUpperCase().replace(/ /g, '_');
         }
 
+        // DE FIX: Pas de payload aan om de nieuwe velden te reflecteren
         const flatProfileData = {
             role: finalData.role,
-            system: mapUnitToSystemValue(prefs.eenheid),
+            firstName: prefs.firstName, // NIEUW
+            lastName: prefs.lastName,   // NIEUW
+            system: mapUnitToSystemValue(medInfo.eenheid), // VERPLAATST
             gender: mapGenderToSystemValue(prefs.geslacht),
+            dateOfBirth: prefs.dateOfBirth,
             weight: parseFloat(prefs.gewicht) || 0,
             height: parseFloat(prefs.lengte) || 0,
-            diabetesType: medInfo.diabetesType, // Is al in het juiste formaat (bv. 'TYPE_1')
-            longActingInsulin: toInsulinEnum(medInfo.longActingInsulin),
-            shortActingInsulin: toInsulinEnum(medInfo.shortActingInsulin),
+            diabetesType: medInfo.diabetesType,
+            longActingInsulin: toInsulinEnum(medInfo.longActing?.insulin),
+            shortActingInsulin: toInsulinEnum(medInfo.shortActing?.insulin),
             diabeticDevices: finalData.diabeticDevices || [],
         };
 
@@ -105,6 +107,8 @@ export function OnboardingContextProvider({ children }) {
             throw new Error("Incomplete registration. The role was not selected.");
         }
 
+        console.log('%cFinal Onboarding Payload:', 'color: green; font-weight: bold;', flatProfileData);
+
         const { data, error } = await submitOnboardingProfile(flatProfileData);
 
         if (error) {
@@ -112,7 +116,7 @@ export function OnboardingContextProvider({ children }) {
             throw new Error(error.message || 'Het opslaan van de onboarding-gegevens is mislukt.');
         }
 
-        setUser(data);
+        setUserData(data);
         sessionStorage.removeItem(SESSION_STORAGE_KEY);
         return data;
     };

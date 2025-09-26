@@ -1,0 +1,103 @@
+/* src/pages/Zorgverlener/ProviderDashboard.css */
+
+.provider-dashboard-container {
+    padding: var(--space-7) var(--space-5);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.provider-header {
+    text-align: center;
+    margin-bottom: var(--space-7);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.provider-header h1 {
+    font-size: var(--font-size-h2);
+    color: var(--color-heading);
+    margin-bottom: var(--space-3);
+}
+
+.provider-header p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-5);
+}
+
+.provider-header .btn {
+    margin-top: var(--space-5);
+}
+
+.patient-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-6);
+}
+
+.patient-summary-card {
+    background-color: var(--color-card-background);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    border-left: 5px solid var(--color-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.patient-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.patient-summary-card.has-alerts {
+    border-left-color: var(--color-error);
+}
+
+.patient-summary-card h3 {
+    font-size: var(--font-size-h4);
+    color: var(--color-heading);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: var(--space-3);
+}
+
+.patient-kpis {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.kpi-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.kpi-label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.kpi-value {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+
+.patient-summary-card .btn {
+    margin-top: auto; /* Push button to the bottom */
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .provider-dashboard-container {
+        padding: var(--space-5) var(--space-3);
+    }
+
+    .patient-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

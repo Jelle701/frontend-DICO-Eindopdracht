@@ -13,8 +13,6 @@ const DashboardPage = lazy(() => import('./pages/Authorization/DashboardPage.jsx
 const MyDataPage = lazy(() => import('./pages/Authorization/MyDataPage.jsx'));
 const GlucoseLogPage = lazy(() => import('./pages/Authorization/GlucoseLogPage.jsx'));
 const ServiceHubPage = lazy(() => import('./pages/service/ServiceHubPage.jsx'));
-const AccessCodeManagementPage = lazy(() => import('./pages/Authorization/AccessCodeManagementPage.jsx'));
-const PatientManagementPage = lazy(() => import('./pages/Authorization/PatientManagementPage.jsx'));
 
 // Onboarding Pages
 const RegisterPage = lazy(() => import('./pages/open/onboarding/RegisterPage.jsx'));
@@ -24,6 +22,10 @@ const OnboardingPreferences = lazy(() => import('./pages/open/onboarding/Onboard
 const MedicineInfo = lazy(() => import('./pages/open/onboarding/MedicineInfo.jsx'));
 const DiabeticDevices = lazy(() => import('./pages/open/onboarding/DiabeticDevices.jsx'));
 const OnboardingLinkPatientPage = lazy(() => import('./pages/open/onboarding/OnboardingLinkPatientPage.jsx'));
+
+// Zorgverlener Pages
+const PatientPortal = lazy(() => import('./pages/Zorgverlener/PatientPortal.jsx'));
+const ProviderDashboard = lazy(() => import('./pages/Zorgverlener/ProviderDashboard.jsx')); // NIEUW
 
 const LoadingFallback = () => <div style={{ textAlign: 'center', marginTop: '50px' }}>Laden...</div>;
 
@@ -54,8 +56,10 @@ function App() {
                     <Route path="/glucose-log" element={<GlucoseLogPage />} />
                     <Route path="/my-data" element={<MyDataPage />} />
                     <Route path="/service-hub" element={<ServiceHubPage />} />
-                    <Route path="/access-code-management" element={<AccessCodeManagementPage />} />
-                    <Route path="/patient-management" element={<PatientManagementPage />} />
+                    
+                    {/* Zorgverlener Routes */}
+                    <Route path="/patient-portal" element={<PatientPortal />} />
+                    <Route path="/provider-dashboard" element={<ProviderDashboard />} /> {/* NIEUW */}
                 </Route>
 
                 {/* --- Catch-all Route --- */}

@@ -1,0 +1,212 @@
+/* src/pages/Zorgverlener/PatientPortal.css */
+
+.patient-portal-container {
+    padding: var(--space-7) var(--space-5);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.portal-header {
+    text-align: center;
+    margin-bottom: var(--space-7);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.portal-header h1 {
+    font-size: var(--font-size-h2);
+    color: var(--color-heading);
+    margin-bottom: var(--space-3);
+}
+
+.portal-header p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-5);
+}
+
+.portal-header .btn {
+    margin-top: var(--space-5);
+}
+
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+}
+
+.patient-card {
+    background-color: var(--color-card-background);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    border: 1px solid var(--color-border);
+}
+
+.patient-card h3 {
+    font-size: var(--font-size-h4);
+    color: var(--color-heading);
+    margin-bottom: var(--space-2);
+}
+
+.patient-card p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-3);
+}
+
+.patient-card .btn {
+    margin-top: auto; /* Push button to the bottom */
+    width: 100%;
+}
+
+/* Styling for the access code management card within the service hub */
+.service-card.access-management-card {
+    grid-column: 1 / -1; /* Span full width in grid */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6);
+}
+
+.service-card.access-management-card .code-display-section {
+    margin: var(--space-5) 0;
+    width: 100%;
+}
+
+.service-card.access-management-card .code-box {
+    background-color: var(--color-background);
+    border: 1px dashed var(--color-border-dark);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--border-radius-md);
+    font-family: 'monospace';
+    font-size: var(--font-size-lg);
+    color: var(--color-accent-positive);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    word-break: break-all;
+}
+
+.service-card.access-management-card .code-box span {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.service-card.access-management-card .copy-button {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--border-radius-sm);
+    transition: background-color 0.2s ease;
+}
+
+.service-card.access-management-card .copy-button:hover {
+    background-color: var(--color-primary-light);
+}
+
+.service-card.access-management-card .generate-button {
+    margin-top: var(--space-5);
+    width: auto;
+}
+
+.copy-success-text {
+    color: var(--color-success);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-2);
+}
+
+/* Modal Styling (reused from onboarding/RegisterPage.css or similar) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--color-background);
+    padding: var(--space-7);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+}
+
+.modal-content h2 {
+    font-size: var(--font-size-h3);
+    color: var(--color-heading);
+    margin-bottom: var(--space-5);
+}
+
+.modal-content p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-5);
+}
+
+.modal-content .form-group {
+    margin-bottom: var(--space-5);
+    text-align: left;
+}
+
+.modal-content .form-group label {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.modal-content .form-group input[type="text"] {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    background-color: var(--color-input-background);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+}
+
+.error-message {
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-3);
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .patient-portal-container {
+        padding: var(--space-5) var(--space-3);
+    }
+
+    .patient-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-card.access-management-card {
+        padding: var(--space-5);
+    }
+}

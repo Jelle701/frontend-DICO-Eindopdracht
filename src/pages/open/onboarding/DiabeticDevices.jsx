@@ -38,18 +38,11 @@ function DiabeticDevices() {
             .filter(device => device.brand && device.model);
 
         try {
-            // DE FIX: Roep alleen de submit functie aan.
-            // De PrivateRoute zal de navigatie afhandelen nadat de user state is bijgewerkt.
             await submitOnboardingData(selectedDevices);
-            
-            // De 'navigate' call is hier verwijderd om de race condition op te lossen.
-            // De pagina blijft hier nu wachten tot de PrivateRoute de gebruiker doorstuurt.
-
         } catch (err) {
             setError(err.message || 'Er is een onbekende fout opgetreden.');
-            setLoading(false); // Zorg ervoor dat de loading state stopt bij een fout
+            setLoading(false);
         }
-        // setLoading(false) wordt hier niet meer gezet, omdat de pagina zal navigeren.
     };
 
     const renderDeviceSelector = (categoryKey, categoryName) => {
@@ -100,6 +93,7 @@ function DiabeticDevices() {
 
                         {renderDeviceSelector('cgm', 'CGM')}
                         {renderDeviceSelector('insulinPump', 'Insulinepompen')}
+                        {/* DE FIX: De typefout is hier gecorrigeerd */}
                         {renderDeviceSelector('bloodGlucoseMeter', 'Bloedglucosemeters')}
 
                         {error && <p className="error-message">{error}</p>}

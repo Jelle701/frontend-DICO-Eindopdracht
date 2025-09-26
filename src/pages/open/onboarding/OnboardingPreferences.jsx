@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css'; // AANGEPAST: Gebruik nu de juiste CSS
+import './RegisterPage.css';
 
 function OnboardingPreferences() {
     const navigate = useNavigate();
     const { onboardingData, updateOnboardingData } = useOnboarding();
     const [formData, setFormData] = useState({
-        eenheid: onboardingData.preferences?.eenheid || 'mmol/L',
+        // VERWIJDERD: eenheid is verplaatst
+        firstName: onboardingData.preferences?.firstName || '', // NIEUW
+        lastName: onboardingData.preferences?.lastName || '',   // NIEUW
         geslacht: onboardingData.preferences?.geslacht || '',
         gewicht: onboardingData.preferences?.gewicht || '',
-        lengte: onboardingData.preferences?.lengte || ''
+        lengte: onboardingData.preferences?.lengte || '',
+        dateOfBirth: onboardingData.preferences?.dateOfBirth || ''
     });
     const [bmi, setBmi] = useState(null);
 
@@ -43,16 +46,26 @@ function OnboardingPreferences() {
             <div className="onboarding-page-container">
                 <div className="auth-page">
                     <form onSubmit={handleSubmit}>
-                        <h1>Persoonlijke voorkeuren</h1>
+                        <h1>Persoonlijke Gegevens</h1>
                         <p>Deze gegevens helpen ons om de informatie beter op uw situatie af te stemmen.</p>
 
+                        {/* NIEUWE VELDEN */}
                         <div className="input-group">
-                            <label>Eenheid voor glucosemeting</label>
-                            <select name="eenheid" value={formData.eenheid} onChange={handleChange}>
-                                <option value="mmol/L">mmol/L</option>
-                                <option value="mg/dL">mg/dL</option>
-                            </select>
+                            <label htmlFor="firstName">Voornaam</label>
+                            <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="bv. Jan" />
                         </div>
+                        <div className="input-group">
+                            <label htmlFor="lastName">Achternaam</label>
+                            <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="bv. Jansen" />
+                        </div>
+
+                        <div className="input-group">
+                            <label htmlFor="dateOfBirth">Geboortedatum</label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required />
+                        </div>
+
+                        {/* VERWIJDERD: Eenheid voor glucosemeting */}
+
                         <div className="input-group">
                             <label htmlFor="geslacht">Geslacht</label>
                             <select id="geslacht" name="geslacht" value={formData.geslacht} onChange={handleChange} required>

@@ -1,55 +1,50 @@
 // src/pages/Authorization/MyDataPage.jsx
 import React, { useState, useEffect } from 'react';
-import { getMyProfile, updateUserProfile } from '../../services/ProfileService';
+import { useUser, useAuth } from '../../contexts/AuthContext';
+import { updateUserProfile } from '../../services/ProfileService';
 import Navbar from '../../components/Navbar';
 import './MyDataPage.css';
 
+// Helper om de enums van de backend te mappen naar leesbare labels
+const GENDER_MAP = {
+    MALE: 'Man',
+    FEMALE: 'Vrouw',
+    OTHER: 'Anders',
+    PREFER_NOT_TO_SAY: 'Zeg ik liever niet',
+};
+
+const DIABETES_TYPE_MAP = {
+    TYPE_1: 'Type 1',
+    TYPE_2: 'Type 2',
+    LADA: 'LADA',
+    MODY: 'MODY',
+    GESTATIONAL: 'Zwangerschapsdiabetes',
+    OTHER: 'Anders/Onbekend',
+};
+
 function MyDataPage() {
-    // We use formState to hold the data for the entire form
+    const { user, setUserData } = useUser();
+    const { loading: authLoading } = useAuth();
+
     const [formState, setFormState] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            setLoading(true);
-            const { data, error: fetchError } = await getMyProfile();
-            if (fetchError) {
-                setError(fetchError.message);
-                setFormState(null);
-            } else {
-                // Pre-fill the form with the fetched data
-                setFormState(data);
-            }
-            setLoading(false);
-        };
-
-        fetchProfile();
-    }, []);
+        if (user) {
+            setFormState(user);
+        }
+    }, [user]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        const [section, field] = name.split('.');
-
-        if (field) {
-            // Handle nested objects like 'preferences.weight'
-            setFormState(prev => ({
-                ...prev,
-                [section]: {
-                    ...prev[section],
-                    [field]: value
-                }
-            }));
-        } else {
-            // Handle top-level fields like 'firstName'
-            setFormState(prev => ({ ...prev, [name]: value }));
-        }
+        setFormState(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setIsSubmitting(true);
         setError('');
         setSuccess('');
 
@@ -59,36 +54,17 @@ function MyDataPage() {
             setError(updateError.message);
         } else {
             setSuccess('Gegevens succesvol bijgewerkt!');
-            // Optionally, refresh the form state with the latest data from the server
-            setFormState(data);
-            setTimeout(() => setSuccess(''), 3000); // Hide success message after 3 seconds
+            setUserData(data); // Update de globale user state
+            setTimeout(() => setSuccess(''), 3000);
         }
-        setLoading(false);
+        setIsSubmitting(false);
     };
 
-    if (loading) {
+    if (authLoading || !formState) {
         return (
             <>
                 <Navbar />
                 <div className="my-data-page"><p>Gegevens worden geladen...</p></div>
-            </>
-        );
-    }
-
-    if (error) {
-        return (
-            <>
-                <Navbar />
-                <div className="my-data-page form-message error"><p>Fout: {error}</p></div>
-            </>
-        );
-    }
-
-    if (!formState) {
-        return (
-            <>
-                <Navbar />
-                <div className="my-data-page"><p>Geen profielgegevens gevonden.</p></div>
             </>
         );
     }
@@ -98,81 +74,81 @@ function MyDataPage() {
             <Navbar />
             <div className="my-data-page">
                 <form className="form-card" onSubmit={handleSubmit}>
-                    <h1>Mijn Gegevens Aanpassen</h1>
+                    <h1>Mijn Gegevens</h1>
 
+                    {/* --- Persoonlijke Gegevens --- */}
                     <div className="form-section">
                         <h2>Persoonlijke Gegevens</h2>
                         <div className="input-group">
-                            <label htmlFor="firstName">Voornaam</label>
-                            <input type="text" id="firstName" name="firstName" value={formState.firstName || ''} onChange={handleInputChange} />
+                            <label>Voornaam</label>
+                            <input type="text" name="firstName" value={formState.firstName || ''} onChange={handleInputChange} />
                         </div>
                         <div className="input-group">
-                            <label htmlFor="lastName">Achternaam</label>
-                            <input type="text" id="lastName" name="lastName" value={formState.lastName || ''} onChange={handleInputChange} />
+                            <label>Achternaam</label>
+                            <input type="text" name="lastName" value={formState.lastName || ''} onChange={handleInputChange} />
                         </div>
                         <div className="input-group">
-                            <label htmlFor="email">E-mailadres (kan niet gewijzigd worden)</label>
-                            <input type="email" id="email" name="email" value={formState.email || ''} readOnly disabled />
+                            <label>Geboortedatum</label>
+                            <input type="date" name="dateOfBirth" value={formState.dateOfBirth ? formState.dateOfBirth.split('T')[0] : ''} onChange={handleInputChange} />
                         </div>
                         <div className="input-group">
-                            <label htmlFor="dob">Geboortedatum</label>
-                            <input type="date" id="dob" name="dob" value={formState.dob ? formState.dob.split('T')[0] : ''} onChange={handleInputChange} />
+                            <label>Geslacht</label>
+                            <select name="gender" value={formState.gender || ''} onChange={handleInputChange}>
+                                {Object.entries(GENDER_MAP).map(([key, label]) => (
+                                    <option key={key} value={key}>{label}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
-                    {formState.preferences && (
-                        <div className="form-section">
-                            <h2>Voorkeuren</h2>
-                            <div className="input-group">
-                                <label htmlFor="preferences.gender">Geslacht</label>
-                                <select id="preferences.gender" name="preferences.gender" value={formState.preferences.gender || ''} onChange={handleInputChange}>
-                                    <option value="">Niet opgegeven</option>
-                                    <option value="Man">Man</option>
-                                    <option value="Vrouw">Vrouw</option>
-                                    <option value="Anders">Anders</option>
-                                </select>
-                            </div>
-                            <div className="input-group">
-                                <label htmlFor="preferences.weight">Gewicht (kg)</label>
-                                <input type="number" id="preferences.weight" name="preferences.weight" value={formState.preferences.weight || ''} onChange={handleInputChange} />
-                            </div>
-                            <div className="input-group">
-                                <label htmlFor="preferences.height">Lengte (cm)</label>
-                                <input type="number" id="preferences.height" name="preferences.height" value={formState.preferences.height || ''} onChange={handleInputChange} />
-                            </div>
+                    {/* --- Medische Informatie --- */}
+                    <div className="form-section">
+                        <h2>Medische Informatie</h2>
+                        <div className="input-group">
+                            <label>Type Diabetes</label>
+                            <select name="diabetesType" value={formState.diabetesType || ''} onChange={handleInputChange}>
+                                {Object.entries(DIABETES_TYPE_MAP).map(([key, label]) => (
+                                    <option key={key} value={key}>{label}</option>
+                                ))}
+                            </select>
                         </div>
-                    )}
+                        <div className="input-group">
+                            <label>Langwerkende Insuline</label>
+                            <input type="text" name="longActingInsulin" value={formState.longActingInsulin || ''} onChange={handleInputChange} />
+                        </div>
+                        <div className="input-group">
+                            <label>Kortwerkende Insuline</label>
+                            <input type="text" name="shortActingInsulin" value={formState.shortActingInsulin || ''} onChange={handleInputChange} />
+                        </div>
+                    </div>
 
-                    {formState.medicineInfo && (
-                        <div className="form-section">
-                            <h2>Medische Informatie</h2>
-                            <div className="input-group">
-                                <label htmlFor="medicineInfo.diabetesType">Type Diabetes</label>
-                                <select id="medicineInfo.diabetesType" name="medicineInfo.diabetesType" value={formState.medicineInfo.diabetesType || ''} onChange={handleInputChange}>
-                                    <option value="">Niet opgegeven</option>
-                                    <option value="Type 1">Type 1</option>
-                                    <option value="Type 2">Type 2</option>
-                                    <option value="LADA">LADA</option>
-                                    <option value="MODY">MODY</option>
-                                    <option value="Zwangerschap">Zwangerschapsdiabetes</option>
-                                </select>
-                            </div>
-                            <div className="input-group">
-                                <label htmlFor="medicineInfo.longActingInsulin">Langwerkende Insuline</label>
-                                <input type="text" id="medicineInfo.longActingInsulin" name="medicineInfo.longActingInsulin" value={formState.medicineInfo.longActingInsulin || ''} onChange={handleInputChange} />
-                            </div>
-                            <div className="input-group">
-                                <label htmlFor="medicineInfo.shortActingInsulin">Kortwerkende Insuline</label>
-                                <input type="text" id="medicineInfo.shortActingInsulin" name="medicineInfo.shortActingInsulin" value={formState.medicineInfo.shortActingInsulin || ''} onChange={handleInputChange} />
-                            </div>
-                        </div>
-                    )}
+                    {/* --- Hulpmiddelen (Alleen-lezen) --- */}
+                    <div className="form-section read-only-section">
+                        <h2>Hulpmiddelen</h2>
+                        {formState.diabeticDevices && formState.diabeticDevices.length > 0 ? (
+                            <ul>
+                                {formState.diabeticDevices.map((device, index) => (
+                                    <li key={index}>{device.category}: {device.brand} {device.model}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>Geen hulpmiddelen geregistreerd.</p>
+                        )}
+                    </div>
+
+                    {/* --- Account Status (Alleen-lezen) --- */}
+                    <div className="form-section read-only-section">
+                        <h2>Account Status</h2>
+                        <p><strong>Rol:</strong> {formState.role}</p>
+                        <p><strong>E-mail Geverifieerd:</strong> {formState.flags?.emailVerified ? 'Ja' : 'Nee'}</p>
+                        <p><strong>Onboarding Voltooid:</strong> {formState.flags?.hasDetails ? 'Ja' : 'Nee'}</p>
+                    </div>
 
                     {success && <p className="form-message success">{success}</p>}
                     {error && <p className="form-message error">{error}</p>}
 
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? 'Bezig met opslaan...' : 'Gegevens Opslaan'}
+                    <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                        {isSubmitting ? 'Bezig met opslaan...' : 'Gegevens Opslaan'}
                     </button>
                 </form>
             </div>
