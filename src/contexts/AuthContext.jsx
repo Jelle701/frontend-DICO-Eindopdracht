@@ -5,11 +5,11 @@ const AuthContext = createContext(null);
 
 export function AuthContextProvider({ children }) {
     const [token, setToken] = useState(() => localStorage.getItem('token'));
-    const [user, setUser] = useState(null); // Initialiseer naar null
+    const [user, setUser] = useState(null);
     const [isAuth, setIsAuth] = useState(false);
-    const [loading, setLoading] = useState(true); // Initial loading state
+    const [loading, setLoading] = useState(true); // Start with loading true
 
-    // NIEUW: Log state changes in AuthContextProvider
+    // Log state changes for debugging
     useEffect(() => {
         console.log('AuthContextProvider: user changed to', user);
     }, [user]);
@@ -22,6 +22,7 @@ export function AuthContextProvider({ children }) {
         console.log('AuthContextProvider: isAuth changed to', isAuth);
     }, [isAuth]);
 
+    // Stable logout function
     const logout = useCallback(() => {
         console.log('AuthContextProvider: Performing logout.');
         localStorage.removeItem('token');
@@ -33,45 +34,58 @@ export function AuthContextProvider({ children }) {
         setLoading(false); // Ensure loading is false after logout
     }, []);
 
+    // Main effect for handling authentication logic
     useEffect(() => {
-        const initializeAuth = async () => {
-            // DE FIX: Voorkom redundante initialisatie als user al is gezet en isAuth true is.
-            // Dit voorkomt de race condition na setUserData.
-            if (user && isAuth) {
-                setLoading(false); // Zorg ervoor dat loading false is als we al geauthenticeerd zijn
-                return; 
-            }
+        let isMounted = true; // Flag to prevent state updates on unmounted component
+        console.log('AuthContextProvider: Auth effect is running. Token:', token);
 
-            if (token) { // Only proceed if a token exists
-                setLoading(true); // Set loading to true only when a token is present and we're fetching
+        const initializeAuth = async () => {
+            if (token) {
+                if (isMounted) setLoading(true);
                 try {
                     console.log('AuthContextProvider: Calling getMyProfile...');
                     const { data, error } = await getMyProfile();
+
+                    if (!isMounted) {
+                        console.log('AuthContextProvider: Component unmounted after getMyProfile, aborting state update.');
+                        return; // Abort if component is unmounted
+                    }
+
                     if (error) {
-                        console.log('AuthContextProvider: getMyProfile error, logging out.');
-                        logout(); // This will also set loading to false
+                        console.log('AuthContextProvider: getMyProfile error, logging out.', error);
+                        logout();
                     } else {
                         console.log('AuthContextProvider: getMyProfile success, setting user to:', data);
                         setUser(data);
                         setIsAuth(true);
                     }
                 } catch (err) {
-                    console.error("AuthContextProvider: Error fetching profile during initialization:", err);
-                    logout(); // Log out on error, which sets loading to false
+                    if (isMounted) {
+                        console.error("AuthContextProvider: Error fetching profile during initialization:", err);
+                        logout();
+                    }
                 } finally {
-                    // Ensure loading is false after the fetch operation
-                    setLoading(false);
+                    if (isMounted) {
+                        setLoading(false);
+                    }
                 }
             } else {
-                // If no token, we are not authenticated and not loading
+                // No token, so we are not authenticated.
                 console.log('AuthContextProvider: No token found, setting unauthenticated state.');
-                setLoading(false);
+                setUser(null);
                 setIsAuth(false);
-                setUser(null); // Ensure user is null if no token
+                setLoading(false);
             }
         };
+
         initializeAuth();
-    }, [token, logout, user, isAuth]); // Added user, isAuth to dependencies
+
+        // Cleanup function
+        return () => {
+            console.log('AuthContextProvider: Auth effect cleanup.');
+            isMounted = false;
+        };
+    }, [token, logout]); // Only depends on token and the stable logout function
 
     const login = useCallback((jwt) => {
         console.log('AuthContextProvider: Login called, setting token.');
@@ -79,12 +93,11 @@ export function AuthContextProvider({ children }) {
         setToken(jwt);
     }, []);
 
-    // Function to update user and loading state consistently from external calls (e.g., SelectRolePage)
     const setUserData = useCallback((profile) => {
         console.log('AuthContextProvider: setUserData called, setting user to:', profile);
         setUser(profile);
-        setIsAuth(true); // If we set user, they are authenticated
-        setLoading(false); // Ensure loading is false after setting user data
+        setIsAuth(true);
+        setLoading(false);
     }, []);
 
     const contextValue = useMemo(() => ({
@@ -94,7 +107,7 @@ export function AuthContextProvider({ children }) {
         loading,
         login,
         logout,
-        setUserData, // Exporteer de nieuwe functie
+        setUserData,
     }), [token, isAuth, user, loading, login, logout, setUserData]);
 
     return (
@@ -104,6 +117,7 @@ export function AuthContextProvider({ children }) {
     );
 }
 
+// Keep original hooks to avoid breaking other parts of the app
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -124,7 +138,7 @@ export const useUser = () => {
     }
     return {
         user: context.user,
-        setUserData: context.setUserData, // Exporteer de nieuwe functie
+        setUserData: context.setUserData,
         loading: context.loading,
     };
 };

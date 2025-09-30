@@ -17,13 +17,12 @@ const getInitialDateTime = () => {
 };
 
 function DashboardPage() {
-    const { user } = useUser();
+    const { user, loading: userLoading } = useUser(); // Get user and loading state
     const [glucoseData, setGlucoseData] = useState([]);
     const [rawMeasurements, setRawMeasurements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Correctly check for delegated view using the right sessionStorage keys
     const isDelegatedView = !!sessionStorage.getItem('delegatedToken');
     const patientUsername = sessionStorage.getItem('patientUsername');
 
@@ -62,7 +61,6 @@ function DashboardPage() {
     useEffect(() => {
         if (isDelegatedView || user) {
             fetchMeasurements();
-            // Only set up the interval for the patient's own view
             if (!isDelegatedView) {
                 const intervalId = setInterval(fetchMeasurements, 60000);
                 return () => clearInterval(intervalId);
@@ -91,7 +89,7 @@ function DashboardPage() {
         try {
             await addGlucoseMeasurement(payload);
             setFormSuccess('Meting succesvol opgeslagen!');
-            fetchMeasurements(); // Refresh data after adding
+            fetchMeasurements();
             setFormState({ value: '', ...getInitialDateTime() });
             setTimeout(() => setFormSuccess(''), 3000);
         } catch (addError) {
@@ -101,7 +99,7 @@ function DashboardPage() {
 
     const formatDate = (isoString) => new Date(isoString).toLocaleString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-    if (loading && !user && !isDelegatedView) {
+    if (userLoading) {
         return (
             <>
                 <Navbar />
@@ -115,7 +113,7 @@ function DashboardPage() {
             <Navbar />
             <div className="dashboard-page">
                 <header className="dashboard-header">
-                    <h1>{isDelegatedView ? `Dashboard van ${patientUsername}` : `Welkom terug, ${user?.username}!`}</h1>
+                    <h1>{isDelegatedView ? `Dashboard van ${patientUsername}` : `Welkom terug, ${user?.firstName || 'gebruiker'}!`}</h1>
                     <p>{isDelegatedView ? 'U bekijkt deze gegevens als zorgverlener of ouder/voogd.' : 'Hier is een overzicht van je recente activiteit en gegevens.'}</p>
                 </header>
 
@@ -168,15 +166,6 @@ function DashboardPage() {
                             ) : !loading && (<p>Geen metingen om weer te geven.</p>)}
                         </div>
                     </div>
-
-                    <aside className="widgets-container">
-                        {!isDelegatedView && user && (
-                             <div className="widget-card">
-                                <h3>Accountbeheer</h3>
-                                <Link to="/access-code-management" className="management-link">Toegang voor zorgverleners beheren</Link>
-                            </div>
-                        )}
-                    </aside>
                 </main>
             </div>
         </>

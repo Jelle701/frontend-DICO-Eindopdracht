@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getLinkedPatients, linkPatientToProvider, getDelegatedTokenForPatient } from '../../services/ProviderService';
+import { getLinkedPatients, linkPatientToProvider } from '../../services/ProviderService';
 import Navbar from '../../components/Navbar.jsx';
 import './PatientPortal.css';
 
 function PatientPortal() {
     const [patients, setPatients] = useState([]);
+    const [selectedPatient, setSelectedPatient] = useState(null); // NIEUW: Houdt de geselecteerde patiënt bij
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showAddPatientModal, setShowAddPatientModal] = useState(false);
     const [newPatientCode, setNewPatientCode] = useState('');
-    const navigate = useNavigate();
 
     const fetchPatients = useCallback(async () => {
-        console.log('%cPatientPortal: Fetching patients...', 'color: blue;');
         setLoading(true);
         setError('');
         try {
             const { data, error: apiError } = await getLinkedPatients();
             if (apiError) throw apiError;
-            console.log('%cPatientPortal: Patients fetched successfully:', 'color: green;', data);
             setPatients(data || []);
+            // Selecteer de eerste patiënt in de lijst als die er is
+            if (data && data.length > 0) {
+                setSelectedPatient(data[0]);
+            }
         } catch (err) {
-            console.error('PatientPortal: Error fetching patients:', err);
             setError(err.message || 'Fout bij het ophalen van patiënten.');
         } finally {
             setLoading(false);
@@ -35,76 +35,74 @@ function PatientPortal() {
 
     const handleAddPatient = async (e) => {
         e.preventDefault();
-        console.log(`%cPatientPortal: Attempting to link patient with code: ${newPatientCode}`, 'color: blue;');
         setError('');
         try {
             const { error: apiError } = await linkPatientToProvider(newPatientCode);
             if (apiError) throw apiError;
             
-            console.log('%cPatientPortal: Patient linked successfully. Refreshing patient list...', 'color: green;');
             await fetchPatients();
             setShowAddPatientModal(false);
             setNewPatientCode('');
         } catch (err) {
-            console.error('PatientPortal: Error linking patient:', err);
             setError(err.message || 'Kan patiënt niet toevoegen. Controleer de code.');
-        }
-    };
-
-    const handleViewDashboard = async (patientId, patientUsername) => {
-        console.log(`%cPatientPortal: Attempting to get delegated token for patientId: ${patientId}`, 'color: blue;');
-        try {
-            const { data, error: apiError } = await getDelegatedTokenForPatient(patientId);
-            if (apiError) throw apiError;
-
-            const { delegatedToken } = data;
-            console.log('%cPatientPortal: Delegated token received:', 'color: green;', delegatedToken);
-
-            sessionStorage.setItem('delegatedToken', delegatedToken);
-            sessionStorage.setItem('patientUsername', patientUsername);
-
-            console.log('PatientPortal: Navigating to /dashboard...');
-            navigate('/dashboard');
-        } catch (err) {
-            console.error('PatientPortal: Error getting delegated token:', err);
-            setError(err.message || 'Kon geen toegang krijgen tot het dashboard van de patiënt.');
         }
     };
 
     return (
         <>
             <Navbar />
-            <div className="patient-portal-container">
-                <header className="portal-header">
-                    <h1>Zorgverlenersportaal</h1>
-                    <p>Beheer hier uw gekoppelde patiënten.</p>
-                    <button onClick={() => setShowAddPatientModal(true)} className="btn btn-primary">
-                        + Nieuwe Patiënt Koppelen
-                    </button>
-                </header>
+            <div className="patient-portal-container master-detail-layout">
+                {/* --- Master View: Patiëntenlijst --- */}
+                <aside className="patient-list-sidebar">
+                    <header className="sidebar-header">
+                        <h2>Gekoppelde Patiënten</h2>
+                        <button onClick={() => setShowAddPatientModal(true)} className="btn btn-primary btn-sm">
+                            + Koppelen
+                        </button>
+                    </header>
+                    
+                    {loading && <p>Laden...</p>}
+                    {error && !showAddPatientModal && <p className="error-message">{error}</p>}
 
-                {loading && <p>Patiëntenlijst wordt geladen...</p>}
-                {error && !showAddPatientModal && <p className="error-message">{error}</p>}
-
-                <div className="patient-grid">
-                    {!loading && patients.length > 0 ? (
-                        patients.map(patient => (
-                            <div key={patient.id} className="patient-card">
-                                <h3>{patient.firstName} {patient.lastName}</h3>
-                                <p>Email: {patient.email}</p>
-                                <button 
-                                    onClick={() => handleViewDashboard(patient.id, `${patient.firstName} ${patient.lastName}`)} 
-                                    className="btn btn-secondary"
-                                >
-                                    Bekijk Dashboard
-                                </button>
+                    <div className="patient-list-items">
+                        {!loading && patients.map(patient => (
+                            <div 
+                                key={patient.id}
+                                className={`patient-list-item ${selectedPatient?.id === patient.id ? 'active' : ''}`}
+                                onClick={() => setSelectedPatient(patient)}
+                            >
+                                <span>{patient.firstName} {patient.lastName}</span>
                             </div>
-                        ))
-                    ) : (
-                        !loading && <p>U heeft nog geen patiënten gekoppeld.</p>
-                    )}
-                </div>
+                        ))}
+                        {!loading && patients.length === 0 && <p>Geen patiënten gekoppeld.</p>}
+                    </div>
+                </aside>
 
+                {/* --- Detail View: Patiëntgegevens --- */}
+                <main className="patient-detail-content">
+                    {selectedPatient ? (
+                        <>
+                            <header className="detail-header">
+                                <h1>{selectedPatient.firstName} {selectedPatient.lastName}</h1>
+                                <p>Persoonlijke en medische gegevens</p>
+                            </header>
+                            <div className="details-grid">
+                                <div className="detail-item"><strong>Email:</strong> {selectedPatient.email}</div>
+                                <div className="detail-item"><strong>Geboortedatum:</strong> {selectedPatient.dateOfBirth ? new Date(selectedPatient.dateOfBirth).toLocaleDateString('nl-NL') : 'N/A'}</div>
+                                <div className="detail-item"><strong>Geslacht:</strong> {selectedPatient.gender || 'N/A'}</div>
+                                <div className="detail-item"><strong>Diabetes Type:</strong> {selectedPatient.diabetesType || 'N/A'}</div>
+                                <div className="detail-item"><strong>Lengte:</strong> {selectedPatient.height ? `${selectedPatient.height} cm` : 'N/A'}</div>
+                                <div className="detail-item"><strong>Gewicht:</strong> {selectedPatient.weight ? `${selectedPatient.weight} kg` : 'N/A'}</div>
+                                <div className="detail-item"><strong>Langwerkende Insuline:</strong> {selectedPatient.longActingInsulin || 'N/A'}</div>
+                                <div className="detail-item"><strong>Kortwerkende Insuline:</strong> {selectedPatient.shortActingInsulin || 'N/A'}</div>
+                            </div>
+                        </>
+                    ) : (
+                        !loading && <p>Selecteer een patiënt uit de lijst om de gegevens te bekijken.</p>
+                    )}
+                </main>
+
+                {/* Modal voor het toevoegen van een nieuwe patiënt */}
                 {showAddPatientModal && (
                     <div className="modal-overlay">
                         <div className="modal-content">

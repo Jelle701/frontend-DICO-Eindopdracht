@@ -48,13 +48,17 @@ function SelectRolePage() {
         try {
             const payload = { role: selectedRole };
 
-            // DIAGNOSTISCHE LOG: Toon de exacte payload die naar de backend wordt gestuurd.
-            console.log('Submitting payload to updateUserProfile:', JSON.stringify(payload, null, 2));
+            // --- DIAGNOSTISCHE LOG ---
+            // Dit is de cruciale stap om te bewijzen wat de frontend verstuurt.
+            console.log('--- Submitting to /api/profile/details ---');
+            console.log(JSON.stringify(payload, null, 2));
+            console.log('----------------------------------------');
 
             const { data: updatedProfile, error: apiError } = await updateUserProfile(payload);
 
-            // NIEUW: Log de waarde van updatedProfile voordat setUserData wordt aangeroepen
-            console.log('SelectRolePage: Received updatedProfile:', updatedProfile);
+            if (apiError) {
+                throw apiError;
+            }
 
             setUserData(updatedProfile);
             updateOnboardingData({ role: selectedRole });

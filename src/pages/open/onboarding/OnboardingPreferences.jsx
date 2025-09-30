@@ -8,15 +8,15 @@ function OnboardingPreferences() {
     const navigate = useNavigate();
     const { onboardingData, updateOnboardingData } = useOnboarding();
     const [formData, setFormData] = useState({
-        // VERWIJDERD: eenheid is verplaatst
-        firstName: onboardingData.preferences?.firstName || '', // NIEUW
-        lastName: onboardingData.preferences?.lastName || '',   // NIEUW
+        firstName: onboardingData.preferences?.firstName || '',
+        lastName: onboardingData.preferences?.lastName || '',
         geslacht: onboardingData.preferences?.geslacht || '',
         gewicht: onboardingData.preferences?.gewicht || '',
         lengte: onboardingData.preferences?.lengte || '',
         dateOfBirth: onboardingData.preferences?.dateOfBirth || ''
     });
     const [bmi, setBmi] = useState(null);
+    const [error, setError] = useState(''); // State for validation errors
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,6 +36,22 @@ function OnboardingPreferences() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setError(''); // Clear previous errors
+
+        // --- JavaScript Validation ---
+        const gewichtNum = parseFloat(formData.gewicht);
+        const lengteNum = parseFloat(formData.lengte);
+
+        if (gewichtNum < 20 || gewichtNum > 250) {
+            setError('Gewicht moet tussen 20 en 250 kg zijn.');
+            return;
+        }
+
+        if (lengteNum < 50 || lengteNum > 300) {
+            setError('Lengte moet tussen 50 en 300 cm zijn.');
+            return;
+        }
+
         updateOnboardingData({ preferences: formData });
         navigate('/onboarding/medicine');
     };
@@ -49,7 +65,6 @@ function OnboardingPreferences() {
                         <h1>Persoonlijke Gegevens</h1>
                         <p>Deze gegevens helpen ons om de informatie beter op uw situatie af te stemmen.</p>
 
-                        {/* NIEUWE VELDEN */}
                         <div className="input-group">
                             <label htmlFor="firstName">Voornaam</label>
                             <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="bv. Jan" />
@@ -64,8 +79,6 @@ function OnboardingPreferences() {
                             <input type="date" id="dateOfBirth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required />
                         </div>
 
-                        {/* VERWIJDERD: Eenheid voor glucosemeting */}
-
                         <div className="input-group">
                             <label htmlFor="geslacht">Geslacht</label>
                             <select id="geslacht" name="geslacht" value={formData.geslacht} onChange={handleChange} required>
@@ -78,15 +91,16 @@ function OnboardingPreferences() {
                         </div>
                         <div className="input-group">
                             <label htmlFor="gewicht">Gewicht (kg)</label>
-                            <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required placeholder="bv. 75" />
+                            <input type="number" id="gewicht" name="gewicht" value={formData.gewicht} onChange={handleChange} required placeholder="bv. 75" min="20" max="250" />
                         </div>
                         <div className="input-group">
                             <label htmlFor="lengte">Lengte (cm)</label>
-                            <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required placeholder="bv. 180" />
+                            <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required placeholder="bv. 180" min="50" max="300" />
                         </div>
 
                         {bmi && <p style={{textAlign: 'center', marginTop: 'calc(-1 * var(--space-5))'}}>Je berekende BMI is: <strong>{bmi}</strong></p>}
                         
+                        {error && <p className="error-message">{error}</p>} 
                         <button type="submit" className="btn btn--primary form-action-button">Volgende stap</button>
                     </form>
                 </div>
