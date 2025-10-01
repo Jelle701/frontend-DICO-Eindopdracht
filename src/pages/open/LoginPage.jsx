@@ -19,25 +19,35 @@ function LoginPage() {
 
     useEffect(() => {
         if (isAuth && user) {
+            console.log('[LoginPage] User authenticated, determining redirect...', user);
             if (user.role) {
                 switch (user.role) {
+                    case 'ADMIN':
+                        console.log('[LoginPage] Admin user detected, redirecting to /admin/dashboard');
+                        navigate('/admin/dashboard');
+                        break;
                     case 'PATIENT':
+                        console.log('[LoginPage] Patient user detected, redirecting to /dashboard');
                         navigate('/dashboard');
                         break;
                     case 'GUARDIAN':
-                        navigate('/guardian-dashboard');
+                        console.log('[LoginPage] Guardian user detected, redirecting to /onboarding/link-patient');
+                        navigate('/onboarding/link-patient'); // Corrected route for Guardian
                         break;
                     case 'PROVIDER':
-                        navigate('/provider-dashboard'); // AANGEPAST
+                        console.log('[LoginPage] Provider user detected, redirecting to /provider-dashboard');
+                        navigate('/provider-dashboard');
                         break;
                     default:
+                        console.log(`[LoginPage] Unknown role ${user.role}, redirecting to /`);
                         navigate('/');
                 }
             } else {
+                console.log('[LoginPage] User has no role, redirecting to onboarding');
                 navigate('/onboarding/role');
             }
         } else if (isAuth && user === null) {
-            // Wacht op user data
+            console.log('[LoginPage] Auth is ready, but user object is pending...');
         }
     }, [isAuth, user, navigate]);
 

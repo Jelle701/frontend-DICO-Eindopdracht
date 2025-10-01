@@ -9,32 +9,40 @@ const AccessCodeManagementPage = () => {
     const [copySuccess, setCopySuccess] = useState('');
 
     const fetchAccessCode = async () => {
+        console.log('fetchAccessCode: Start');
         setLoading(true);
         setError('');
         try {
             // CORRECTIE: De overbodige /api is hier verwijderd.
             const response = await apiClient.get('/patient/access-code');
+            console.log('fetchAccessCode: Success', response);
             setAccessCode(response.data.accessCode);
         } catch (err) {
+            console.error('fetchAccessCode: Error', err);
             // Don't show an error if the code just doesn't exist yet (404)
             if (err.response && err.response.status !== 404) {
                 setError('Fout bij het ophalen van de toegangscode.');
             }
         } finally {
+            console.log('fetchAccessCode: Finally');
             setLoading(false);
         }
     };
 
     const generateAccessCode = async () => {
+        console.log('generateAccessCode: Start');
         setLoading(true);
         setError('');
         try {
             // CORRECTIE: De overbodige /api is hier verwijderd.
             const response = await apiClient.post('/patient/access-code/generate');
+            console.log('generateAccessCode: Success', response);
             setAccessCode(response.data.accessCode);
         } catch (err) {
+            console.error('generateAccessCode: Error', err);
             setError('Fout bij het genereren van de code. Probeer het later opnieuw.');
         } finally {
+            console.log('generateAccessCode: Finally');
             setLoading(false);
         }
     };

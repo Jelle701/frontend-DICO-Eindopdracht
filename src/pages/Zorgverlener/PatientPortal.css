@@ -1,121 +1,169 @@
-/* src/pages/Zorgverlener/PatientPortal.css */
+/*
+ * Patient Portal Styling based on WHOOP Style Guide
+ */
 
-/* --- NIEUW: Master-Detail Layout --- */
-.master-detail-layout {
-    display: flex;
-    height: calc(100vh - 60px); /* Volledige hoogte minus de navbar */
+.patient-portal-container {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Sidebar and main content */
+    height: calc(100vh - 80px); /* Full height minus navbar */
+    background: linear-gradient(180deg, var(--gradient-bg-start), var(--gradient-bg-end));
+    color: var(--color-white);
 }
 
-/* --- Master View: Patiëntenlijst Zijbalk --- */
+/* --- Master View: Sidebar --- */
 .patient-list-sidebar {
-    width: 320px;
-    flex-shrink: 0;
-    background-color: var(--color-card-background);
-    border-right: 1px solid var(--color-border);
+    background-color: rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    gap: var(--space-5);
 }
 
 .sidebar-header {
-    padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .sidebar-header h2 {
-    font-size: var(--font-size-lg);
+    font-size: 18px;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .patient-list-items {
-    overflow-y: auto;
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 
 .patient-list-item {
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
     cursor: pointer;
-    border-bottom: 1px solid var(--color-border-light);
+    font-weight: 600;
+    color: var(--gray-100);
     transition: background-color 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .patient-list-item:hover {
-    background-color: var(--color-background-hover);
+    background-color: rgba(255, 255, 255, var(--op-8));
 }
 
 .patient-list-item.active {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary-dark);
-    font-weight: var(--font-weight-bold);
+    background-color: var(--color-teal);
+    color: #07261C; /* Dark text for contrast on teal */
+    font-weight: 700;
+    border-color: var(--color-teal);
 }
 
-/* --- Detail View: Patiëntgegevens --- */
-.patient-detail-content {
-    flex-grow: 1;
-    padding: var(--space-7);
+/* --- Detail View: Main Content --- */
+.patient-detail-content.card {
+    margin: var(--space-6);
+    padding: var(--space-6);
+    background: rgba(36, 43, 51, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
     overflow-y: auto;
 }
 
-.detail-header {
-    margin-bottom: var(--space-6);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--color-border);
-}
-
 .detail-header h1 {
-    font-size: var(--font-size-h2);
-    margin-bottom: var(--space-2);
-}
-
-.detail-header p {
-    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-5) 0;
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .details-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--space-5);
 }
 
 .detail-item {
-    background-color: var(--color-card-background);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    background: rgba(0,0,0,0.1);
     padding: var(--space-4);
-    border-radius: var(--border-radius-md);
-    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+}
+
+.detail-item span {
+    font-size: 12px;
+    color: var(--gray-200);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .detail-item strong {
-    display: block;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    margin-bottom: var(--space-2);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-white);
 }
 
-/* --- Modal Styling (blijft grotendeels hetzelfde) --- */
+.no-patient-selected {
+    text-align: center;
+    margin-top: 20%;
+}
+.no-patient-selected h2 {
+    color: var(--gray-100);
+}
+.no-patient-selected p {
+    color: var(--gray-300);
+}
+
+/* --- Modal Styling --- */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
 }
 
-.modal-content {
-    background-color: var(--color-background);
-    padding: var(--space-7);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-xl);
-    max-width: 500px;
+.modal-content.card {
     width: 90%;
-    text-align: center;
+    max-width: 500px;
+    background: var(--gray-700);
+    border: 1px solid var(--gray-500);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+.modal-content .form-group {
+    margin-bottom: var(--space-5);
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+.modal-content input {
+    width: 100%;
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-500);
+    background: var(--gray-800);
+    color: var(--color-white);
+    font-size: 16px;
 }
 
 .modal-actions {
@@ -123,8 +171,4 @@
     justify-content: flex-end;
     gap: var(--space-3);
     margin-top: var(--space-6);
-}
-
-.error-message {
-    color: var(--color-error);
 }

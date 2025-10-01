@@ -29,52 +29,56 @@ function PrivateRoute() {
         return <div>Gebruikersprofiel ophalen...</div>;
     }
 
+    // --- Main Navigation Logic ---
+
+    // NEW: If user is ADMIN, bypass all onboarding and standard role checks.
+    if (user.role === 'ADMIN') {
+        return <Outlet />;
+    }
+
     const isFullyOnboarded = user?.flags?.hasDetails;
     const currentPath = location.pathname;
     const isTryingToAccessOnboarding = ONBOARDING_ROUTES.includes(currentPath);
 
-    // --- DE FIX: Centrale navigatielogica voor ingelogde gebruikers ---
-
-    // Bepaal de standaard startpagina op basis van de rol.
-    let intendedStartPath = '/';
-    switch (user.role) {
-        case 'PATIENT':
-            intendedStartPath = '/dashboard';
-            break;
-        case 'GUARDIAN':
-            intendedStartPath = '/guardian-dashboard';
-            break;
-        case 'PROVIDER':
-            intendedStartPath = '/provider-dashboard'; // DE FIX
-            break;
-        default:
-            intendedStartPath = '/';
-    }
-
-    // Scenario 1: Gebruiker is NIET volledig onboarded.
+    // 1. User is NOT fully onboarded
     if (!isFullyOnboarded) {
+        // If they are not on an onboarding route, force them to the first step.
         if (!isTryingToAccessOnboarding) {
             return <Navigate to={FIRST_ONBOARDING_STEP} replace />;
         }
+        // Otherwise, allow access to the current onboarding page.
         return <Outlet />;
     }
 
-    // Scenario 2: Gebruiker is WEL volledig onboarded.
-    if (isTryingToAccessOnboarding) {
-        return <Navigate to={intendedStartPath} replace />;
+    // 2. User IS fully onboarded
+    if (isFullyOnboarded) {
+        // EXCEPTION FOR GUARDIAN: A Guardian's main task is to link a patient.
+        // If they are a Guardian, their primary destination should be the link page.
+        if (user.role === 'GUARDIAN') {
+            if (currentPath !== '/onboarding/link-patient') {
+                return <Navigate to="/onboarding/link-patient" replace />;
+            }
+            return <Outlet />;
+        }
+
+        // For all OTHER onboarded users (e.g., PATIENT, PROVIDER):
+        // If they try to access any onboarding page, redirect them to their final destination.
+        if (isTryingToAccessOnboarding) {
+            let intendedStartPath = user.role === 'PATIENT' ? '/dashboard' : '/provider-dashboard';
+            return <Navigate to={intendedStartPath} replace />;
+        }
     }
 
-    // Zorgverleners mogen niet op het patiëntendashboard zijn.
+    // 3. Role-based access control for non-onboarding pages
     if (user.role === 'PROVIDER' && currentPath === '/dashboard') {
-         return <Navigate to={intendedStartPath} replace />;
+         return <Navigate to="/provider-dashboard" replace />;
     }
     
-    // Patiënten mogen niet op zorgverlenerpaginas zijn.
     if (user.role === 'PATIENT' && (currentPath === '/provider-dashboard' || currentPath === '/patient-portal')) {
-         return <Navigate to={intendedStartPath} replace />;
+         return <Navigate to="/dashboard" replace />;
     }
 
-    // In alle andere gevallen voor een volledig onboarded gebruiker, geef toegang.
+    // If no other rules apply, render the requested page.
     return <Outlet />;
 }
 

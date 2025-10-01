@@ -5,7 +5,7 @@ import './PatientPortal.css';
 
 function PatientPortal() {
     const [patients, setPatients] = useState([]);
-    const [selectedPatient, setSelectedPatient] = useState(null); // NIEUW: Houdt de geselecteerde patiënt bij
+    const [selectedPatient, setSelectedPatient] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showAddPatientModal, setShowAddPatientModal] = useState(false);
@@ -18,7 +18,6 @@ function PatientPortal() {
             const { data, error: apiError } = await getLinkedPatients();
             if (apiError) throw apiError;
             setPatients(data || []);
-            // Selecteer de eerste patiënt in de lijst als die er is
             if (data && data.length > 0) {
                 setSelectedPatient(data[0]);
             }
@@ -51,12 +50,11 @@ function PatientPortal() {
     return (
         <>
             <Navbar />
-            <div className="patient-portal-container master-detail-layout">
-                {/* --- Master View: Patiëntenlijst --- */}
+            <div className="patient-portal-container page--dark">
                 <aside className="patient-list-sidebar">
                     <header className="sidebar-header">
-                        <h2>Gekoppelde Patiënten</h2>
-                        <button onClick={() => setShowAddPatientModal(true)} className="btn btn-primary btn-sm">
+                        <h2>Patiënten</h2>
+                        <button onClick={() => setShowAddPatientModal(true)} className="btn btn--ghost">
                             + Koppelen
                         </button>
                     </header>
@@ -78,54 +76,51 @@ function PatientPortal() {
                     </div>
                 </aside>
 
-                {/* --- Detail View: Patiëntgegevens --- */}
-                <main className="patient-detail-content">
+                <main className="patient-detail-content card">
                     {selectedPatient ? (
                         <>
                             <header className="detail-header">
                                 <h1>{selectedPatient.firstName} {selectedPatient.lastName}</h1>
-                                <p>Persoonlijke en medische gegevens</p>
                             </header>
                             <div className="details-grid">
-                                <div className="detail-item"><strong>Email:</strong> {selectedPatient.email}</div>
-                                <div className="detail-item"><strong>Geboortedatum:</strong> {selectedPatient.dateOfBirth ? new Date(selectedPatient.dateOfBirth).toLocaleDateString('nl-NL') : 'N/A'}</div>
-                                <div className="detail-item"><strong>Geslacht:</strong> {selectedPatient.gender || 'N/A'}</div>
-                                <div className="detail-item"><strong>Diabetes Type:</strong> {selectedPatient.diabetesType || 'N/A'}</div>
-                                <div className="detail-item"><strong>Lengte:</strong> {selectedPatient.height ? `${selectedPatient.height} cm` : 'N/A'}</div>
-                                <div className="detail-item"><strong>Gewicht:</strong> {selectedPatient.weight ? `${selectedPatient.weight} kg` : 'N/A'}</div>
-                                <div className="detail-item"><strong>Langwerkende Insuline:</strong> {selectedPatient.longActingInsulin || 'N/A'}</div>
-                                <div className="detail-item"><strong>Kortwerkende Insuline:</strong> {selectedPatient.shortActingInsulin || 'N/A'}</div>
+                                <div className="detail-item"><span>Email</span><strong>{selectedPatient.email}</strong></div>
+                                <div className="detail-item"><span>Geboortedatum</span><strong>{selectedPatient.dateOfBirth ? new Date(selectedPatient.dateOfBirth).toLocaleDateString('nl-NL') : 'N/A'}</strong></div>
+                                <div className="detail-item"><span>Geslacht</span><strong>{selectedPatient.gender || 'N/A'}</strong></div>
+                                <div className="detail-item"><span>Diabetes Type</span><strong>{selectedPatient.diabetesType || 'N/A'}</strong></div>
+                                <div className="detail-item"><span>Lengte</span><strong>{selectedPatient.height ? `${selectedPatient.height} cm` : 'N/A'}</strong></div>
+                                <div className="detail-item"><span>Gewicht</span><strong>{selectedPatient.weight ? `${selectedPatient.weight} kg` : 'N/A'}</strong></div>
+                                <div className="detail-item"><span>Langwerkende Insuline</span><strong>{selectedPatient.longActingInsulin || 'N/A'}</strong></div>
+                                <div className="detail-item"><span>Kortwerkende Insuline</span><strong>{selectedPatient.shortActingInsulin || 'N/A'}</strong></div>
                             </div>
                         </>
                     ) : (
-                        !loading && <p>Selecteer een patiënt uit de lijst om de gegevens te bekijken.</p>
+                        !loading && <div className="no-patient-selected"><h2>Selecteer een patiënt</h2><p>Klik op een naam in de lijst om de details te bekijken.</p></div>
                     )}
                 </main>
 
-                {/* Modal voor het toevoegen van een nieuwe patiënt */}
                 {showAddPatientModal && (
                     <div className="modal-overlay">
-                        <div className="modal-content">
+                        <div className="modal-content card">
                             <h2>Nieuwe Patiënt Koppelen</h2>
                             <form onSubmit={handleAddPatient}>
                                 <p>Voer de unieke toegangscode in die u van de patiënt heeft ontvangen.</p>
                                 <div className="form-group">
-                                    <label htmlFor="patient-code">Toegangscode van Patiënt</label>
+                                    <label htmlFor="patient-code">Toegangscode</label>
                                     <input
                                         id="patient-code"
                                         type="text"
                                         value={newPatientCode}
                                         onChange={(e) => setNewPatientCode(e.target.value)}
-                                        placeholder="bv. A7B-X9C-F4G"
+                                        placeholder="bv. ABC-123-XYZ"
                                         required
                                     />
                                 </div>
                                 {error && <p className="error-message">{error}</p>}
                                 <div className="modal-actions">
-                                    <button type="button" onClick={() => { setShowAddPatientModal(false); setError(''); }} className="btn btn-secondary">
+                                    <button type="button" onClick={() => { setShowAddPatientModal(false); setError(''); }} className="btn">
                                         Annuleren
                                     </button>
-                                    <button type="submit" className="btn btn-primary">
+                                    <button type="submit" className="btn btn--primary">
                                         Koppel Patiënt
                                     </button>
                                 </div>

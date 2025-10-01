@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateUserProfile } from '../../../services/ProfileService';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
@@ -12,32 +12,13 @@ function SelectRolePage() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { updateOnboardingData } = useOnboarding();
-    const { user, setUserData, loading: userLoading } = useUser();
-
-    const [shouldNavigate, setShouldNavigate] = useState(false);
-
-    useEffect(() => {
-        if (shouldNavigate && user && user.role === selectedRole && !userLoading) {
-            switch (selectedRole) {
-                case 'PATIENT':
-                    navigate('/onboarding/preferences');
-                    break;
-                case 'GUARDIAN':
-                    navigate('/onboarding/link-patient');
-                    break;
-                case 'PROVIDER':
-                    navigate('/provider-dashboard');
-                    break;
-                default:
-                    setError('Ongeldige rol geselecteerd na update.');
-                    setShouldNavigate(false);
-            }
-        }
-    }, [shouldNavigate, user, selectedRole, navigate, userLoading]);
+    const { setUserData } = useUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('[SelectRolePage] handleSubmit aangeroepen');
         if (!selectedRole) {
+            console.warn('[SelectRolePage] Geen rol geselecteerd');
             setError('Kies een rol om verder te gaan.');
             return;
         }
@@ -47,22 +28,42 @@ function SelectRolePage() {
 
         try {
             const payload = { role: selectedRole };
-
-            // --- DIAGNOSTISCHE LOG ---
-            // Dit is de cruciale stap om te bewijzen wat de frontend verstuurt.
-            console.log('--- Submitting to /api/profile/details ---');
-            console.log(JSON.stringify(payload, null, 2));
-            console.log('----------------------------------------');
-
+            console.log('[SelectRolePage] Payload voor updateUserProfile:', payload);
             const { data: updatedProfile, error: apiError } = await updateUserProfile(payload);
 
             if (apiError) {
+                console.error('[SelectRolePage] Fout bij updateUserProfile API call:', apiError);
                 throw apiError;
             }
 
+            console.log('[SelectRolePage] updateUserProfile succesvol. Response:', updatedProfile);
+
+            // Update contexts
+            console.log('[SelectRolePage] Contexts updaten...');
             setUserData(updatedProfile);
             updateOnboardingData({ role: selectedRole });
-            setShouldNavigate(true);
+            console.log(`[SelectRolePage] Onboarding context geüpdatet met rol: ${selectedRole}`);
+
+            // Direct navigation
+            console.log(`[SelectRolePage] Navigeren op basis van rol: ${selectedRole}`);
+            switch (selectedRole) {
+                case 'PATIENT':
+                    console.log('[SelectRolePage] Navigeren naar /onboarding/preferences');
+                    navigate('/onboarding/preferences');
+                    break;
+                case 'GUARDIAN':
+                    console.log('[SelectRolePage] Navigeren naar /onboarding/link-patient');
+                    navigate('/onboarding/link-patient');
+                    break;
+                case 'PROVIDER':
+                    console.log('[SelectRolePage] Navigeren naar /provider-dashboard');
+                    navigate('/provider-dashboard');
+                    break;
+                default:
+                    console.error('[SelectRolePage] Ongeldige rol geselecteerd, kan niet navigeren.');
+                    setError('Ongeldige rol geselecteerd, kan niet navigeren.');
+                    setLoading(false);
+            }
 
         } catch (apiError) {
             setError(apiError.message || 'Er is een fout opgetreden bij het opslaan van uw rol.');
@@ -85,8 +86,9 @@ function SelectRolePage() {
                                 id="role-select"
                                 value={selectedRole}
                                 onChange={(e) => {
+                                    console.log(`[SelectRolePage] Rol geselecteerd: ${e.target.value}`);
                                     setSelectedRole(e.target.value);
-                                    setError(''); // Reset error when role changes
+                                    setError('');
                                 }}
                                 required
                             >

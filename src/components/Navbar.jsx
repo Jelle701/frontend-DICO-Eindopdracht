@@ -1,20 +1,21 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth, useUser } from '../contexts/AuthContext.jsx'; // Importeer useUser
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'; // Importeer Link
+import { useAuth, useUser } from '../contexts/AuthContext.jsx';
 import DicoLogo from '../assets/react.svg';
 import './Navbar.css';
 
 function Navbar() {
     const { isAuth, logout } = useAuth();
-    const { user } = useUser(); // Haal de gebruiker op om de rol te bepalen
+    const { user } = useUser();
     const navigate = useNavigate();
+    const location = useLocation(); // Gebruik de location hook
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
 
-    // Bepaal het juiste dashboard pad op basis van de rol
+    const isAdmin = user?.role === 'ADMIN';
     const isProvider = user?.role === 'PROVIDER';
-    const dashboardPath = isProvider ? '/provider-dashboard' : '/dashboard';
+    const dashboardPath = isAdmin ? '/admin-dashboard' : isProvider ? '/provider-dashboard' : '/dashboard';
 
     const handleLogout = () => {
         logout();
@@ -37,6 +38,10 @@ function Navbar() {
     }, [menuRef]);
 
     const closeMenu = () => setMenuOpen(false);
+
+    // Bepaal de classNames voor de admin links handmatig op basis van de volledige URL
+    const dashboardLinkClass = `nav-link ${location.pathname === '/admin-dashboard' && (location.hash === '' || location.hash === '#dashboard') ? 'active' : ''}`;
+    const managementLinkClass = `nav-link ${location.pathname === '/admin-dashboard' && location.hash === '#management' ? 'active' : ''}`;
 
     return (
         <nav className="navbar" ref={menuRef}>
@@ -61,17 +66,24 @@ function Navbar() {
                 <ul className="nav-menu-desktop">
                     {isAuth ? (
                         <>
-                            <li><NavLink to={dashboardPath} className="nav-link">Dashboard</NavLink></li>
-                            
-                            {/* NIEUW: Link naar patiëntenbeheer voor zorgverleners */}
-                            {isProvider && (
-                                <li><NavLink to="/patient-portal" className="nav-link">Patiënten Beheren</NavLink></li>
+                            {isAdmin ? (
+                                <>
+                                    <li><Link to="/admin-dashboard#dashboard" className={dashboardLinkClass}>Dashboard</Link></li>
+                                    <li><Link to="/admin-dashboard#management" className={managementLinkClass}>Gebruikersbeheer</Link></li>
+                                </> 
+                            ) : (
+                                // Voor andere rollen gebruiken we NavLink zoals voorheen
+                                <li><NavLink to={dashboardPath} className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Dashboard</NavLink></li>
                             )}
 
-                            {!isProvider && (
+                            {isProvider && !isAdmin && (
+                                <li><NavLink to="/patient-portal" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Patiënten Beheren</NavLink></li>
+                            )}
+
+                            {!isProvider && !isAdmin && (
                                 <>
-                                    <li><NavLink to="/my-data" className="nav-link">Mijn Gegevens</NavLink></li>
-                                    <li><NavLink to="/service-hub" className="nav-link">Services</NavLink></li>
+                                    <li><NavLink to="/my-data" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Mijn Gegevens</NavLink></li>
+                                    <li><NavLink to="/service-hub" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Services</NavLink></li>
                                 </>
                             )}
                             
@@ -88,17 +100,23 @@ function Navbar() {
                 {isAuth && menuOpen && (
                     <div className="nav-menu-mobile">
                         <ul>
-                            <li><NavLink to={dashboardPath} className="nav-link" onClick={closeMenu}>Dashboard</NavLink></li>
-
-                            {/* NIEUW: Link naar patiëntenbeheer voor zorgverleners */}
-                            {isProvider && (
-                                <li><NavLink to="/patient-portal" className="nav-link" onClick={closeMenu}>Patiënten Beheren</NavLink></li>
+                            {isAdmin ? (
+                                <>
+                                    <li><Link to="/admin-dashboard#dashboard" className={dashboardLinkClass} onClick={closeMenu}>Dashboard</Link></li>
+                                    <li><Link to="/admin-dashboard#management" className={managementLinkClass} onClick={closeMenu}>Gebruikersbeheer</Link></li>
+                                </>
+                            ) : (
+                                <li><NavLink to={dashboardPath} className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Dashboard</NavLink></li>
                             )}
 
-                            {!isProvider && (
+                            {isProvider && !isAdmin && (
+                                <li><NavLink to="/patient-portal" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Patiënten Beheren</NavLink></li>
+                            )}
+
+                            {!isProvider && !isAdmin && (
                                 <>
-                                    <li><NavLink to="/my-data" className="nav-link" onClick={closeMenu}>Mijn Gegevens</NavLink></li>
-                                    <li><NavLink to="/service-hub" className="nav-link" onClick={closeMenu}>Services</NavLink></li>
+                                    <li><NavLink to="/my-data" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Mijn Gegevens</NavLink></li>
+                                    <li><NavLink to="/service-hub" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Services</NavLink></li>
                                 </>
                             )}
 

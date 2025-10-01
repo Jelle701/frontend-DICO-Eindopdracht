@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 // Component Imports
 import PublicRoute from "./components/PublicRoute.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
+import AdminRoute from './components/AdminRoute.jsx'; // Import AdminRoute
 
 // --- Page Imports (Lazily Loaded) ---
 const HomePage = lazy(() => import('./pages/open/HomePage.jsx'));
@@ -25,7 +26,10 @@ const OnboardingLinkPatientPage = lazy(() => import('./pages/open/onboarding/Onb
 
 // Zorgverlener Pages
 const PatientPortal = lazy(() => import('./pages/Zorgverlener/PatientPortal.jsx'));
-const ProviderDashboard = lazy(() => import('./pages/Zorgverlener/ProviderDashboard.jsx')); // NIEUW
+const ProviderDashboard = lazy(() => import('./pages/Zorgverlener/ProviderDashboard.jsx'));
+
+// Admin Pages
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'));
 
 const LoadingFallback = () => <div style={{ textAlign: 'center', marginTop: '50px' }}>Laden...</div>;
 
@@ -59,7 +63,12 @@ function App() {
                     
                     {/* Zorgverlener Routes */}
                     <Route path="/patient-portal" element={<PatientPortal />} />
-                    <Route path="/provider-dashboard" element={<ProviderDashboard />} /> {/* NIEUW */}
+                    <Route path="/provider-dashboard" element={<ProviderDashboard />} />
+
+                    {/* Admin Routes */}
+                    <Route element={<AdminRoute />}>
+                        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                    </Route>
                 </Route>
 
                 {/* --- Catch-all Route --- */}

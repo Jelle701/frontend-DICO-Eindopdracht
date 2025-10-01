@@ -16,7 +16,9 @@ function OnboardingPreferences() {
         dateOfBirth: onboardingData.preferences?.dateOfBirth || ''
     });
     const [bmi, setBmi] = useState(null);
-    const [error, setError] = useState(''); // State for validation errors
+    const [error, setError] = useState('');
+
+    const today = new Date().toISOString().split('T')[0];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,11 +38,22 @@ function OnboardingPreferences() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setError(''); // Clear previous errors
+        setError('');
 
-        // --- JavaScript Validation ---
         const gewichtNum = parseFloat(formData.gewicht);
         const lengteNum = parseFloat(formData.lengte);
+        const birthDate = new Date(formData.dateOfBirth);
+        const minBirthDate = new Date('1900-01-01');
+        const currentDate = new Date();
+
+        if (birthDate > currentDate) {
+            setError('Geboortedatum kan niet in de toekomst liggen.');
+            return;
+        }
+        if (birthDate < minBirthDate) {
+            setError('Geboortedatum lijkt onrealistisch. Controleer het jaartal.');
+            return;
+        }
 
         if (gewichtNum < 20 || gewichtNum > 250) {
             setError('Gewicht moet tussen 20 en 250 kg zijn.');
@@ -76,7 +89,7 @@ function OnboardingPreferences() {
 
                         <div className="input-group">
                             <label htmlFor="dateOfBirth">Geboortedatum</label>
-                            <input type="date" id="dateOfBirth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required />
+                            <input type="date" id="dateOfBirth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required max={today} />
                         </div>
 
                         <div className="input-group">

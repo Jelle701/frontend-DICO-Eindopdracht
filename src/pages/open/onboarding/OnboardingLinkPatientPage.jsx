@@ -2,58 +2,37 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../services/ApiClient';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css'; // AANGEPAST: Gebruik nu de juiste CSS
+import './RegisterPage.css';
 
 function OnboardingLinkPatientPage() {
-    const [formData, setFormData] = useState({
-        email: '',
-        code: ''
-    });
+    const [accessCode, setAccessCode] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
-        if (!formData.email || !formData.code) {
-            setError('Voer zowel het e-mailadres als de toegangscode in.');
+        if (!accessCode) {
+            setError('Voer de toegangscode in.');
             setLoading(false);
             return;
         }
 
         try {
-            const response = await apiClient.post('/api/access/grant', { 
-                email: formData.email, 
-                accessCode: formData.code 
+            await apiClient.post('/api/guardian/link-patient', { 
+                accessCode: accessCode 
             });
-            const { delegatedToken, patientUsername } = response.data;
 
-            if (delegatedToken) {
-                sessionStorage.setItem('delegatedToken', delegatedToken);
-                if (patientUsername) {
-                    sessionStorage.setItem('patientUsername', patientUsername);
-                }
-                navigate('/dashboard');
-            } else {
-                setError('Geen geldig token ontvangen van de server.');
-            }
+            navigate('/patient-portal');
 
         } catch (err) {
-            if (err.response && err.response.status === 404) {
-                setError('De combinatie van e-mailadres en toegangscode is ongeldig of verlopen.');
+            if (err.response && (err.response.status === 400 || err.response.status === 404)) {
+                setError('De ingevoerde toegangscode is ongeldig of verlopen.');
             } else {
-                setError('Er is een fout opgetreden. Probeer het later opnieuw.');
+                setError('Er is een onbekende fout opgetreden. Probeer het later opnieuw.');
             }
         } finally {
             setLoading(false);
@@ -63,34 +42,21 @@ function OnboardingLinkPatientPage() {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container">
-                <div className="auth-page">
+            <div className="onboarding-page-container page--dark">
+                <div className="auth-page card">
                     <form onSubmit={handleSubmit}>
                         <h1>Koppel aan Patiënt</h1>
-                        <p>Voer het e-mailadres en de toegangscode in die u van de patiënt heeft ontvangen om het dashboard te bekijken.</p>
+                        <p>Voer de unieke toegangscode in die u van de patiënt heeft ontvangen.</p>
                         
-                        <div className="input-group">
-                            <label htmlFor="email">E-mailadres van Patiënt</label>
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="bv. patient@email.com"
-                                required
-                            />
-                        </div>
-
                         <div className="input-group">
                             <label htmlFor="code">Toegangscode</label>
                             <input
                                 id="code"
                                 type="text"
                                 name="code"
-                                value={formData.code}
-                                onChange={handleChange}
-                                placeholder="bv. A7B-X9C-F4G"
+                                value={accessCode}
+                                onChange={(e) => setAccessCode(e.target.value)}
+                                placeholder="bv. ABC-123-XYZ"
                                 required
                             />
                         </div>
@@ -98,7 +64,7 @@ function OnboardingLinkPatientPage() {
                         {error && <p className="error-message">{error}</p>}
 
                         <button type="submit" disabled={loading} className="btn btn--primary form-action-button">
-                            {loading ? 'Bezig met verbinden...' : 'Bekijk Dashboard'}
+                            {loading ? 'Bezig met koppelen...' : 'Koppel Patiënt'}
                         </button>
                     </form>
                 </div>

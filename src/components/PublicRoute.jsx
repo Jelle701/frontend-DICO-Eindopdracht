@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth, useUser } from '../contexts/AuthContext'; // Importeer useUser
+import { useAuth, useUser } from '../contexts/AuthContext.jsx'; // Importeer useUser
 
 const PublicRoute = ({ children }) => {
     const { isAuth, loading: authLoading } = useAuth();
@@ -22,11 +22,15 @@ const PublicRoute = ({ children }) => {
         let intendedStartPath = '/'; // Fallback
 
         switch (user.role) {
+            case 'ADMIN':
+                intendedStartPath = '/admin/dashboard';
+                break;
             case 'PATIENT':
                 intendedStartPath = '/dashboard';
                 break;
             case 'GUARDIAN':
-                intendedStartPath = '/guardian-dashboard';
+                // FIX: A Guardian's next step is always to link a patient.
+                intendedStartPath = '/onboarding/link-patient';
                 break;
             case 'PROVIDER':
                 intendedStartPath = '/patient-portal';

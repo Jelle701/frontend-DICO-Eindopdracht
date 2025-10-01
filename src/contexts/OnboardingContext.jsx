@@ -37,6 +37,7 @@ export function OnboardingContextProvider({ children }) {
     }, [onboardingData]);
 
     const updateOnboardingData = (newData) => {
+        console.log('[OnboardingContext] updateOnboardingData aangeroepen met:', newData);
         setOnboardingData(prevData => {
             const updatedData = { ...prevData };
 
@@ -47,11 +48,13 @@ export function OnboardingContextProvider({ children }) {
                     updatedData[key] = newData[key];
                 }
             }
+            console.log('[OnboardingContext] Nieuwe onboardingData state:', updatedData);
             return updatedData;
         });
     };
 
     const submitOnboardingData = async (devices) => {
+        console.log('[OnboardingContext] submitOnboardingData aangeroepen');
         const finalData = {
             ...onboardingData,
             diabeticDevices: devices,
