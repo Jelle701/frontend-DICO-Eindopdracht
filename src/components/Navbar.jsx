@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'; // Importeer Link
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth, useUser } from '../contexts/AuthContext.jsx';
 import DicoLogo from '../assets/react.svg';
 import './Navbar.css';
@@ -9,7 +9,7 @@ function Navbar() {
     const { isAuth, logout } = useAuth();
     const { user } = useUser();
     const navigate = useNavigate();
-    const location = useLocation(); // Gebruik de location hook
+    const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
 
@@ -39,9 +39,15 @@ function Navbar() {
 
     const closeMenu = () => setMenuOpen(false);
 
-    // Bepaal de classNames voor de admin links handmatig op basis van de volledige URL
-    const dashboardLinkClass = `nav-link ${location.pathname === '/admin-dashboard' && (location.hash === '' || location.hash === '#dashboard') ? 'active' : ''}`;
-    const managementLinkClass = `nav-link ${location.pathname === '/admin-dashboard' && location.hash === '#management' ? 'active' : ''}`;
+    // --- Definitieve oplossing voor Admin Links ---
+    const handleAdminNav = (path) => {
+        navigate(path);
+        closeMenu();
+    };
+
+    // Bepaal de class direct op basis van de location.hash
+    const isDashboardActive = location.pathname === '/admin-dashboard' && (location.hash === '' || location.hash === '#dashboard');
+    const isManagementActive = location.pathname === '/admin-dashboard' && location.hash === '#management';
 
     return (
         <nav className="navbar" ref={menuRef}>
@@ -68,11 +74,10 @@ function Navbar() {
                         <>
                             {isAdmin ? (
                                 <>
-                                    <li><Link to="/admin-dashboard#dashboard" className={dashboardLinkClass}>Dashboard</Link></li>
-                                    <li><Link to="/admin-dashboard#management" className={managementLinkClass}>Gebruikersbeheer</Link></li>
+                                    <li><a href="/admin-dashboard#dashboard" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#dashboard'); }} className={`nav-link ${isDashboardActive ? 'active' : ''}`}>Dashboard</a></li>
+                                    <li><a href="/admin-dashboard#management" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#management'); }} className={`nav-link ${isManagementActive ? 'active' : ''}`}>Gebruikersbeheer</a></li>
                                 </> 
                             ) : (
-                                // Voor andere rollen gebruiken we NavLink zoals voorheen
                                 <li><NavLink to={dashboardPath} className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Dashboard</NavLink></li>
                             )}
 
@@ -102,8 +107,8 @@ function Navbar() {
                         <ul>
                             {isAdmin ? (
                                 <>
-                                    <li><Link to="/admin-dashboard#dashboard" className={dashboardLinkClass} onClick={closeMenu}>Dashboard</Link></li>
-                                    <li><Link to="/admin-dashboard#management" className={managementLinkClass} onClick={closeMenu}>Gebruikersbeheer</Link></li>
+                                    <li><a href="/admin-dashboard#dashboard" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#dashboard'); }} className={`nav-link ${isDashboardActive ? 'active' : ''}`}>Dashboard</a></li>
+                                    <li><a href="/admin-dashboard#management" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#management'); }} className={`nav-link ${isManagementActive ? 'active' : ''}`}>Gebruikersbeheer</a></li>
                                 </>
                             ) : (
                                 <li><NavLink to={dashboardPath} className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Dashboard</NavLink></li>

@@ -7,6 +7,8 @@ import PublicRoute from "./components/PublicRoute.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import AdminRoute from './components/AdminRoute.jsx'; // Import AdminRoute
 
+const Test = lazy(() => import('./Test/test.jsx'));
+
 // --- Page Imports (Lazily Loaded) ---
 const HomePage = lazy(() => import('./pages/open/HomePage.jsx'));
 const LoginPage = lazy(() => import('./pages/open/LoginPage.jsx'));
@@ -42,6 +44,7 @@ function App() {
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
                 <Route path="/verify" element={<PublicRoute><VerifyEmailPage /></PublicRoute>} />
+                <Route path="/test" element={<PublicRoute><Test /></PublicRoute>} />
 
                 {/* --- Private Routes (require authentication) --- */}
                 <Route element={<PrivateRoute />}>
@@ -67,7 +70,10 @@ function App() {
 
                     {/* Admin Routes */}
                     <Route element={<AdminRoute />}>
-                        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin/management" element={<AdminDashboard />} />
+                        {/* Redirect for the old admin path */}
+                        <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
                     </Route>
                 </Route>
 
