@@ -71,8 +71,8 @@ const EditUserModal = ({ user, onClose, onSave }) => {
                     </div>
                     {error && <p className="error-message">{error}</p>}
                     <div className="modal-actions">
-                        <button type="button" onClick={onClose} disabled={loading} className="btn-secondary">Annuleren</button>
-                        <button type="submit" disabled={loading} className="btn-primary">{loading ? 'Opslaan...' : 'Opslaan'}</button>
+                        <button type="button" onClick={onClose} disabled={loading} className="btn btn--secondary">Annuleren</button>
+                        <button type="submit" disabled={loading} className="btn btn--primary">{loading ? 'Opslaan...' : 'Opslaan'}</button>
                     </div>
                 </form>
             </div>

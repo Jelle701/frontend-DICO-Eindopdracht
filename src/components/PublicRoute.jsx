@@ -8,7 +8,7 @@ const PublicRoute = ({ children }) => {
 
     // Wacht tot de authenticatie- en gebruikersdata is geladen
     if (authLoading || userLoading) {
-        return <div>Laden...</div>; // Of een spinner
+        return <div className="loading-fallback-message">Laden...</div>; // Of een spinner
     }
 
     // Als de gebruiker geauthenticeerd is, stuur ze naar de juiste startpagina
@@ -23,7 +23,7 @@ const PublicRoute = ({ children }) => {
 
         switch (user.role) {
             case 'ADMIN':
-                intendedStartPath = '/admin/dashboard';
+                intendedStartPath = '/admin-dashboard'; // Aangepast naar de correcte admin route
                 break;
             case 'PATIENT':
                 intendedStartPath = '/dashboard';
@@ -33,7 +33,7 @@ const PublicRoute = ({ children }) => {
                 intendedStartPath = '/onboarding/link-patient';
                 break;
             case 'PROVIDER':
-                intendedStartPath = '/patient-portal';
+                intendedStartPath = '/provider-dashboard';
                 break;
             default:
                 intendedStartPath = '/';

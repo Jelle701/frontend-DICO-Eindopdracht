@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { verifyEmail } from '../../../services/AuthService/AuthService';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css'; // AANGEPAST: Gebruik nu de styling van de registratiepagina
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 const VerifyEmailPage = () => {
     const [token, setToken] = useState('');
@@ -56,13 +56,13 @@ const VerifyEmailPage = () => {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container">
-                <div className="auth-page">
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
                     {userEmail ? (
                         <form onSubmit={handleSubmit}>
                             <h1>Verifieer je e-mailadres</h1>
-                            <p>We hebben een verificatiecode gestuurd naar <strong>{userEmail}</strong>.</p>
-                            <p style={{color: 'var(--gray-400)', fontSize: '14px', marginTop: 'calc(-1 * var(--space-7))'}}>
+                            <p className="auth-form-description">We hebben een verificatiecode gestuurd naar <strong>{userEmail}</strong>.</p> {/* Gebruik de nieuwe description class */}
+                            <p className="text-400 small mt-neg-7"> {/* Replaced inline style with utility classes */}
                                 (Voor ontwikkelingsdoeleinden: controleer de backend-console voor de code).
                             </p>
                             
@@ -90,7 +90,7 @@ const VerifyEmailPage = () => {
                     ) : (
                         <div>
                             <h1>Fout</h1>
-                            <p>{error}</p>
+                            <p className="error-message">{error}</p> {/* Added class for consistency */}
                             <button onClick={() => navigate('/register')} className="btn btn--primary form-action-button">
                                 Terug naar Registratie
                             </button>

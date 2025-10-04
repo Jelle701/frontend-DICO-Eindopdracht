@@ -1,16 +1,18 @@
 .notification {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: var(--border-radius-md);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    bottom: var(--space-5); /* 20px -> 24px */
+    right: var(--space-5); /* 20px -> 24px */
+    padding: var(--space-4) var(--space-5); /* 1rem 1.5rem -> 16px 24px */
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1); /* Gebruikt design token */
     display: flex;
     align-items: center;
     justify-content: space-between;
     max-width: 350px;
     z-index: 2000;
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn var(--ts-med) ease-out; /* Gebruikt design token */
+    background-color: var(--gray-800); /* Standaard achtergrond voor melding */
+    color: var(--color-white); /* Standaard tekstkleur */
 }
 
 @keyframes slideIn {
@@ -25,25 +27,27 @@
 }
 
 .notification.success {
-    background-color: var(--color-success-light);
+    background-color: rgba(22, 236, 6, var(--op-8)); /* Lichte succes achtergrond (var(--color-success) met --op-8) */
     border-left: 5px solid var(--color-success);
+    color: var(--color-success); /* Tekstkleur voor succesmelding */
 }
 
 .notification.error {
-    background-color: var(--color-danger-light);
+    background-color: rgba(255, 0, 38, var(--op-8)); /* Lichte fout achtergrond (var(--color-danger) met --op-8) */
     border-left: 5px solid var(--color-danger);
+    color: var(--color-danger); /* Tekstkleur voor foutmelding */
 }
 
 .notification p {
     margin: 0;
-    color: var(--color-gray-800);
+    /* De kleur wordt ingesteld door de bovenliggende .notification.success/error of de standaard .notification */
 }
 
 .notification .close-btn {
     background: none;
     border: none;
-    font-size: 1.5rem;
-    color: var(--color-gray-500);
+    font-size: 1.5rem; /* Behouden */
+    color: var(--gray-400); /* Neutrale kleur voor sluitknop */
     cursor: pointer;
-    padding: 0 0 0 1rem;
+    padding: 0 0 0 var(--space-4); /* 1rem -> 16px */
 }

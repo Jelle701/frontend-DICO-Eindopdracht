@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../services/ApiClient';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css';
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function OnboardingLinkPatientPage() {
     const [accessCode, setAccessCode] = useState('');
@@ -22,16 +22,24 @@ function OnboardingLinkPatientPage() {
         }
 
         try {
-            await apiClient.post('/api/guardian/link-patient', { 
+            // CORRECTIE: De overbodige '/api' is verwijderd.
+            await apiClient.post('/guardian/link-patient', { 
                 accessCode: accessCode 
             });
 
+            // Navigeer naar de portal na een succesvolle koppeling
             navigate('/patient-portal');
 
         } catch (err) {
-            if (err.response && (err.response.status === 400 || err.response.status === 404)) {
-                setError('De ingevoerde toegangscode is ongeldig of verlopen.');
+            // Verbeterde foutafhandeling volgens de nieuwe backend-standaard
+            if (err.response && err.response.data && err.response.data.message) {
+                // Gebruik de specifieke foutmelding van de backend
+                setError(err.response.data.message);
+            } else if (err.request) {
+                // Netwerkfout
+                setError('Kan de server niet bereiken. Controleer je internetverbinding.');
             } else {
+                // Andere onverwachte fouten
                 setError('Er is een onbekende fout opgetreden. Probeer het later opnieuw.');
             }
         } finally {
@@ -42,11 +50,11 @@ function OnboardingLinkPatientPage() {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container page--dark">
-                <div className="auth-page card">
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
                     <form onSubmit={handleSubmit}>
                         <h1>Koppel aan Patiënt</h1>
-                        <p>Voer de unieke toegangscode in die u van de patiënt heeft ontvangen.</p>
+                        <p className="auth-form-description">Voer de unieke toegangscode in die u van de patiënt heeft ontvangen.</p> {/* Gebruik de nieuwe description class */}
                         
                         <div className="input-group">
                             <label htmlFor="code">Toegangscode</label>
@@ -56,7 +64,7 @@ function OnboardingLinkPatientPage() {
                                 name="code"
                                 value={accessCode}
                                 onChange={(e) => setAccessCode(e.target.value)}
-                                placeholder="bv. ABC-123-XYZ"
+                                placeholder="bv. 123456"
                                 required
                             />
                         </div>

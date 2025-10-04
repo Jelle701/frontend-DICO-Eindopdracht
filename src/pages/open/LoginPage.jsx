@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, useUser } from '../../contexts/AuthContext';
 import { loginUser } from '../../services/AuthService/AuthService';
 import Navbar from '../../components/Navbar.jsx';
-import './Loginpage.css';
+import '../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -23,8 +23,8 @@ function LoginPage() {
             if (user.role) {
                 switch (user.role) {
                     case 'ADMIN':
-                        console.log('[LoginPage] Admin user detected, redirecting to /admin/dashboard');
-                        navigate('/admin/dashboard');
+                        console.log('[LoginPage] Admin user detected, redirecting to /admin-dashboard');
+                        navigate('/admin-dashboard');
                         break;
                     case 'PATIENT':
                         console.log('[LoginPage] Patient user detected, redirecting to /dashboard');
@@ -88,11 +88,11 @@ function LoginPage() {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container">
-                <div className="auth-page">
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
                     <form onSubmit={handleSubmit}>
                         <h1>Inloggen</h1>
-                        <p>Welkom terug! Log in om verder te gaan.</p>
+                        <p className="auth-form-description">Welkom terug! Log in om verder te gaan.</p> {/* Gebruik de nieuwe description class */}
 
                         <div className="input-group">
                             <label htmlFor="email">E-mailadres</label>

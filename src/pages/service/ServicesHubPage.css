@@ -1,76 +1,86 @@
 /* src/pages/Services/ServicesHubPage.css */
 .services-page-container {
-    max-width: 1200px;
+    max-width: var(--container-lg);
     margin: 0 auto;
-    padding: 3rem 2rem;
+    padding: var(--space-7) var(--space-6); /* 3rem 2rem -> 48px 32px */
 }
 
 .services-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-7); /* 3rem -> 48px */
 }
 
 .services-header h1 {
-    font-size: 2.5rem;
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    color: var(--color-white); /* Consistent met algemene tekstkleur */
 }
 
 .services-header p {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
-    margin-top: 0.5rem;
+    font-size: 16px; /* Baseliner */
+    line-height: 24px; /* Baseliner */
+    color: var(--gray-300);
+    margin-top: var(--space-2); /* 0.5rem -> 8px */
 }
 
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
+    gap: var(--space-6); /* 2rem -> 32px */
 }
 
 .service-card {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 2rem;
+    background: rgba(255,255,255,var(--op-8)); /* Consistent met andere kaarten */
+    border: 1px solid rgba(255,255,255,var(--op-16)); /* Consistent met andere kaarten */
+    border-radius: var(--radius-lg); /* 16px -> 14px */
+    padding: var(--space-6); /* 2rem -> 32px */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition: transform var(--ts-med) ease-in-out, box-shadow var(--ts-med) ease-in-out;
+    box-shadow: var(--shadow-1); /* Standaard schaduw */
 }
 
 .service-card:not(.disabled):hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px); /* 5px -> 1px voor consistentie met btn:hover */
+    box-shadow: var(--shadow-2);
 }
 
 .service-card-logo {
-    height: 50px;
-    margin-bottom: 1.5rem;
+    height: 50px; /* Behouden */
+    margin-bottom: var(--space-5); /* 1.5rem -> 24px */
 }
 
 .service-card-title {
-    font-size: 1.3rem;
-    margin: 0 0 0.75rem 0;
+    font-size: 20px; /* Geen directe token, behouden */
+    line-height: 28px; /* Geen directe token, behouden */
+    margin: 0 0 var(--space-3) 0; /* 0.75rem -> 12px */
+    color: var(--color-white); /* Consistent met algemene tekstkleur */
 }
 
 .service-card-description {
-    color: var(--color-text-secondary);
+    color: var(--gray-300);
     flex-grow: 1;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-5); /* 1.5rem -> 24px */
 }
 
+/* De .service-card .btn zal de globale .btn stijlen gebruiken */
 .service-card .btn {
     width: 100%;
 }
 
 .service-card.disabled {
-    background-color: var(--color-surface);
-    opacity: 0.6;
+    opacity: 0.5; /* Consistent met disabled knoppen */
+    cursor: not-allowed;
+    background: rgba(255,255,255,var(--op-8)); /* Consistent met andere kaarten */
+    border: 1px solid rgba(255,255,255,var(--op-16)); /* Consistent met andere kaarten */
+    box-shadow: none; /* Geen schaduw voor disabled */
 }
 
 .service-card.disabled .btn {
-    background-color: var(--color-border);
-    color: var(--color-text-muted);
+    background-color: var(--gray-700); /* Donkerder grijs voor disabled knop */
+    color: var(--gray-400); /* Lichtere tekst voor disabled knop */
     cursor: not-allowed;
 }
 

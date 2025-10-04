@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import medicatieData from '../../../Data/MedicatieDataSet.json';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css';
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 const DIABETES_TYPES = [
     { value: 'TYPE_1', label: 'Type 1' },
@@ -51,8 +51,8 @@ function MedicineInfo() {
         eenheid: onboardingData.medicineInfo?.eenheid || 'mmol/L', // NIEUW
         diabetesType: onboardingData.medicineInfo?.diabetesType || '',
         gebruiktInsuline: onboardingData.medicineInfo?.gebruiktInsuline || 'nee',
-        longActing: onboardingData.medicineInfo?.longActing || { manufacturer: '', insulin: '' },
-        shortActing: onboardingData.medicineInfo?.shortActing || { manufacturer: '', insulin: '' },
+        longActing: onboardingData.medicineInfo?.longActing || { manufacturer: '', insulin: '', },
+        shortActing: onboardingData.medicineInfo?.shortActing || { manufacturer: '', insulin: '', },
     });
     const [error, setError] = useState('');
 
@@ -88,7 +88,7 @@ function MedicineInfo() {
         const availableInsulins = selectedManufacturer ? (insulinsByManufacturer[selectedManufacturer] || []) : [];
 
         return (
-            <div className="device-category-box" style={{marginTop: 0}}>
+            <div className="device-category-box mt-0"> {/* Removed inline style, using utility class */}
                 <h2>{label}</h2>
                 <div className="input-group">
                     <label htmlFor={`${category}-manufacturer`}>Fabrikant</label>
@@ -111,11 +111,11 @@ function MedicineInfo() {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container">
-                <div className="auth-page">
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
                     <form onSubmit={handleSubmit}>
                         <h1>Medische Informatie</h1>
-                        <p>Deze informatie helpt ons om de app beter op jou af te stemmen.</p>
+                        <p className="auth-form-description">Deze informatie helpt ons om de app beter op jou af te stemmen.</p> {/* Gebruik de nieuwe description class */}
                         
                         {/* VERPLAATST VELD */}
                         <div className="input-group">
@@ -149,7 +149,7 @@ function MedicineInfo() {
                         </div>
 
                         {formData.gebruiktInsuline === 'ja' && (
-                            <div style={{display: 'flex', flexDirection: 'column', gap: 'var(--space-5)'}}>
+                            <div className="d-flex flex-column gap-5"> {/* Removed inline style, using utility classes */}
                                 {renderInsulinSelector('long', 'Langwerkende Insuline', longManufacturers)}
                                 {renderInsulinSelector('short', 'Kortwerkende Insuline', shortManufacturers)}
                             </div>

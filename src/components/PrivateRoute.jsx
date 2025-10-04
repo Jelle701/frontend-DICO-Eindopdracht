@@ -18,7 +18,7 @@ function PrivateRoute() {
     const location = useLocation();
 
     if (authLoading || userLoading) {
-        return <div>Laden...</div>;
+        return <div className="loading-fallback-message">Laden...</div>;
     }
 
     if (!isAuth) {
@@ -26,7 +26,7 @@ function PrivateRoute() {
     }
 
     if (!user) {
-        return <div>Gebruikersprofiel ophalen...</div>;
+        return <div className="loading-fallback-message">Gebruikersprofiel ophalen...</div>;
     }
 
     // --- Main Navigation Logic ---

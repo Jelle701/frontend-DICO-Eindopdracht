@@ -1,85 +1,91 @@
 .access-code-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    max-width: 600px; /* Specifieke breedte, behouden */
+    margin: var(--space-7) auto; /* 48px top/bottom */
+    padding: var(--space-5); /* 24px */
+    border: 1px solid var(--gray-700); /* Consistente rand */
+    border-radius: var(--radius-xl); /* Consistente radius */
     text-align: center;
-    background-color: #f9f9f9;
+    background-color: var(--gray-800); /* Consistente donkere achtergrond */
+    box-shadow: var(--shadow-1); /* Schaduw toevoegen voor kaart-achtig uiterlijk */
 }
 
 .info-text {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 20px;
+    font-size: 14px; /* Equivalent aan 0.9rem */
+    color: var(--gray-300);
+    margin-bottom: var(--space-5); /* 24px */
 }
 
 .code-display-section {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
+    margin: var(--space-5) 0; /* 24px 0 */
+    padding: var(--space-5); /* 24px */
+    background-color: var(--gray-900); /* Iets donkerdere achtergrond voor contrast */
+    border-radius: var(--radius-md); /* 10px */
+    border: 1px solid var(--gray-700); /* Consistente rand */
 }
 
 .code-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px;
-    border: 1px dashed #aaa;
-    border-radius: 4px;
-    background-color: #eee;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
+    padding: var(--space-4); /* 16px */
+    border: 1px dashed var(--gray-500); /* Gestippelde rand met token */
+    border-radius: var(--radius-sm); /* 6px */
+    background-color: var(--gray-700); /* Lichtere grijs voor codeblok */
+    font-family: 'Courier New', Courier, monospace; /* Specifiek lettertype behouden */
+    font-size: 1.5rem; /* Specifieke lettergrootte behouden */
+    font-weight: 700; /* Token voor bold */
+    color: var(--gray-100); /* Lichte tekstkleur */
 }
 
 .code-box span {
-    margin-right: 15px;
+    margin-right: var(--space-4); /* 16px */
 }
 
 .copy-button {
-    padding: 8px 12px;
-    font-size: 0.9rem;
+    /* Aangenomen dat dit een aangepaste knop is, niet overerfd van .btn */
+    padding: var(--space-2) var(--space-3); /* 8px 12px */
+    font-size: 14px; /* Consistent met kleine tekst */
     cursor: pointer;
-    border: 1px solid #007bff;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    border: 1px solid var(--color-teal);
+    background-color: var(--color-teal);
+    color: #07261C; /* Specifieke contrastkleur voor teal uit index.css */
+    border-radius: var(--radius-sm); /* 6px */
+    transition: background-color var(--ts-med) ease, border-color var(--ts-med) ease;
 }
 
 .copy-button:hover {
-    background-color: #0056b3;
+    background-color: #00D08A; /* Een iets donkerdere teal */
+    border-color: #00D08A;
 }
 
 .copy-success-text {
-    color: green;
-    font-size: 0.9rem;
-    margin-top: 10px;
+    color: var(--color-success);
+    font-size: 14px; /* Equivalent aan 0.9rem */
+    margin-top: var(--space-3); /* 12px */
 }
 
 .generate-button {
-    padding: 12px 20px;
-    font-size: 1rem;
+    /* Aangenomen dat dit een aangepaste knop is, niet overerfd van .btn */
+    padding: var(--space-3) var(--space-5); /* 12px 24px */
+    font-size: 16px; /* Equivalent aan 1rem */
     cursor: pointer;
     border: none;
-    background-color: #28a745;
-    color: white;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    background-color: var(--color-success);
+    color: var(--color-white);
+    border-radius: var(--radius-sm); /* 6px */
+    transition: background-color var(--ts-med) ease;
 }
 
 .generate-button:hover {
-    background-color: #218838;
+    background-color: #13C005; /* Een iets donkerder groen */
 }
 
 .generate-button:disabled {
-    background-color: #ccc;
+    background-color: var(--gray-600);
     cursor: not-allowed;
+    opacity: 0.7; /* Opaciteit toevoegen voor uitgeschakelde status */
 }
 
 .error-text {
-    color: #dc3545;
+    color: var(--color-danger);
 }

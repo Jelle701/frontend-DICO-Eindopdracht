@@ -1,0 +1,61 @@
+/* src/pages/open/GrantAccessPage.css */
+
+.grant-access-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - var(--space-8)); /* Full height minus navbar (64px) */
+    padding: var(--space-6);
+    background: linear-gradient(180deg, var(--gradient-bg-start), var(--gradient-bg-end));
+}
+
+.grant-access-form {
+    background: var(--gray-800); /* Consistent met card background */
+    padding: var(--space-7); /* 2.5rem -> 48px */
+    border-radius: var(--radius-lg); /* 8px -> 14px */
+    box-shadow: var(--shadow-2); /* Use design token */
+    width: 100%;
+    max-width: 450px;
+    border: 1px solid var(--gray-700); /* Consistent met card border */
+}
+
+.grant-access-form h2 {
+    text-align: center;
+    margin-bottom: var(--space-6); /* 2rem -> 32px */
+    color: var(--color-white); /* Consistent met general text color */
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+}
+
+.grant-access-form p {
+    text-align: center;
+    color: var(--gray-300); /* Consistent met muted text */
+    margin-bottom: var(--space-5);
+}
+
+.form-group {
+    margin-bottom: var(--space-5); /* 1.5rem -> 24px */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-2); /* 0.5rem -> 8px */
+    font-weight: 700; /* Consistent met global label */
+    color: var(--gray-200); /* Consistent met global label */
+}
+
+/* Input styles are global via index.css .input */
+
+.error-message {
+    color: var(--color-danger); /* Use design token */
+    background-color: rgba(255, 0, 38, var(--op-8)); /* var(--color-danger) met --op-8 */
+    border: 1px solid var(--color-danger); /* Use design token */
+    padding: var(--space-3); /* 0.75rem -> 12px */
+    border-radius: var(--radius-sm); /* 4px -> 6px */
+    margin-bottom: var(--space-5); /* 1.5rem -> 24px */
+    text-align: center;
+    font-size: 14px; /* Small token */
+    line-height: 20px; /* Small token */
+}
+
+/* Button styles are global via index.css .btn and .btn--primary */

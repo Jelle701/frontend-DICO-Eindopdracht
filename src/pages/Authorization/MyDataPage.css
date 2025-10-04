@@ -2,78 +2,84 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 3rem 2rem;
+    padding: var(--space-7) var(--space-6); /* 48px 32px */
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Standaard, maar expliciet voor duidelijkheid */
 }
 
 .form-card {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    max-width: 800px;
+    background: rgba(255,255,255,var(--op-8)); /* Consistent met andere kaarten */
+    border: 1px solid rgba(255,255,255,var(--op-16)); /* Consistent met andere kaarten */
+    border-radius: var(--radius-xl); /* Consistent met modals en andere grote kaarten */
+    max-width: 800px; /* Specifieke breedte, behouden */
     width: 100%;
-    padding: 2.5rem 3rem;
+    padding: var(--space-7) var(--space-8); /* 48px 64px */
+    box-shadow: var(--shadow-1); /* Consistent met andere kaarten */
 }
 
 .form-card h1 {
     text-align: center;
-    margin-bottom: 2.5rem;
-    font-size: 2rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 1.5rem;
+    margin-bottom: var(--space-7); /* 48px */
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    color: var(--color-white); /* Consistent met algemene tekstkleur */
+    border-bottom: 1px solid rgba(255,255,255,var(--op-16)); /* Consistente rand */
+    padding-bottom: var(--space-5); /* 24px */
 }
 
 .form-section {
-    margin-bottom: 2.5rem;
+    margin-bottom: var(--space-7); /* 48px */
 }
 
 .form-section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--color-text-primary);
+    font-size: 28px; /* H3 token */
+    line-height: 34px; /* H3 token */
+    margin-bottom: var(--space-5); /* 24px */
+    color: var(--color-white); /* Consistent met algemene tekstkleur */
 }
 
 .input-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-5); /* 24px */
 }
 
 .input-group label {
     display: block;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: var(--color-text-secondary);
+    font-weight: 700; /* Consistent met globale label */
+    margin-bottom: var(--space-2); /* 8px */
+    color: var(--gray-200); /* Consistent met globale label */
 }
 
 .input-group input[disabled] {
-    background-color: var(--color-background);
+    background-color: var(--gray-700); /* Donkerder grijs voor disabled input */
     cursor: not-allowed;
     opacity: 0.7;
 }
 
 .form-card .btn-primary {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: var(--space-4); /* 16px */
+    /* De rest van de styling wordt overgenomen van de globale .btn en .btn--primary */
 }
 
 .form-message {
     text-align: center;
-    padding: 0.8rem;
-    border-radius: 8px;
-    margin: 1.5rem 0;
-    font-size: 0.95rem;
-    font-weight: 500;
+    padding: var(--space-3); /* 12px */
+    border-radius: var(--radius-md); /* 10px */
+    margin: var(--space-5) 0; /* 24px 0 */
+    font-size: 14px; /* Small token */
+    line-height: 20px; /* Small token */
+    font-weight: 600; /* Semibold */
     border: 1px solid transparent;
 }
 
 .form-message.error {
-    color: var(--color-accent-danger);
-    background-color: rgba(239, 71, 111, 0.1);
-    border-color: var(--color-accent-danger);
+    color: var(--color-danger);
+    background-color: rgba(255, 0, 38, var(--op-8)); /* var(--color-danger) met --op-8 */
+    border-color: var(--color-danger);
 }
 
 .form-message.success {
-    color: var(--color-accent-positive);
-    background-color: rgba(0, 168, 120, 0.1);
-    border-color: var(--color-accent-positive);
+    color: var(--color-success);
+    background-color: rgba(22, 236, 6, var(--op-8)); /* var(--color-success) met --op-8 */
+    border-color: var(--color-success);
 }

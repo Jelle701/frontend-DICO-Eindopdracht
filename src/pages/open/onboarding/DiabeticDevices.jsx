@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import devicesData from '../../../Data/DiabeticDevices.json';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css';
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function DiabeticDevices() {
     const { submitOnboardingData } = useOnboarding();
@@ -85,11 +85,11 @@ function DiabeticDevices() {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container">
-                <div className="auth-page">
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
                     <form onSubmit={handleSubmit}>
                         <h1>Hulpmiddelen</h1>
-                        <p>Selecteer de hulpmiddelen die u gebruikt. Dit is niet verplicht.</p>
+                        <p className="auth-form-description">Selecteer de hulpmiddelen die u gebruikt. Dit is niet verplicht.</p> {/* Gebruik de nieuwe description class */}
 
                         {renderDeviceSelector('cgm', 'CGM')}
                         {renderDeviceSelector('insulinPump', 'Insulinepompen')}

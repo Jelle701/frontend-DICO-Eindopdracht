@@ -60,7 +60,7 @@ function LinkPatientPage() {
 
                 {error && <p className="error-message">{error}</p>}
 
-                <button type="submit" disabled={loading}>
+                <button type="submit" disabled={loading} className="btn btn--primary">
                     {loading ? 'Bezig met koppelen...' : 'Koppel Account'}
                 </button>
             </form>

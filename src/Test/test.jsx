@@ -8,9 +8,9 @@ export default function Test() {
         <div className="page--dark">
             {/* Navbar */}
             <header className="navbar">
-                <div className="container" style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
-                    <span className="small text-300" style={{ letterSpacing: 2 }}>WHOOP-STYLE UI • DEMO</span>
-                    <div style={{ display: "flex", gap: 12 }}>
+                <div className="container d-flex w-100 justify-between items-center">
+                    <span className="small text-300" style={{ letterSpacing: '2px' }}>WHOOP-STYLE UI • DEMO</span>
+                    <div className="d-flex gap-3">
                         <button className="btn btn--ghost" onClick={() => setDisabled((v) => !v)}>
                             Toggle Disabled
                         </button>
@@ -29,7 +29,7 @@ export default function Test() {
                                 Test hier je design tokens, typografie, knoppen, badges, formulieren en tabellen.
                                 Alles gebruikt uitsluitend je CSS-variabelen en utilities.
                             </p>
-                            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                            <div className="d-flex gap-3 flex-wrap">
                                 <button className="btn btn--primary">Primary CTA</button>
                                 <button className="btn" disabled={disabled}>Secondary</button>
                                 <button className="btn btn--ghost">Ghost</button>
@@ -64,7 +64,7 @@ export default function Test() {
                         <div className="card">
                             <h3 className="mt-0">Card Titel</h3>
                             <p className="text-100">Gebruik <code>.card</code> voor panelen met subtiele borders en schaduw.</p>
-                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                            <div className="d-flex gap-2 flex-wrap">
                                 <span className="badge badge--recovery-high">Recovery High</span>
                                 <span className="badge badge--recovery-med">Recovery Med</span>
                                 <span className="badge badge--recovery-low">Recovery Low</span>
@@ -75,7 +75,7 @@ export default function Test() {
                         <div className="card">
                             <h3 className="mt-0">Buttons</h3>
                             <p className="text-100">Knoppen met states en animatie.</p>
-                            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                            <div className="d-flex gap-3 flex-wrap">
                                 <button className="btn btn--primary">Primary</button>
                                 <button className="btn" disabled={disabled}>Secondary</button>
                                 <button className="btn btn--ghost">Ghost</button>

@@ -3,34 +3,34 @@
    ========================================================================== */
 
 .dashboard-page {
-    max-width: 1600px;
+    max-width: var(--container-lg); /* Gebruik container token */
     margin: 0 auto;
-    padding: 2rem;
-    font-family: sans-serif;
+    padding: var(--space-6);
+    font-family: var(--font-sans);
 }
 
 .dashboard-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-7);
 }
 
 .dashboard-header h1 {
-    font-size: 2.5rem;
-    color: var(--color-text-primary);
-    margin-bottom: 0.5rem;
+    font-size: 48px; /* Gebruik h1 token */
+    line-height: 56px; /* Gebruik h1 token */
+    color: var(--color-white);
+    margin-bottom: var(--space-2);
 }
 
 .dashboard-header p {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
+    font-size: 16px; /* Baseliner */
+    line-height: 24px; /* Baseliner */
+    color: var(--gray-300);
 }
 
 .dashboard-layout {
     display: grid;
-    /* Two columns: 2/3 for the main content, 1/3 for the sidebar */
     grid-template-columns: 2fr 1fr;
-    gap: 2rem;
-    /* Align items to the top of their grid area */
+    gap: var(--space-6);
     align-items: flex-start;
 }
 
@@ -40,18 +40,19 @@
    ========================================================================== */
 
 .chart-container {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1.5rem 2rem 2rem 1rem; /* Extra space for chart labels */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    background: rgba(255,255,255,var(--op-8)); /* Gebruik card-achtige achtergrond */
+    border: 1px solid rgba(255,255,255,var(--op-16)); /* Gebruik card-achtige rand */
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-6) var(--space-6) var(--space-4);
+    box-shadow: var(--shadow-1);
 }
 
 .chart-container h2 {
     margin-top: 0;
-    margin-bottom: 2rem;
-    font-size: 1.5rem;
-    color: var(--color-text-primary);
+    margin-bottom: var(--space-6);
+    font-size: 28px; /* Gebruik h3 token */
+    line-height: 34px; /* Gebruik h3 token */
+    color: var(--color-white);
 }
 
 .no-data-placeholder {
@@ -60,14 +61,14 @@
     justify-content: center;
     align-items: center;
     height: 400px;
-    color: var(--color-text-secondary);
-    background-color: rgba(0,0,0,0.02);
-    border-radius: 8px;
+    color: var(--gray-300);
+    background-color: rgba(255,255,255,var(--op-8)); /* Subtiele achtergrond */
+    border-radius: var(--radius-md);
     text-align: center;
 }
 
 .no-data-placeholder a {
-    color: var(--color-primary);
+    color: var(--color-teal);
     font-weight: 600;
     text-decoration: none;
 }
@@ -75,76 +76,75 @@
 /* --- Quick Add Form --- */
 
 .quick-add-form {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(255,255,255,var(--op-16));
 }
 
 .quick-add-form h3 {
     margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-    color: var(--color-text-primary);
+    margin-bottom: var(--space-5);
+    font-size: 20px; /* Geen directe token, behouden */
+    line-height: 28px; /* Geen directe token, behouden */
+    color: var(--color-white);
 }
 
-/* AANGEPAST: De twee-kolommen grid is niet meer nodig voor één input. */
 .quick-add-form .form-row {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
 }
 
 .quick-add-form .input-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--gray-300);
 }
 
-.quick-add-form .btn-primary {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-}
+/* .quick-add-form .btn-primary zal de globale .btn--primary stijlen gebruiken */
 
 .form-error, .form-success {
     text-align: center;
-    padding: 0.75rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-4);
+    font-size: 14px;
+    line-height: 20px;
 }
 
 .form-error {
-    color: #D8000C;
-    background-color: #FFD2D2;
-    border: 1px solid #D8000C;
+    color: var(--color-danger);
+    background-color: rgba(255, 0, 38, var(--op-8));
+    border: 1px solid var(--color-danger);
 }
 
 .form-success {
-    color: #4F8A10;
-    background-color: #DFF2BF;
-    border: 1px solid #4F8A10;
+    color: var(--color-success);
+    background-color: rgba(22, 236, 6, var(--op-8));
+    border: 1px solid var(--color-success);
 }
 
 /* --- Tabel met alle metingen --- */
 
 .measurements-table-container {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(255,255,255,var(--op-16));
 }
 
 .measurements-table-container h3 {
     margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-    color: var(--color-text-primary);
+    margin-bottom: var(--space-5);
+    font-size: 20px; /* Geen directe token, behouden */
+    line-height: 28px; /* Geen directe token, behouden */
+    color: var(--color-white);
 }
 
 .table-wrapper {
-    max-height: 400px; /* Maak de tabel scrollbaar als deze te lang wordt */
+    max-height: 400px;
     overflow-y: auto;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,var(--op-16));
+    border-radius: var(--radius-md);
 }
 
 .measurements-table-container table {
@@ -155,22 +155,23 @@
 
 .measurements-table-container th,
 .measurements-table-container td {
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-3) var(--space-4);
+    font-size: 14px;
+    line-height: 20px;
+    border-bottom: 1px solid rgba(255,255,255,var(--op-16));
 }
 
 .measurements-table-container thead th {
-    background-color: #f9f9f9;
-    color: var(--color-text-secondary);
+    background-color: var(--gray-700);
+    color: var(--gray-300);
     font-weight: 600;
-    position: sticky; /* Houd de header bovenaan bij het scrollen */
+    position: sticky;
     top: 0;
     z-index: 1;
 }
 
 .measurements-table-container tbody tr:hover {
-    background-color: #f5faff; /* Lichte blauwe hover voor duidelijkheid */
+    background-color: rgba(0, 241, 159, var(--op-8)); /* Lichte teal hover */
 }
 
 
@@ -180,24 +181,25 @@
 
 .widgets-container {
     display: grid;
-    gap: 1.5rem;
+    gap: var(--space-5);
 }
 
 .widget-card {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    background: rgba(255,255,255,var(--op-8)); /* Gebruik card-achtige achtergrond */
+    border: 1px solid rgba(255,255,255,var(--op-16)); /* Gebruik card-achtige rand */
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-1);
 }
 
 .widget-card h3 {
     margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    color: var(--color-primary);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.75rem;
+    margin-bottom: var(--space-4);
+    font-size: 20px; /* Geen directe token, behouden */
+    line-height: 28px; /* Geen directe token, behouden */
+    color: var(--color-teal);
+    border-bottom: 1px solid rgba(255,255,255,var(--op-16));
+    padding-bottom: var(--space-3);
 }
 
 .widget-card ul {
@@ -210,36 +212,39 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
-    color: var(--color-text-primary);
+    font-size: 14px;
+    line-height: 20px;
+    padding: var(--space-2) 0;
+    color: var(--color-white);
 }
 
 .widget-card li span {
-    color: var(--color-text-secondary);
+    color: var(--gray-300);
 }
 
 /* --- Specific Widget for Devices --- */
 
 .device-widget-item {
-    padding: 0.75rem 0;
+    padding: var(--space-3) 0;
 }
 
 .device-widget-item:not(:last-child) {
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid rgba(255,255,255,var(--op-16));
 }
 
 .device-widget-item h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1rem;
+    margin: 0 0 var(--space-1) 0;
+    font-size: 16px;
+    line-height: 24px;
     text-transform: capitalize;
-    color: var(--color-text-primary);
+    color: var(--color-white);
 }
 
 .device-widget-item p {
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--gray-300);
 }
 
 
@@ -249,14 +254,12 @@
 
 @media (max-width: 1200px) {
     .dashboard-layout {
-        /* Stack columns on tablets and smaller devices */
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 600px) {
     .quick-add-form .form-row {
-        /* Stack form fields on mobile for better usability */
         grid-template-columns: 1fr;
     }
 }

@@ -1,0 +1,135 @@
+/* src/styles/AuthForm.css */
+
+/* General container for authentication/onboarding pages */
+.auth-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - var(--space-8)); /* Full height minus navbar (64px) */
+    padding: var(--space-6);
+    background: linear-gradient(180deg, var(--gradient-bg-start), var(--gradient-bg-end)); /* Global background */
+}
+
+/* Card-like form container */
+.auth-form-card {
+    background: var(--gray-800); /* Consistent with card background */
+    padding: var(--space-7); /* 48px */
+    border-radius: var(--radius-lg); /* 14px */
+    box-shadow: var(--shadow-2); /* Use design token */
+    width: 100%;
+    max-width: 450px; /* Standardized max-width */
+    border: 1px solid var(--gray-700); /* Consistent with card border */
+}
+
+.auth-form-card h1 {
+    text-align: center;
+    margin-bottom: var(--space-6); /* 32px */
+    color: var(--color-white); /* Consistent with general text color */
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+}
+
+.auth-form-description {
+    text-align: center;
+    color: var(--gray-200);
+    margin-top: 0;
+    margin-bottom: var(--space-6);
+}
+
+.input-group {
+    margin-bottom: var(--space-5); /* 24px */
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: var(--space-2); /* 8px */
+    font-weight: 700; /* Consistent with global label */
+    color: var(--gray-200); /* Consistent with global label */
+    font-size: 14px; /* Small token */
+    text-transform: uppercase;
+    letter-spacing: 0.6px; /* 0.05em at 12px font-size is 0.6px */
+}
+
+/* Input styles are global via index.css .input, but specific overrides might be needed */
+/* For now, relying on global .input styles */
+
+.error-message {
+    color: var(--color-danger); /* Use design token */
+    background-color: rgba(255, 0, 38, var(--op-8)); /* var(--color-danger) met --op-8 */
+    border: 1px solid var(--color-danger); /* Use design token */
+    padding: var(--space-3); /* 12px */
+    border-radius: var(--radius-sm); /* 6px */
+    margin-bottom: var(--space-5); /* 24px */
+    text-align: center;
+    font-size: 14px; /* Small token */
+    line-height: 20px; /* Small token */
+}
+
+.success-message {
+    color: var(--color-success);
+    text-align: center;
+    font-size: 14px; /* Small token */
+    line-height: 20px; /* Small token */
+}
+
+.form-footer {
+    margin-top: var(--space-5);
+    text-align: center;
+    color: var(--gray-300); /* Consistent with muted text */
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.form-footer a {
+    font-weight: 700;
+    color: var(--color-teal); /* Consistent with link color */
+}
+
+/* Form action button (full width, top margin) */
+.form-action-button {
+    width: 100%;
+    margin-top: var(--space-6);
+}
+
+/* Role Selection Specific Styles (from RegisterPage.css) */
+.role-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.role-card {
+    background: var(--gray-700);
+    border: 1px solid var(--gray-600);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    cursor: pointer;
+    transition: all var(--ts-med) ease;
+}
+
+.role-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-1);
+}
+
+.role-card.selected {
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 2px var(--color-teal);
+    background: rgba(0, 241, 159, var(--op-8)); /* Lichte teal achtergrond */
+}
+
+.role-card h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-1);
+    color: var(--color-white);
+    font-size: 20px; /* Specific size */
+    line-height: 28px;
+}
+
+.role-card p {
+    color: var(--gray-300);
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 0;
+}

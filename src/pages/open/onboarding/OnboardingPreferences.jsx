@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import Navbar from '../../../components/Navbar.jsx';
-import './RegisterPage.css';
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function OnboardingPreferences() {
     const navigate = useNavigate();
@@ -72,11 +72,11 @@ function OnboardingPreferences() {
     return (
         <>
             <Navbar />
-            <div className="onboarding-page-container">
-                <div className="auth-page">
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
                     <form onSubmit={handleSubmit}>
                         <h1>Persoonlijke Gegevens</h1>
-                        <p>Deze gegevens helpen ons om de informatie beter op uw situatie af te stemmen.</p>
+                        <p className="auth-form-description">Deze gegevens helpen ons om de informatie beter op uw situatie af te stemmen.</p> {/* Gebruik de nieuwe description class */}
 
                         <div className="input-group">
                             <label htmlFor="firstName">Voornaam</label>
@@ -111,7 +111,7 @@ function OnboardingPreferences() {
                             <input type="number" id="lengte" name="lengte" value={formData.lengte} onChange={handleChange} required placeholder="bv. 180" min="50" max="300" />
                         </div>
 
-                        {bmi && <p style={{textAlign: 'center', marginTop: 'calc(-1 * var(--space-5))'}}>Je berekende BMI is: <strong>{bmi}</strong></p>}
+                        {bmi && <p className="text-center mt-neg-5">Je berekende BMI is: <strong>{bmi}</strong></p>}
                         
                         {error && <p className="error-message">{error}</p>} 
                         <button type="submit" className="btn btn--primary form-action-button">Volgende stap</button>

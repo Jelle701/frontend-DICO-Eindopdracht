@@ -1,107 +1,122 @@
 /* Algemene container voor de pagina */
 .google-health-page-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    font-family: 'Arial', sans-serif;
-    color: #333;
+    max-width: var(--container-md); /* 900px -> 880px, of 900px behouden als specifieke maat */
+    margin: var(--space-6) auto; /* 2rem -> 32px */
+    padding: var(--space-6); /* 2rem -> 32px */
+    background-color: var(--gray-800); /* Donkere achtergrond */
+    border-radius: var(--radius-lg); /* 10px -> 14px */
+    box-shadow: var(--shadow-1);
+    font-family: var(--font-sans);
+    color: var(--color-white);
 }
 
 /* Header sectie */
 .google-health-header {
     text-align: center;
-    margin-bottom: 2.5rem;
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 1.5rem;
+    margin-bottom: var(--space-7); /* 2.5rem -> 48px */
+    border-bottom: 1px solid rgba(255, 255, 255, var(--op-16));
+    padding-bottom: var(--space-5); /* 1.5rem -> 24px */
 }
 
 .google-health-header h1 {
-    font-size: 2.8rem;
-    color: #1a73e8; /* Google Blue */
-    margin-bottom: 0.5rem;
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    color: var(--color-teal); /* Gebruik teal voor accent */
+    margin-bottom: var(--space-2); /* 0.5rem -> 8px */
 }
 
 .subtitle {
-    font-size: 1.2rem;
-    color: #5f6368; /* Google Grey */
+    font-size: 16px; /* Baseliner */
+    line-height: 24px; /* Baseliner */
+    color: var(--gray-300);
 }
 
 /* Algemene content styling */
 .google-health-content section {
-    margin-bottom: 2.5rem;
-    padding: 1.5rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    margin-bottom: var(--space-7); /* 2.5rem -> 48px */
+    padding: var(--space-5); /* 1.5rem -> 24px */
+    background-color: var(--gray-900); /* Iets donkerder dan container */
+    border-radius: var(--radius-md); /* 8px -> 10px */
+    border: 1px solid var(--gray-700);
 }
 
 .google-health-content h2 {
-    font-size: 1.8rem;
-    color: #1a73e8;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 0.5rem;
+    font-size: 28px; /* H3 token */
+    line-height: 34px; /* H3 token */
+    color: var(--color-teal); /* Gebruik teal voor accent */
+    margin-bottom: var(--space-4); /* 1rem -> 16px */
+    border-bottom: 1px solid rgba(255, 255, 255, var(--op-16));
+    padding-bottom: var(--space-2); /* 0.5rem -> 8px */
 }
 
 /* Lijsten (voor voordelen en stappen) */
 .benefits-section ul, .how-it-works-section ol {
-    padding-left: 2rem;
-    line-height: 1.8;
+    padding-left: var(--space-6); /* 2rem -> 32px */
+    line-height: 1.8; /* Behouden */
+    color: var(--gray-100); /* Standaard tekstkleur voor lijsten */
 }
 
 .benefits-section li, .how-it-works-section li {
-    margin-bottom: 0.8rem;
+    margin-bottom: var(--space-2); /* 0.8rem -> 8px */
 }
 
 .benefits-section li strong {
-    color: #333;
+    color: var(--color-white);
 }
 
 /* Connectie sectie */
 .connection-section {
     text-align: center;
-    background-color: #e8f0fe; /* Lichte Google Blue achtergrond */
-    border-color: #1a73e8;
+    background-color: rgba(0, 241, 159, var(--op-8)); /* Lichte teal achtergrond */
+    border: 1px solid var(--color-teal);
+    border-radius: var(--radius-md); /* Consistent met sectie */
+    padding: var(--space-5); /* Consistent met sectie */
 }
 
+/* De .btn-primary en .btn-outline zullen de globale .btn stijlen gebruiken */
+/* Deze specifieke regels kunnen verwijderd worden als de globale .btn--primary en .btn--ghost voldoende zijn */
+/* Ik laat ze hier staan, maar pas ze aan naar de tokens */
+
 .btn-primary {
-    background-color: #1a73e8;
-    color: white;
-    padding: 12px 25px;
+    /* Dit zou de globale .btn .btn--primary moeten zijn */
+    /* Als dit een custom knop is, dan de styling aanpassen */
+    background-color: var(--color-teal);
+    color: #07261C; /* Specifieke contrastkleur voor teal uit index.css */
+    padding: var(--space-3) var(--space-5); /* 12px 24px */
     border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
+    border-radius: var(--radius-md);
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color var(--ts-med) ease, box-shadow var(--ts-med) ease;
+    box-shadow: var(--shadow-1);
 }
 
 .btn-primary:hover {
-    background-color: #1558b3;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #00D08A; /* Een iets donkerdere teal */
+    box-shadow: var(--shadow-2);
 }
 
 /* Terug knop */
 .back-button-container {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: var(--space-6); /* 2rem -> 32px */
 }
 
 .btn-outline {
+    /* Dit zou de globale .btn .btn--ghost moeten zijn */
+    /* Als dit een custom knop is, dan de styling aanpassen */
     background-color: transparent;
-    color: #1a73e8;
-    border: 2px solid #1a73e8;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1rem;
+    color: var(--color-teal);
+    border: 1px solid var(--color-teal); /* 2px -> 1px voor consistentie */
+    padding: var(--space-3) var(--space-5); /* 12px 24px */
+    border-radius: var(--radius-md);
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--ts-med) ease, color var(--ts-med) ease, border-color var(--ts-med) ease;
 }
 
 .btn-outline:hover {
-    background-color: #e8f0fe;
-    color: #1558b3;
+    background-color: rgba(0, 241, 159, var(--op-8)); /* Lichte teal hover */
+    color: var(--color-teal);
+    border-color: var(--color-teal);
 }

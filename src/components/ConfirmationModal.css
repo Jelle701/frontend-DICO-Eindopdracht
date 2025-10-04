@@ -1,24 +1,31 @@
 .confirmation-modal-content {
-    background-color: white;
-    padding: var(--space-8);
-    border-radius: var(--border-radius-lg);
+    background-color: var(--gray-800); /* Aangepast naar een donkere achtergrond voor consistentie */
+    padding: var(--space-7); /* Aangepast naar space-7 (48px) voor consistentie met EditUserModal */
+    border-radius: var(--radius-xl); /* Aangepast naar radius-xl (20px) voor consistentie met EditUserModal */
     width: 100%;
     max-width: 450px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-2); /* Gebruikt design token */
     text-align: center;
+    border: 1px solid var(--gray-700); /* Consistent met andere kaarten/modalen */
 }
 
 .confirmation-modal-content h2 {
     margin-top: 0;
     margin-bottom: var(--space-4);
+    color: var(--color-white); /* Consistent met algemene tekstkleur */
 }
 
 .confirmation-modal-content p {
     margin-bottom: var(--space-6);
-    color: var(--color-gray-600);
+    color: var(--gray-300); /* Gebruikt design token */
 }
 
+/* De .modal-actions en .btn-danger classes zullen de globale stijlen gebruiken,
+   dus hier is alleen een aanpassing nodig als er specifieke overrides zijn.
+   De .btn-danger is al correct gedefinieerd in de globale CSS. */
 .confirmation-modal-content .modal-actions .btn-danger {
+    /* Deze regel kan waarschijnlijk verwijderd worden als de globale .btn--danger voldoende is,
+       of aangepast worden als er specifieke overrides nodig zijn. */
     background-color: var(--color-danger);
-    color: white;
+    color: var(--color-white);
 }

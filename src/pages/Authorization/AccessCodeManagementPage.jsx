@@ -70,7 +70,7 @@ const AccessCodeManagementPage = () => {
                 Met deze code kunnen zij uw dashboard inzien, maar geen gegevens aanpassen.
             </p>
 
-            {loading && <p>Aan het laden...</p>}
+            {loading && <p className="loading-fallback-message">Aan het laden...</p>}
             {error && <p className="error-text">{error}</p>}
 
             <div className="code-display-section">

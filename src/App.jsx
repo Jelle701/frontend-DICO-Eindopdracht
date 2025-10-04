@@ -33,7 +33,7 @@ const ProviderDashboard = lazy(() => import('./pages/Zorgverlener/ProviderDashbo
 // Admin Pages
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'));
 
-const LoadingFallback = () => <div style={{ textAlign: 'center', marginTop: '50px' }}>Laden...</div>;
+const LoadingFallback = () => <div className="loading-fallback-message">Laden...</div>;
 
 function App() {
     return (
@@ -70,10 +70,11 @@ function App() {
 
                     {/* Admin Routes */}
                     <Route element={<AdminRoute />}>
-                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                        <Route path="/admin/management" element={<AdminDashboard />} />
+                        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin-dashboard#management" element={<AdminDashboard />} />
                         {/* Redirect for the old admin path */}
-                        <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+                        <Route path="/admin/dashboard" element={<Navigate to="/admin-dashboard" replace />} />
+                        <Route path="/admin/management" element={<Navigate to="/admin-dashboard#management" replace />} />
                     </Route>
                 </Route>
 

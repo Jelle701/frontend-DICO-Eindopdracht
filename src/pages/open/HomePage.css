@@ -1,61 +1,119 @@
-.top-banner {
-    background-color: #00f5a0;
-    color: #000;
-    text-align: center;
-    padding: 0.5rem 1rem;
-    font-weight: 500;
-    font-size: 0.95rem;
+.homepage {
+    /* De body heeft al de gradient, dus deze is niet nodig op .homepage */
+    /* min-height: 100vh; */
 }
 
-.top-banner a {
-    color: #000;
+.top-banner {
+    background-color: var(--color-teal);
+    color: #07261C; /* Donkere tekst voor contrast op teal */
+    text-align: center;
+    padding: var(--space-2) var(--space-4);
     font-weight: 600;
+    font-size: 14px;
+}
+
+.top-banner a.top-banner-link {
+    color: #07261C;
+    font-weight: 700;
     text-decoration: underline;
 }
 
 .hero-section {
-    position: relative;
+    /* position: relative; -- Niet langer nodig als video niet absoluut is */
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: column; /* Stapel items onder elkaar */
+    /* justify-content: center; -- VERWIJDERD: Zorgt ervoor dat content vanaf de top stroomt */
     align-items: center;
-    min-height: 80vh;
+    min-height: calc(100vh - 64px); /* Aangepast voor navbar hoogte */
     text-align: center;
-    padding: 2rem;
-    color: white;
+    padding: var(--space-6);
+    color: var(--color-white);
+    overflow: hidden; /* Zorgt ervoor dat video niet buiten de sectie komt */
 }
 
 .hero-video {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* VERWIJDERD: position: absolute; top: 0; left: 0; z-index: -1; */
     width: 100%;
-    height: 100%;
+    max-height: 50vh; /* Beperk de hoogte van de video */
     object-fit: cover;
-    z-index: -1;
-    opacity: 0.3;
+    opacity: 0.3; /* Behoud de opacity om de tekst eroverheen leesbaar te houden, ook al staat de tekst er nu onder */
+    /* VERWIJDERD: filter: blur(5px); */
+    margin-bottom: var(--space-6); /* Ruimte onder de video */
+}
+
+.hero-content {
+    /* VERWIJDERD: position: relative; z-index: 1; */
+    max-width: var(--container-md); /* Beperk breedte voor leesbaarheid */
+    margin: 0 auto;
 }
 
 .hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    font-size: 48px; /* H1 token */
+    line-height: 56px; /* H1 token */
+    margin-bottom: var(--space-4);
 }
 
-.hero-content p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
+.hero-tagline {
+    font-size: 20px; /* Geen directe token, behouden */
+    line-height: 28px; /* Geen directe token, behouden */
+    margin-bottom: var(--space-6);
+    color: var(--gray-200);
+}
+
+.hero-highlights {
+    /* d-flex, gap-5, flex-wrap, justify-center komen van utility classes */
+    margin-top: var(--space-6);
+    overflow: hidden; /* Zorgt ervoor dat de animatie buiten de sectie verborgen blijft */
+    white-space: nowrap; /* Voorkomt dat de spans inpakken */
+    display: flex; /* Zorgt voor een flexibele container */
+    justify-content: flex-start; /* Start van links, maar animatie overschrijft dit */
+    align-items: center;
+    width: 100%; /* Zorgt ervoor dat het de volledige breedte inneemt */
+}
+
+.hero-highlights span {
+    display: inline-block; /* Zorgt ervoor dat transform werkt */
+    color: var(--gray-300);
+    font-size: 14px;
+    line-height: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: continuousSlide 15s linear infinite; /* Duur en herhaling */
+    padding-right: 2em; /* Ruimte tussen de items */
+    flex-shrink: 0; /* Voorkomt dat items krimpen */
+}
+
+.hero-highlights span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.hero-highlights span:nth-child(2) {
+    animation-delay: 5s;
+}
+
+.hero-highlights span:nth-child(3) {
+    animation-delay: 10s;
+}
+
+@keyframes continuousSlide {
+    from {
+        transform: translateX(100vw); /* Start rechts buiten beeld */
+    }
+    to {
+        transform: translateX(-100vw); /* Eindig links buiten beeld */
+    }
 }
 
 .features-section {
-    padding: 4rem 2rem;
+    padding: var(--space-7) var(--space-6);
 }
 
 .features-grid {
     display: flex;
-    justify-content: space-around;
+    justify-content: center; /* Centreer de inhoud */
     align-items: center;
-    gap: 2rem;
-    margin-bottom: 4rem;
+    gap: var(--space-7); /* Meer ruimte tussen tekst en afbeelding */
+    margin-bottom: var(--space-8);
     flex-wrap: wrap;
 }
 
@@ -67,47 +125,288 @@
     max-width: 500px;
 }
 
-.feature-img1,
-.feature-img2 {
-    max-width: 300px;
+.feature-text h2 {
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    margin-bottom: var(--space-4);
+}
+
+.feature-text p {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--gray-200);
+    margin-bottom: var(--space-4);
+}
+
+.feature-text ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: var(--space-4);
+    color: var(--gray-100);
+}
+
+.feature-text ul li {
+    margin-bottom: var(--space-2);
+    position: relative;
+    padding-left: var(--space-4);
+}
+
+.feature-text ul li::before {
+    content: '✓'; /* Checkmark */
+    color: var(--color-teal);
+    position: absolute;
+    left: 0;
+}
+
+.feature-image-wrapper {
+    flex-shrink: 0;
+    max-width: 400px; /* Max breedte voor afbeelding */
+    width: 100%;
+}
+
+.feature-img {
+    width: 100%;
     height: auto;
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);\
+}
+
+.data-impact-section {
+    background-color: var(--gray-800); /* Donkerdere achtergrond voor contrast */
+    padding: var(--space-7) var(--space-6);
+    text-align: center; /* Center align content within the section */
+}
+
+.data-impact-section h2 {
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    margin-bottom: var(--space-4);
+}
+
+.metrics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-6); /* d-flex, gap-6, justify-center, flex-wrap, mt-6 komen van utility classes */
+}
+
+.metric-card {
+    background: rgba(255,255,255,var(--op-8)); /* Lichtere card achtergrond */
+    border: 1px solid rgba(255,255,255,var(--op-16));
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    text-align: center;
+    min-width: 200px;
+    box-shadow: var(--shadow-1);
+}
+
+.metric-card .numeric.stat {
+    font-size: 48px; /* Grote cijfers */
+    line-height: 56px;
+    color: var(--color-teal);
+    margin-bottom: var(--space-2);
+}
+
+.metric-card p {
+    margin: 0;
+    color: var(--gray-300);
+}
+
+.how-it-works-section {
+    padding: var(--space-7) var(--space-6);
+    text-align: center; /* Center align content within the section */
+}
+
+.how-it-works-section h2 {
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    margin-bottom: var(--space-4);
+}
+
+.how-it-works-grid {
+    display: flex;
+    /* flex-wrap: wrap; -- VERWIJDERD om kaarten op één horizontale lijn te houden */
+    justify-content: center;
+    gap: var(--space-6); /* d-flex, gap-6, flex-wrap, justify-center, mt-6 komen van utility classes */
+}
+
+.how-it-works-step {
+    background: rgba(255,255,255,var(--op-8));
+    border: 1px solid rgba(255,255,255,var(--op-16));
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    text-align: center;
+    max-width: 254px; /* AANGEPAST: 20% minder breed dan 317px */
+    box-shadow: var(--shadow-1);
+}
+
+.how-it-works-step .step-number {
+    font-family: var(--font-numeric);\
+    font-size: 48px;
+    line-height: 1;
+    color: var(--color-teal);
+    margin-bottom: var(--space-3);
+}
+
+.how-it-works-step h3 {
+    font-size: 28px; /* H3 token */
+    line-height: 34px; /* H3 token */
+    margin-bottom: var(--space-2);
+}
+
+.how-it-works-step p {
+    margin: 0;
+    color: var(--gray-300);
 }
 
 .testimonials-section {
-    background-color: #111;
-    padding: 4rem 2rem;
+    background-color: var(--gray-900);
+    padding: var(--space-7) var(--space-6);
     text-align: center;
+}
+
+.testimonials-image {
+    max-width: 80%; /* Max breedte van de afbeelding */
+    height: auto;
+    margin-bottom: var(--space-6); /* Ruimte onder de afbeelding */
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
 }
 
 .testimonials-grid {
     display: flex;
+    /* flex-wrap: wrap; -- VERWIJDERD om kaarten op één horizontale lijn te houden */
     justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
+    gap: var(--space-6); /* d-flex, gap-6, justify-center, flex-wrap, mt-6 komen van utility classes */
 }
 
 .testimonial {
-    max-width: 400px;
+    max-width: 261px; /* AANGEPAST: 40% minder breed dan 435px */
     font-style: italic;
+    background: rgba(255,255,255,var(--op-8));
+    border: 1px solid rgba(255,255,255,var(--op-16));
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-1);
+}
+
+.testimonial-avatar {
+    width: 160px; /* Twee keer zo groot */
+    height: 160px; /* Twee keer zo groot */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: var(--space-3);
+    /* border: 3px solid var(--color-teal); -- VERWIJDERD */
+}
+
+.testimonial p {
+    margin-bottom: var(--space-4);
+    color: var(--gray-100);
 }
 
 .testimonial footer {
-    margin-top: 1rem;
+    margin-top: var(--space-4);
     font-style: normal;
-    font-weight: bold;
+    font-weight: 700;
+    color: var(--color-white);\
 }
 
 .cta-section {
-    padding: 4rem 2rem;
+    padding: var(--space-7) var(--space-6);\
     text-align: center;
-    background-color: #1a1a1a;
+    background-color: var(--gray-800);
+}
+
+.cta-section h2 {
+    font-size: 36px; /* H2 token */
+    line-height: 44px; /* H2 token */
+    margin-bottom: var(--space-4);
+}
+
+.cta-section p {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--gray-200);
+    margin-bottom: var(--space-6);
+}
+
+.d-flex.gap-4.justify-center.mt-6 {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
 }
 
 .main-footer {
-    background-color: #111;
-    padding: 2rem 1rem;
+    background-color: var(--gray-900);
+    padding: var(--space-6) var(--space-4);
     text-align: center;
-    color: var(--color-muted);
+    color: var(--gray-300);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 960px) {
+    .hero-content h1 {
+        font-size: 36px;
+        line-height: 44px;
+    }
+    .hero-tagline {
+        font-size: 16px;
+        line-height: 24px;
+    }
+    .features-grid {
+        flex-direction: column; /* Stack columns */
+    }
+    .features-grid.reverse {
+        flex-direction: column; /* Stack columns */
+    }
+    .feature-image-wrapper {
+        max-width: 100%;
+    }
+    .metrics-grid, .how-it-works-grid, .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+    .metric-card, .how-it-works-step, .testimonial {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero-content h1 {
+        font-size: 28px;
+        line-height: 34px;
+    }
+    .hero-tagline {
+        font-size: 14px;
+        line-height: 20px;
+    }
+    .top-banner {
+        font-size: 12px;
+    }
+    .navbar-logo span {
+        font-size: 1.2rem;
+    }
+    .feature-text h2, .data-impact-section h2, .how-it-works-section h2, .testimonials-section h2, .cta-section h2 {
+        font-size: 28px;
+        line-height: 34px;
+    }
+    .metric-card .numeric.stat, .how-it-works-step .step-number {
+        font-size: 36px;
+        line-height: 44px;
+    }
+    .how-it-works-step h3 {
+        font-size: 20px;
+        line-height: 28px;
+    }
+    .cta-section p {
+        font-size: 14px;
+        line-height: 20px;
+    }
+    .d-flex.gap-4.justify-center.mt-6 {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+    .btn {
+        width: 100%;
+    }
 }

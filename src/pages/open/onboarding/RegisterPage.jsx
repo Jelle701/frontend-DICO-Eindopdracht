@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../../../services/AuthService/AuthService.jsx';
 import Navbar from '../../../components/Navbar.jsx'; // Importeer de Navbar
-import './RegisterPage.css';
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 // Stap 1 van de nieuwe flow: Een generiek account aanmaken.
 function RegisterPage() {
@@ -45,28 +45,32 @@ function RegisterPage() {
     return (
         <>
             <Navbar />
-            <div className="auth-page">
-                <form onSubmit={handleSubmit}>
-                    <h1>Maak een account aan</h1>
-                    <p>Stap 1: Registreer uw e-mailadres en wachtwoord.</p>
-                    <div className="input-group">
-                        <label htmlFor="email">E-mailadres</label>
-                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="password">Wachtwoord</label>
-                        <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="confirmPassword">Herhaal Wachtwoord</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
-                    </div>
-                    {error && <p className="error-message">{error}</p>}
-                    <button type="submit">Registreer</button>
-                    <p className="form-footer">
-                        Heb je al een account? <Link to="/login">Log hier in</Link>
-                    </p>
-                </form>
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
+                    <form onSubmit={handleSubmit}>
+                        <h1>Maak een account aan</h1>
+                        <p className="auth-form-description">Stap 1: Registreer uw e-mailadres en wachtwoord.</p> {/* Gebruik de nieuwe description class */}
+                        <div className="input-group">
+                            <label htmlFor="email">E-mailadres</label>
+                            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="password">Wachtwoord</label>
+                            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="confirmPassword">Herhaal Wachtwoord</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+                        </div>
+                        {error && <p className="error-message">{error}</p>}
+                        <button type="submit" className="btn btn--primary form-action-button">Registreer</button>
+                        <div className="form-footer">
+                            <p>
+                                Heb je al een account? <Link to="/login">Log hier in</Link>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </>
     );

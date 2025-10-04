@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { updateUserRole } from '../../../services/ProfileService'; // Deze service moeten we later aanmaken/aanpassen
-import './RegisterPage.css'; // We hergebruiken de styling
+import Navbar from '../../../components/Navbar.jsx'; // Voeg Navbar import toe
+import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 // Dit was RegisterDetailsPage, nu is het de Rol-Selectie Pagina.
 function SelectRolePage() {
@@ -35,10 +36,10 @@ function SelectRolePage() {
                     navigate('/dashboard'); // TIJDELIJK: Moet naar de *echte* volgende stap.
                     break;
                 case 'GUARDIAN':
-                    navigate('/link-patient'); // Deze pagina moeten we nog aanmaken.
+                    navigate('/onboarding/link-patient'); // Aangepast naar de correcte onboarding route
                     break;
                 case 'PROVIDER':
-                    navigate('/patient-management'); // Deze pagina moeten we nog aanmaken.
+                    navigate('/provider-dashboard'); // Aangepast naar de correcte provider route
                     break;
                 default:
                     setError('Ongeldige rol geselecteerd.');
@@ -52,42 +53,47 @@ function SelectRolePage() {
     };
 
     return (
-        <div className="auth-page">
-            <div className="role-selection-container">
-                <h1>Kies uw rol</h1>
-                <p>Stap 2: Selecteer hoe u deze applicatie wilt gebruiken.</p>
-                
-                <div className="role-options">
-                    <div 
-                        className={`role-card ${selectedRole === 'PATIENT' ? 'selected' : ''}`}
-                        onClick={() => handleRoleSelection('PATIENT')}
-                    >
-                        <h3>Patiënt</h3>
-                        <p>Ik wil mijn eigen gezondheidsdata bijhouden en beheren.</p>
-                    </div>
-                    <div 
-                        className={`role-card ${selectedRole === 'GUARDIAN' ? 'selected' : ''}`}
-                        onClick={() => handleRoleSelection('GUARDIAN')}
-                    >
-                        <h3>Ouder/Voogd</h3>
-                        <p>Ik wil de data van een gezinslid (bv. mijn kind) bekijken.</p>
-                    </div>
-                    <div 
-                        className={`role-card ${selectedRole === 'PROVIDER' ? 'selected' : ''}`}
-                        onClick={() => handleRoleSelection('PROVIDER')}
-                    >
-                        <h3>Zorgverlener</h3>
-                        <p>Ik wil de data van meerdere patiënten beheren.</p>
-                    </div>
+        <>
+            <Navbar />
+            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
+                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
+                    <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}> {/* Added form and preventDefault */}
+                        <h1>Kies uw rol</h1>
+                        <p className="auth-form-description">Stap 2: Selecteer hoe u deze applicatie wilt gebruiken.</p> {/* Gebruik de nieuwe description class */}
+                        
+                        <div className="role-options">
+                            <div 
+                                className={`role-card ${selectedRole === 'PATIENT' ? 'selected' : ''}`}
+                                onClick={() => handleRoleSelection('PATIENT')}
+                            >
+                                <h3>Patiënt</h3>
+                                <p>Ik wil mijn eigen gezondheidsdata bijhouden en beheren.</p>
+                            </div>
+                            <div 
+                                className={`role-card ${selectedRole === 'GUARDIAN' ? 'selected' : ''}`}
+                                onClick={() => handleRoleSelection('GUARDIAN')}
+                            >
+                                <h3>Ouder/Voogd</h3>
+                                <p>Ik wil de data van een gezinslid (bv. mijn kind) bekijken.</p>
+                            </div>
+                            <div 
+                                className={`role-card ${selectedRole === 'PROVIDER' ? 'selected' : ''}`}
+                                onClick={() => handleRoleSelection('PROVIDER')}
+                            >
+                                <h3>Zorgverlener</h3>
+                                <p>Ik wil de data van meerdere patiënten beheren.</p>
+                            </div>
+                        </div>
+
+                        {error && <p className="error-message">{error}</p>}
+
+                        <button type="submit" disabled={loading || !selectedRole} className="btn btn--primary form-action-button"> {/* Updated class name */}
+                            {loading ? 'Bezig met opslaan...' : 'Volgende'}
+                        </button>
+                    </form>
                 </div>
-
-                {error && <p className="error-message">{error}</p>}
-
-                <button onClick={handleSubmit} disabled={loading || !selectedRole} className="btn-submit-role">
-                    {loading ? 'Bezig met opslaan...' : 'Volgende'}
-                </button>
             </div>
-        </div>
+        </>
     );
 }
 

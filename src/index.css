@@ -145,6 +145,7 @@ a {
   text-decoration: none;
   text-underline-offset: 3px; /* px */
 }
+
 a:hover { text-decoration: underline; }
 
 .navbar {
@@ -205,6 +206,29 @@ a:hover { text-decoration: underline; }
   --btn-bd: rgba(255,255,255,var(--op-16));
   backdrop-filter: saturate(140%) blur(6px);
 }
+
+.btn--secondary {
+  --btn-bg: var(--gray-600);
+  --btn-fg: var(--color-white);
+  --btn-bd: var(--gray-600);
+}
+
+.btn--danger {
+  --btn-bg: var(--color-danger);
+  --btn-fg: var(--color-white);
+  --btn-bd: var(--color-danger);
+}
+
+.btn--outline {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-teal);
+  --btn-bd: var(--color-teal);
+  backdrop-filter: saturate(140%) blur(6px); /* Optioneel, consistent met ghost */
+}
+.btn--outline:hover {
+  --btn-bg: rgba(0,241,159,var(--op-8)); /* Lichte teal hover */
+}
+
 
 /* ===========================
    6) CARDS & SECTIES
@@ -279,6 +303,57 @@ textarea { height: auto; min-height: 120px; padding-top: 12px; padding-bottom: 1
 .form-help   { margin-top: 6px; font-size: 12px; color: var(--gray-300); }
 .form-error  { margin-top: 6px; font-size: 12px; color: var(--color-danger); }
 
+.radio-group {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  color: var(--gray-100);
+}
+
+.radio-label input[type="radio"] {
+  /* Standaard browser radio knop verbergen */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid var(--gray-500);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  outline: none;
+  transition: all var(--ts-fast) ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.radio-label input[type="radio"]:checked {
+  border-color: var(--color-teal);
+  background-color: var(--color-teal);
+}
+
+.radio-label input[type="radio"]:checked::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-white);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.radio-label input[type="radio"]:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
 /* ===========================
    9) TABLES (voor CSV/PDF-overzicht)
    =========================== */
@@ -337,3 +412,78 @@ textarea { height: auto; min-height: 120px; padding-top: 12px; padding-bottom: 1
 .text-100 { color: var(--gray-100); }
 .text-300 { color: var(--gray-300); }
 .text-teal { color: var(--color-teal); }
+.text-400 { color: var(--gray-400); }
+
+.loading-fallback-message {
+  text-align: center;
+  margin-top: var(--space-7);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-6);
+  color: var(--gray-300);
+}
+
+.placeholder-box {
+  border: 1px solid var(--gray-600);
+  padding: var(--space-6);
+  margin-top: var(--space-6);
+  border-radius: var(--radius-md);
+}
+
+/* Flexbox Utilities */
+.d-flex { display: flex; }
+.w-100 { width: 100%; }
+.justify-between { justify-content: space-between; }
+.items-center { align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-column { flex-direction: column; }
+
+/* Gap Utilities */
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+.gap-7 { gap: var(--space-7); }
+.gap-8 { gap: var(--space-8); }
+
+/* Letter Spacing Utilities */
+.ls-2 { letter-spacing: 2px; }
+
+/* Text Alignment Utilities */
+.text-center { text-align: center; }
+
+/* Negative Margin Utilities */
+.mt-neg-5 { margin-top: calc(-1 * var(--space-5)); }
+.mt-neg-7 { margin-top: calc(-1 * var(--space-7)); }
+
+/* Min-height Utilities */
+.min-h-60px { min-height: 60px; }
+
+/* ===========================
+   11) LISTS & DETAILS
+   =========================== */
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0; /* 12px top/bottom padding */
+  border-bottom: 1px solid rgba(255,255,255,0.06); /* Consistent with table rows */
+}
+
+.detail-item:last-child {
+  border-bottom: none; /* Remove border from the last item in a list */
+}
+
+.detail-item__label {
+  color: var(--gray-200); /* Lighter color for the label */
+  font-size: 14px;
+}
+
+.detail-item__value {
+  color: var(--color-white); /* Standard text color for the value */
+  font-weight: 700; /* Make the value bold */
+}

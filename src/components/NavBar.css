@@ -1,39 +1,41 @@
 /* src/components/Navbar.css */
 .navbar {
-    background-color: var(--color-surface);
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
+    /* Gebruik de styling van de navbar uit index.css */
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid var(--color-border);
+    height: 64px; /* Vaste hoogte zoals in index.css */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centreert de inhoud horizontaal */
+    background: linear-gradient(180deg, rgba(16,21,24,0.9), rgba(16,21,24,0)); /* Van index.css */
+    backdrop-filter: blur(8px); /* Van index.css */
+    border-bottom: 1px solid rgba(255,255,255,var(--op-16)); /* Van index.css, met token */
 }
 
 .navbar-container {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; -- VERWIJDERD om flex-grow de ruimte te laten verdelen */
     align-items: center;
     height: 100%;
-    width: 100%;
-    max-width: 1600px;
-    padding: 0 2rem;
+    width: 100%; /* Zorgt ervoor dat het de volledige breedte inneemt */
+    padding-left: var(--space-6); /* Van index.css */
+    padding-right: var(--space-6); /* Van index.css */
 }
 
 .navbar-logo {
-    color: var(--color-text-primary);
+    color: var(--color-white); /* Consistent met body text */
     display: flex;
     align-items: center;
     text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.5rem; /* Geen directe token, behouden */
+    font-weight: 700; /* Consistent met headlines */
+    flex: 1 0 auto; /* Grow 1, shrink 0, basis auto */
 }
 
 .navbar-logo img {
-    height: 32px;
-    margin-right: 12px;
+    height: var(--space-6); /* 32px */
+    margin-right: var(--space-3); /* 12px */
 }
 
 /* --- Desktop Menu --- */
@@ -44,32 +46,34 @@
     text-align: center;
     margin: 0;
     padding: 0;
+    flex: 2 0 auto; /* Grow 2, shrink 0, basis auto */
+    justify-content: flex-end; /* Knoppen rechts uitlijnen binnen hun 2/3 deel */
 }
 
 .nav-menu-desktop li {
-    height: 70px;
+    height: 64px; /* Consistent met navbar hoogte */
     display: flex;
     align-items: center;
 }
 
-.nav-link {
-    color: var(--color-text-secondary);
+.nav-menu-desktop li a.nav-link { /* Verhoogde specificiteit */
+    color: var(--gray-200); /* Neutrale tekstkleur */
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    margin: 0 0.5rem;
-    font-weight: 500;
-    transition: color 0.2s ease-in-out;
+    padding: 0 var(--space-4); /* 0 16px */
+    margin: 0 var(--space-2); /* 0 8px */
+    font-weight: 600; /* Semibold */
+    transition: color var(--ts-med) ease, border-bottom-color var(--ts-med) ease;
     border-bottom: 3px solid transparent;
-    line-height: calc(70px - 1rem - 3px);
+    line-height: 64px; /* Zorgt voor verticale centrering */
 }
 
-.nav-link:hover {
-    color: var(--color-text-primary);
+.nav-menu-desktop li a.nav-link:hover { /* Verhoogde specificiteit */
+    color: var(--color-white);
 }
 
-.nav-link.active {
-    color: var(--color-text-primary);
-    border-bottom-color: var(--color-accent-positive);
+.nav-menu-desktop li a.nav-link.active { /* Verhoogde specificiteit */
+    color: var(--color-teal); /* Actieve kleur */
+    border-bottom-color: var(--color-teal); /* Actieve onderrand */
 }
 
 /* --- Hamburger & Mobile Menu --- */
@@ -78,71 +82,71 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 10px;
+    padding: var(--space-2); /* 8px */
     z-index: 1001;
 }
 
 .hamburger-line {
-    width: 25px;
-    height: 2px;
-    background-color: var(--color-text-primary);
-    border-radius: 3px;
-    transition: all 0.3s ease-in-out;
-    margin: 4px 0;
+    width: 25px; /* Behouden */
+    height: 2px; /* Behouden */
+    background-color: var(--color-white);
+    border-radius: 3px; /* Behouden */
+    transition: all var(--ts-med) ease-in-out;
+    margin: var(--space-1) 0; /* 4px 0 */
 }
 
 .hamburger-button.open .hamburger-line:nth-child(1) {
-    transform: translateY(6px) rotate(45deg);
+    transform: translateY(var(--space-2)) rotate(45deg); /* 8px */
 }
 .hamburger-button.open .hamburger-line:nth-child(2) {
     opacity: 0;
 }
 .hamburger-button.open .hamburger-line:nth-child(3) {
-    transform: translateY(-6px) rotate(-45deg);
+    transform: translateY(calc(-1 * var(--space-2))) rotate(-45deg); /* -8px */
 }
 
 .nav-menu-mobile {
     display: none; /* Verberg op desktop */
     position: absolute;
-    right: 1rem;
-    top: 70px;
-    background-color: var(--color-surface);
-    min-width: 220px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    right: var(--space-4); /* 16px */
+    top: 64px; /* Consistent met navbar hoogte */
+    background-color: var(--gray-800); /* Donkere achtergrond */
+    min-width: 220px; /* Behouden */
+    box-shadow: var(--shadow-2);
     z-index: 1000;
-    border-radius: 8px;
-    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); /* 10px */
+    border: 1px solid var(--gray-700); /* Subtiele rand */
     overflow: hidden;
-    animation: fadeIn 0.2s ease-out;
+    animation: fadeIn var(--ts-med) ease-out;
 }
 
 .nav-menu-mobile ul {
     list-style: none;
-    padding: 0.5rem 0;
+    padding: var(--space-2) 0; /* 8px 0 */
     margin: 0;
 }
 
-.nav-menu-mobile .nav-link {
+.nav-menu-mobile ul li a.nav-link { /* Verhoogde specificiteit */
     width: 100%;
     text-align: left;
-    padding: 1rem 1.5rem;
+    padding: var(--space-4) var(--space-5); /* 16px 24px */
     line-height: normal;
     border-bottom: none;
 }
-.nav-menu-mobile .nav-link.active {
-    background-color: rgba(0, 168, 120, 0.1);
-    color: var(--color-accent-positive);
+.nav-menu-mobile ul li a.nav-link.active { /* Verhoogde specificiteit */
+    background-color: rgba(0,241,159,var(--op-8)); /* var(--color-teal) met --op-8 */
+    color: var(--color-teal);
 }
 
 .nav-menu-mobile .separator {
     height: 1px;
-    background-color: var(--color-border);
-    margin: 8px 0;
+    background-color: var(--gray-700);
+    margin: var(--space-2) 0; /* 8px 0 */
 }
 
 .nav-menu-mobile .btn-outline {
-    width: calc(100% - 3rem);
-    margin: 0.5rem 1.5rem 1rem 1.5rem;
+    width: calc(100% - (2 * var(--space-5))); /* 100% - 48px */
+    margin: var(--space-2) var(--space-5) var(--space-4) var(--space-5); /* 8px 24px 16px 24px */
     text-align: center;
 }
 
@@ -162,6 +166,6 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
+    from { opacity: 0; transform: translateY(calc(-1 * var(--space-2))); } /* -8px */
     to { opacity: 1; transform: translateY(0); }
 }

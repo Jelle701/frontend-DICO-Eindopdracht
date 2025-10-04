@@ -8,8 +8,8 @@ const ConfirmationModal = ({ title, message, onConfirm, onCancel, confirmText = 
                 <h2>{title}</h2>
                 <p>{message}</p>
                 <div className="modal-actions">
-                    <button onClick={onCancel} className="btn-secondary">{cancelText}</button>
-                    <button onClick={onConfirm} className="btn-danger">{confirmText}</button>
+                    <button onClick={onCancel} className="btn btn--secondary">{cancelText}</button>
+                    <button onClick={onConfirm} className="btn btn--danger">{confirmText}</button>
                 </div>
             </div>
         </div>

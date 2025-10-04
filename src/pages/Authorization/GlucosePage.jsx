@@ -9,22 +9,17 @@ function GlucosePage() {
     // const { id } = useParams();
 
     return (
-        <div>
+        <>
             <Navbar />
-            <div className="container" style={{ paddingTop: '2rem', textAlign: 'center' }}>
+            <div className="container pt-6 text-center">
                 <h1>Glucose Details</h1>
                 <p>Hier komen de details voor de geselecteerde glucosemeting.</p>
                 {/* Hier kun je een grafiek of tabel met glucosedata tonen */}
-                <div style={{
-                    border: '1px solid var(--color-muted)',
-                    padding: '2rem',
-                    marginTop: '2rem',
-                    borderRadius: '0.5rem'
-                }}>
+                <div className="placeholder-box">
                     <p>Grafiek of data visualisatie komt hier.</p>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

@@ -39,19 +39,32 @@ function Navbar() {
 
     const closeMenu = () => setMenuOpen(false);
 
-    // --- Definitieve oplossing voor Admin Links ---
-    const handleAdminNav = (path) => {
-        navigate(path);
-        closeMenu();
+    // Custom isActive function for admin links
+    const getAdminNavLinkClass = (targetHash) => {
+        // Check if the current path is /admin-dashboard
+        const isBasePathActive = location.pathname === '/admin-dashboard';
+
+        // Determine if this specific admin link is active based on hash
+        let isThisLinkActive = false;
+        if (targetHash === '#dashboard') {
+            // 'Dashboard' link is active if no hash or #dashboard
+            isThisLinkActive = isBasePathActive && (location.hash === '' || location.hash === '#dashboard');
+        } else if (targetHash === '#management') {
+            // 'Gebruikersbeheer' link is active if #management
+            isThisLinkActive = isBasePathActive && location.hash === '#management';
+        }
+
+        return `nav-link ${isThisLinkActive ? 'active' : ''}`;
     };
 
-    // Bepaal de class direct op basis van de location.hash
-    const isDashboardActive = location.pathname === '/admin-dashboard' && (location.hash === '' || location.hash === '#dashboard');
-    const isManagementActive = location.pathname === '/admin-dashboard' && location.hash === '#management';
+    // Generic NavLink class for non-admin links
+    const getNavLinkClass = ({ isActive }) => {
+        return `nav-link ${isActive ? 'active' : ''}`;
+    };
 
     return (
         <nav className="navbar" ref={menuRef}>
-            <div className="navbar-container">
+            <div className="navbar-container d-flex justify-between items-center"> {/* Removed w-100 */}
                 <NavLink to={isAuth ? dashboardPath : "/"} className="navbar-logo" onClick={closeMenu}>
                     <img src={DicoLogo} alt="App Logo" />
                     <span>Diabeheer</span>
@@ -74,30 +87,30 @@ function Navbar() {
                         <>
                             {isAdmin ? (
                                 <>
-                                    <li><a href="/admin-dashboard#dashboard" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#dashboard'); }} className={`nav-link ${isDashboardActive ? 'active' : ''}`}>Dashboard</a></li>
-                                    <li><a href="/admin-dashboard#management" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#management'); }} className={`nav-link ${isManagementActive ? 'active' : ''}`}>Gebruikersbeheer</a></li>
+                                    <li><NavLink to="/admin-dashboard#dashboard" className={getAdminNavLinkClass('#dashboard')}>Dashboard</NavLink></li>
+                                    <li><NavLink to="/admin-dashboard#management" className={getAdminNavLinkClass('#management')}>Gebruikersbeheer</NavLink></li>
                                 </> 
                             ) : (
-                                <li><NavLink to={dashboardPath} className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Dashboard</NavLink></li>
+                                <li><NavLink to={dashboardPath} className={getNavLinkClass}>Dashboard</NavLink></li>
                             )}
 
                             {isProvider && !isAdmin && (
-                                <li><NavLink to="/patient-portal" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Patiënten Beheren</NavLink></li>
+                                <li><NavLink to="/patient-portal" className={getNavLinkClass}>Patiënten Beheren</NavLink></li>
                             )}
 
                             {!isProvider && !isAdmin && (
                                 <>
-                                    <li><NavLink to="/my-data" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Mijn Gegevens</NavLink></li>
-                                    <li><NavLink to="/service-hub" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>Services</NavLink></li>
+                                    <li><NavLink to="/my-data" className={getNavLinkClass}>Mijn Gegevens</NavLink></li>
+                                    <li><NavLink to="/service-hub" className={getNavLinkClass}>Services</NavLink></li>
                                 </>
                             )}
                             
-                            <li><button onClick={handleLogout} className="btn btn-outline">Uitloggen</button></li>
+                            <li><button onClick={handleLogout} className="btn btn--outline">Uitloggen</button></li>
                         </>
                     ) : (
                         <>
                             <li><NavLink to="/login" className="nav-link">Inloggen</NavLink></li>
-                            <li><NavLink to="/register" className="btn btn-primary">Registreren</NavLink></li>
+                            <li><NavLink to="/register" className="btn btn--primary">Registreren</NavLink></li>
                         </>
                     )}
                 </ul>
@@ -107,26 +120,26 @@ function Navbar() {
                         <ul>
                             {isAdmin ? (
                                 <>
-                                    <li><a href="/admin-dashboard#dashboard" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#dashboard'); }} className={`nav-link ${isDashboardActive ? 'active' : ''}`}>Dashboard</a></li>
-                                    <li><a href="/admin-dashboard#management" onClick={(e) => { e.preventDefault(); handleAdminNav('/admin-dashboard#management'); }} className={`nav-link ${isManagementActive ? 'active' : ''}`}>Gebruikersbeheer</a></li>
-                                </>
+                                    <li><NavLink to="/admin-dashboard#dashboard" className={getAdminNavLinkClass('#dashboard')} onClick={closeMenu}>Dashboard</NavLink></li>
+                                    <li><NavLink to="/admin-dashboard#management" className={getAdminNavLinkClass('#management')} onClick={closeMenu}>Gebruikersbeheer</NavLink></li>
+                                </> 
                             ) : (
-                                <li><NavLink to={dashboardPath} className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Dashboard</NavLink></li>
+                                <li><NavLink to={dashboardPath} className={getNavLinkClass} onClick={closeMenu}>Dashboard</NavLink></li>
                             )}
 
                             {isProvider && !isAdmin && (
-                                <li><NavLink to="/patient-portal" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Patiënten Beheren</NavLink></li>
+                                <li><NavLink to="/patient-portal" className={getNavLinkClass} onClick={closeMenu}>Patiënten Beheren</NavLink></li>
                             )}
 
                             {!isProvider && !isAdmin && (
                                 <>
-                                    <li><NavLink to="/my-data" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Mijn Gegevens</NavLink></li>
-                                    <li><NavLink to="/service-hub" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} onClick={closeMenu}>Services</NavLink></li>
+                                    <li><NavLink to="/my-data" className={getNavLinkClass} onClick={closeMenu}>Mijn Gegevens</NavLink></li>
+                                    <li><NavLink to="/service-hub" className={getNavLinkClass} onClick={closeMenu}>Services</NavLink></li>
                                 </>
                             )}
 
                             <li className="separator"></li>
-                            <li><button onClick={handleLogout} className="btn btn-outline">Uitloggen</button></li>
+                            <li><button onClick={handleLogout} className="btn btn--outline">Uitloggen</button></li>
                         </ul>
                     </div>
                 )}

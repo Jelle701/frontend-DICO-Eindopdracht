@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 function ButtonLink({ to, children, variant = 'primary' }) {
     return (
-        <Link to={to} className={`btn btn-${variant}`}>
+        <Link to={to} className={`btn btn--${variant}`}>
             {children}
         </Link>
     );

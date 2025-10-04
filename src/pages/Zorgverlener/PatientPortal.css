@@ -1,174 +1,225 @@
-/*
- * Patient Portal Styling based on WHOOP Style Guide
- */
+/* src/pages/Zorgverlener/PatientPortal.css */
 
+/* --- Main Layout --- */
 .patient-portal-container {
-    display: grid;
-    grid-template-columns: 280px 1fr; /* Sidebar and main content */
-    height: calc(100vh - 80px); /* Full height minus navbar */
-    background: linear-gradient(180deg, var(--gradient-bg-start), var(--gradient-bg-end));
-    color: var(--color-white);
+    display: flex;
+    height: calc(100vh - 64px); /* Full height minus navbar */
+    /* Background is handled by .page--dark class */
 }
 
-/* --- Master View: Sidebar --- */
+/* --- Sidebar --- */
 .patient-list-sidebar {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    padding: var(--space-5);
+    width: 320px;
+    flex-shrink: 0;
+    background-color: var(--gray-800);
+    border-right: 1px solid var(--gray-700);
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    overflow-y: hidden;
 }
 
 .sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--gray-700);
+    flex-shrink: 0;
 }
 
 .sidebar-header h2 {
-    font-size: 18px;
     margin: 0;
+    font-size: 20px; /* Custom size, but let's apply global heading styles */
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 1.6px;
+}
+
+.sidebar-search {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--gray-700);
+}
+
+/* Make search input conform to global .input style */
+.sidebar-search input {
+    height: 44px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-600);
+    background-color: var(--gray-800);
+    transition: border-color var(--ts-med) ease, box-shadow var(--ts-med) ease;
+}
+.sidebar-search input:focus {
+    border-color: var(--color-teal);
+    box-shadow: 0px 0px 0px 2px rgba(0,241,159,0.25);
+    outline: 0;
 }
 
 .patient-list-items {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    overflow-y: auto;
+    flex-grow: 1;
 }
 
 .patient-list-item {
+    display: flex;
+    align-items: center;
     padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
     cursor: pointer;
-    font-weight: 600;
-    color: var(--gray-100);
-    transition: background-color 0.2s ease;
-    border: 1px solid transparent;
+    border-bottom: 1px solid var(--gray-700);
+    transition: background-color var(--ts-fast);
 }
 
 .patient-list-item:hover {
-    background-color: rgba(255, 255, 255, var(--op-8));
+    background-color: var(--gray-700);
 }
 
 .patient-list-item.active {
-    background-color: var(--color-teal);
-    color: #07261C; /* Dark text for contrast on teal */
-    font-weight: 700;
-    border-color: var(--color-teal);
+    background-color: rgba(255, 255, 255, var(--op-8)); /* Use opacity token for selection */
+    border-right: 3px solid var(--color-teal);
 }
 
-/* --- Detail View: Main Content --- */
-.patient-detail-content.card {
-    margin: var(--space-6);
-    padding: var(--space-6);
-    background: rgba(36, 43, 51, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-2);
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-teal);
+    color: #07261C; /* Use high-contrast color from button definition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-right: var(--space-4);
+    flex-shrink: 0;
+}
+
+.patient-info span {
+    display: block;
+    font-weight: 600;
+}
+
+.patient-info small {
+    color: var(--gray-400);
+}
+
+.no-patients-found {
+    padding: var(--space-5);
+    text-align: center;
+    color: var(--gray-400);
+}
+
+/* --- Main Content --- */
+.patient-detail-content {
+    flex-grow: 1;
+    padding: var(--space-7); /* Increased padding for more breathing room */
     overflow-y: auto;
 }
 
+.no-patient-selected .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: var(--gray-500);
+}
+
+.empty-state h2 {
+    /* Inherits global h2/h3 styles */
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+}
+
 .detail-header h1 {
-    margin: 0 0 var(--space-5) 0;
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+    /* Inherits global h1 styles */
+}
+
+.header-actions .btn {
+    margin-left: var(--space-3);
+}
+
+.details-container {
+    display: grid;
+    gap: var(--space-5);
+}
+
+/* Make detail-card conform to global .card style */
+.detail-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5); /* Slightly less padding than a main card */
+    box-shadow: var(--shadow-1);
+}
+
+.detail-card h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--gray-700);
+    padding-bottom: var(--space-3);
+    /* Inherits global h3 styles */
 }
 
 .details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-5);
-}
-
-.detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    background: rgba(0,0,0,0.1);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
+    gap: var(--space-4);
 }
 
 .detail-item span {
+    /* Use .label style from global stylesheet */
+    display: block;
+    margin-bottom: var(--space-2);
     font-size: 12px;
+    line-height: 16px;
     color: var(--gray-200);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 1px;
 }
 
 .detail-item strong {
     font-size: 16px;
     font-weight: 600;
-    color: var(--color-white);
 }
 
-.no-patient-selected {
-    text-align: center;
-    margin-top: 20%;
-}
-.no-patient-selected h2 {
-    color: var(--gray-100);
-}
-.no-patient-selected p {
-    color: var(--gray-300);
-}
-
-/* --- Modal Styling --- */
+/* --- Modal --- */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
 }
 
-.modal-content.card {
-    width: 90%;
+/* Make modal-content conform to global .card style */
+.modal-content {
+    width: 100%;
     max-width: 500px;
-    background: var(--gray-700);
-    border: 1px solid var(--gray-500);
-    padding: var(--space-6);
+    background: var(--gray-800); /* Darker background for modals */
+    border: 1px solid var(--gray-700);
     border-radius: var(--radius-lg);
+    padding: var(--space-6);
     box-shadow: var(--shadow-2);
 }
 
 .modal-content h2 {
     margin-top: 0;
-}
-
-.modal-content .form-group {
-    margin-bottom: var(--space-5);
-}
-
-.modal-content label {
-    display: block;
-    margin-bottom: var(--space-2);
-    font-weight: 600;
-    color: var(--gray-100);
-}
-
-.modal-content input {
-    width: 100%;
-    padding: var(--space-3);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--gray-500);
-    background: var(--gray-800);
-    color: var(--color-white);
-    font-size: 16px;
+    /* Inherits global h2 styles */
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: var(--space-3);
-    margin-top: var(--space-6);
+    margin-top: var(--space-5);
 }
