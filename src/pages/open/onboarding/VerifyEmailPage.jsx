@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { verifyEmail } from '../../../services/AuthService/AuthService';
-import Navbar from '../../../components/Navbar.jsx';
+import Navbar from '../../../components/web components/Navbar.jsx';
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 const VerifyEmailPage = () => {

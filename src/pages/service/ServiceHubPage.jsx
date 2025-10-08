@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/web components/Navbar.jsx';
 import apiClient from '../../services/ApiClient';
 import './ServicesHubPage.css';
 import '../Authorization/AccessCodeManagementPage.css'; // Voeg de extra CSS toe

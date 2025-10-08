@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { updateUserRole } from '../../../services/ProfileService'; // Deze service moeten we later aanmaken/aanpassen
-import Navbar from '../../../components/Navbar.jsx'; // Voeg Navbar import toe
+import Navbar from '../../../components/web components/Navbar.jsx'; // Voeg Navbar import toe
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 // Dit was RegisterDetailsPage, nu is het de Rol-Selectie Pagina.
@@ -28,7 +28,7 @@ function SelectRolePage() {
             // TODO: API-aanroep om de rol van de gebruiker op te slaan in de backend.
             // await updateUserRole({ role: selectedRole });
 
-            // Navigeer naar de juiste flow op basis van de gekozen rol.
+            // Navigeer naar de juiste Routes op basis van de gekozen rol.
             switch (selectedRole) {
                 case 'PATIENT':
                     // De onboarding voor de patient is nog niet geimplementeerd.

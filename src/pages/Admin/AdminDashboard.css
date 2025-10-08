@@ -1,339 +1,82 @@
-/* ===========================
-   1) DESIGN TOKENS
-   =========================== */
-:root {
-  /* Brand core */
-  --color-black: #000000;
-  --color-white: #FFFFFF;
+/* AdminDashboard.css */
 
-  /* Primary (CTA) */
-  --color-teal: #00F19F;
-
-  /* Data-kleuren */
-  --color-strain: #0093E7;
-  --color-recovery-high: #16EC06;  /* 100–67% */
-  --color-recovery-med:  #FFDE00;  /* 66–34% */
-  --color-recovery-low:  #FF0026;  /* 33–0% */
-  --color-sleep:         #7BA1BB;
-  --color-recovery-blue: #67AEE6;
-
-  /* Background gradient */
-  --gradient-bg-start: #283339;
-  --gradient-bg-end:   #101518;
-
-  /* Neutrals */
-  --gray-900: #0E1215;
-  --gray-800: #151A1F;
-  --gray-700: #1B2128;
-  --gray-600: #242B33;
-  --gray-500: #2E3742;
-  --gray-400: #465363;
-  --gray-300: #6B7A8D;
-  --gray-200: #98A6B6;
-  --gray-100: #C8D1DA;
-
-  /* State mapping */
-  --color-success: var(--color-recovery-high);
-  --color-warning: var(--color-recovery-med);
-  --color-danger:  var(--color-recovery-low);
-
-  /* Opacity helpers */
-  --op-8: 0.08;
-  --op-16: 0.16;
-
-  /* Typography stacks */
-  --font-sans: "Proxima Nova", Inter, "Helvetica Neue", Arial, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-numeric: "DIN Pro", "DIN 2014", "IBM Plex Sans Condensed", Rajdhani, "Segoe UI", Arial, sans-serif;
-
-  /* Spacing (px) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
-  --space-8: 64px;
-
-  /* Radius (px) */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-
-  /* Shadows */
-  --shadow-1: 0px 2px 6px rgba(0,0,0,0.24);
-  --shadow-2: 0px 8px 24px rgba(0,0,0,0.28);
-
-  /* Container widths (px) */
-  --container-sm: 640px;
-  --container-md: 880px;
-  --container-lg: 1200px;
-
-  /* Transitions (ms) */
-  --ts-fast: 60ms;
-  --ts-med: 200ms;
+.admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-5); /* 24px gap */
 }
 
-/* ===========================
-   2) GLOBAL / PAGE WRAPPER
-   =========================== */
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0;
-  background-color: var(--gray-900);
-  color: var(--color-white);
-  font-family: var(--font-sans);
-  font-weight: 600; /* semibold body */
-  font-size: 16px;  /* baseliner in px */
-  line-height: 24px;
+.stat-card h3 {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: var(--space-4); /* 16px */
+    margin-bottom: var(--space-5); /* 24px */
 }
 
-.page--dark {
-  background: linear-gradient(180deg, var(--gradient-bg-start), var(--gradient-bg-end));
-  color: var(--color-white);
+.stat-card .stat {
+    font-size: 48px; /* Larger font for the main statistic */
+    line-height: 1.1;
+    margin-bottom: var(--space-2); /* 8px */
 }
 
-/* Focus states (toegankelijk) */
-:focus-visible {
-  outline: 2px solid var(--color-teal);
-  outline-offset: 2px;
+.stat-card .stat-label {
+    font-size: 16px;
+    color: var(--gray-200);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
 }
 
-/* Container utilities */
-.container {
-  width: 100%;
-  max-width: var(--container-lg);
-  padding-left: var(--space-6);
-  padding-right: var(--space-6);
-  margin-left: auto;
-  margin-right: auto;
+.user-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0; /* 12px top/bottom */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ===========================
-   3) TYPOGRAFIE
-   =========================== */
-/* WHOOP: headlines uppercase + ~10% tracking */
-h1, h2, h3 {
-  margin-top: 0;
-  margin-bottom: var(--space-4);
-  font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 1.6px; /* ~0.1em op 16px ≈ 1.6px, expliciet in px */
-  font-weight: 700;
+.user-list-item:last-child {
+    border-bottom: none;
 }
 
-h1 { font-size: 48px; line-height: 56px; }
-h2 { font-size: 36px; line-height: 44px; }
-h3 { font-size: 28px; line-height: 34px; }
-
-p  { margin-top: 0; margin-bottom: var(--space-4); }
-.small { font-size: 14px; line-height: 20px; }
-
-.numeric, .stat, .score {
-  font-family: var(--font-numeric);
-  font-weight: 700;
-  letter-spacing: 0px;
+.user-info {
+    display: flex;
+    flex-direction: column;
 }
 
-/* ===========================
-   4) LINKS & NAVIGATIE
-   =========================== */
-a {
-  color: var(--color-teal);
-  text-decoration: none;
-  text-underline-offset: 3px; /* px */
-}
-a:hover { text-decoration: underline; }
-
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  background: linear-gradient(180deg, rgba(16,21,24,0.9), rgba(16,21,24,0));
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding-left: var(--space-6);
-  padding-right: var(--space-6);
+.user-name {
+    font-weight: 700;
+    color: var(--color-white);
 }
 
-/* ===========================
-   5) BUTTONS
-   =========================== */
-.btn {
-  --btn-bg: var(--gray-700);
-  --btn-fg: var(--color-white);
-  --btn-bd: transparent;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px; /* px i.p.v. em */
-  padding: 12px 16px; /* px i.p.v. em */
-  border-radius: var(--radius-md);
-  border: 1px solid var(--btn-bd);
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 18px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px; /* px */
-  box-shadow: var(--shadow-1);
-  transition: transform var(--ts-fast) ease, box-shadow var(--ts-med) ease, background-color var(--ts-med) ease, border-color var(--ts-med) ease;
-  cursor: pointer;
+.user-email {
+    font-size: 14px;
+    color: var(--gray-300);
 }
 
-.btn:hover   { transform: translateY(-1px); box-shadow: var(--shadow-2); }
-.btn:active  { transform: translateY(0px); }
-.btn:disabled{
-  opacity: 0.5;
-  cursor: not-allowed;
+.user-role-badge {
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
 }
 
-.btn--primary {
-  --btn-bg: var(--color-teal);
-  --btn-fg: #07261C; /* beter contrast op teal */
+/* Role-specific badge colors, using variables from index.css */
+.badge-admin {
+    background-color: var(--color-teal);
+    color: #07261C; /* High contrast text */
 }
 
-.btn--ghost {
-  --btn-bg: rgba(255,255,255,var(--op-8));
-  --btn-bd: rgba(255,255,255,var(--op-16));
-  backdrop-filter: saturate(140%) blur(6px);
+.badge-provider {
+    background-color: var(--color-strain);
+    color: #001728; /* High contrast text */
 }
 
-/* ===========================
-   6) CARDS & SECTIES
-   =========================== */
-.card {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-1);
+.badge-guardian {
+    background-color: var(--color-sleep);
+    color: #0A1B25; /* High contrast text */
 }
 
-.section {
-  padding-top: 64px;  /* vaste px i.p.v. clamp */
-  padding-bottom: 96px;
+.badge-patient {
+    background-color: var(--gray-500);
+    color: var(--color-white);
 }
-
-/* ===========================
-   7) BADGES / DATA-STIJLEN
-   =========================== */
-.badge {
-  display: inline-block;
-  padding: 6px 10px;   /* px */
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 14px;
-}
-
-.badge--recovery-high { background: var(--color-recovery-high); color: #062107; }
-.badge--recovery-med  { background: var(--color-recovery-med);  color: #3A3000; }
-.badge--recovery-low  { background: var(--color-recovery-low);  color: #2A0005; }
-.badge--strain        { background: var(--color-strain);        color: #001728; }
-.badge--sleep         { background: var(--color-sleep);         color: #0A1B25; }
-
-/* ===========================
-   8) FORMS
-   =========================== */
-.input, input[type="text"], input[type="email"], input[type="password"], select, textarea {
-  width: 100%;
-  height: 44px;
-  padding-left: 12px;
-  padding-right: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--gray-600);
-  background-color: var(--gray-800);
-  color: var(--color-white);
-  box-shadow: none;
-  transition: border-color var(--ts-med) ease, box-shadow var(--ts-med) ease;
-  font-size: 14px;
-  line-height: 20px;
-}
-textarea { height: auto; min-height: 120px; padding-top: 12px; padding-bottom: 12px; }
-
-.input:focus, input:focus, select:focus, textarea:focus {
-  border-color: var(--color-teal);
-  box-shadow: 0px 0px 0px 2px rgba(0,241,159,0.25);
-  outline: 0;
-}
-
-.label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--gray-200);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Help / error tekst */
-.form-help   { margin-top: 6px; font-size: 12px; color: var(--gray-300); }
-.form-error  { margin-top: 6px; font-size: 12px; color: var(--color-danger); }
-
-/* ===========================
-   9) TABLES (voor CSV/PDF-overzicht)
-   =========================== */
-.table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0px;
-  background-color: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-.table th, .table td {
-  padding: 12px 16px;
-  font-size: 14px;
-}
-.table thead th {
-  background-color: var(--gray-700);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-}
-.table tbody tr + tr td { border-top: 1px solid rgba(255,255,255,0.06); }
-
-/* ===========================
-   10) UTILITIES
-   =========================== */
-.mt-0 { margin-top: 0px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
-.mt-5 { margin-top: 24px; }
-.mt-6 { margin-top: 32px; }
-
-.mb-0 { margin-bottom: 0px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-.mb-4 { margin-bottom: 16px; }
-.mb-5 { margin-bottom: 24px; }
-.mb-6 { margin-bottom: 32px; }
-
-.pt-6 { padding-top: 32px; }
-.pb-6 { padding-bottom: 32px; }
-.pl-4 { padding-left: 16px; }
-.pr-4 { padding-right: 16px; }
-
-.rounded-sm { border-radius: var(--radius-sm); }
-.rounded-md { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-
-.shadow-1 { box-shadow: var(--shadow-1); }
-.shadow-2 { box-shadow: var(--shadow-2); }
-
-.bg-800 { background-color: var(--gray-800); }
-.bg-700 { background-color: var(--gray-700); }
-.text-100 { color: var(--gray-100); }
-.text-300 { color: var(--gray-300); }
-.text-teal { color: var(--color-teal); }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { linkPatientByCode } from '../../services/GuardianService'; // Importeer de nieuwe service
+import { linkPatientByCode } from '../Guardian/GuardianService.jsx'; // Importeer de nieuwe service
 import './GrantAccessPage.css'; // We hergebruiken de styling
 
 // Deze pagina is voor een ingelogde Ouder/Voogd om hun account te koppelen aan een patiënt.

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import Navbar from '../../components/Navbar.jsx';
+import Navbar from '../../components/web components/Navbar.jsx';
 import './HomePage.css';
 
 // Importeer je afbeeldingen en video's hier

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getLinkedPatients, linkPatientToProvider } from '../../services/ProviderService';
-import Navbar from '../../components/Navbar.jsx';
+import Navbar from '../../components/web components/Navbar.jsx';
 import './PatientPortal.css';
 
 // --- Child Components ---

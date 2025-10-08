@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { updateUserProfile } from '../../../services/ProfileService';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import { useUser } from '../../../contexts/AuthContext';
-import Navbar from '../../../components/Navbar.jsx';
+import Navbar from '../../../components/web components/Navbar.jsx';
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function SelectRolePage() {
@@ -52,8 +52,8 @@ function SelectRolePage() {
                     navigate('/onboarding/preferences');
                     break;
                 case 'GUARDIAN':
-                    console.log('[SelectRolePage] Navigeren naar /onboarding/link-patient');
-                    navigate('/onboarding/link-patient');
+                    console.log('[SelectRolePage] Navigeren naar /guardian-portal');
+                    navigate('/guardian-portal');
                     break;
                 case 'PROVIDER':
                     console.log('[SelectRolePage] Navigeren naar /provider-dashboard');

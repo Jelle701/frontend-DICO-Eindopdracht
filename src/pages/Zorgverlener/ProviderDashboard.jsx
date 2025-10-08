@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getLinkedPatients, getProviderDashboardSummary } from '../../services/ProviderService';
-import Navbar from '../../components/Navbar.jsx';
+import Navbar from '../../components/web components/Navbar.jsx';
 import './ProviderDashboard.css';
 
 // --- Helper Functions ---

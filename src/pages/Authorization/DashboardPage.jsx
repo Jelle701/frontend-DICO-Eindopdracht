@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './DashboardPage.css';
-import Navbar from "../../components/Navbar.jsx";
+import Navbar from "../../components/web components/Navbar.jsx";
 
 const getInitialDateTime = () => {
     const now = new Date();

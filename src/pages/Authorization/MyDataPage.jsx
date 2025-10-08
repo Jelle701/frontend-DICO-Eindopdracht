@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useUser } from '../../contexts/AuthContext';
 import { updateUserProfile } from '../../services/ProfileService';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/web components/Navbar.jsx';
 import medicatieData from '../../Data/MedicatieDataSet.json';
 import devicesData from '../../Data/DiabeticDevices.json';
 import './MyDataPage.css';

@@ -3,9 +3,9 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Component Imports
-import PublicRoute from "./components/PublicRoute.jsx";
-import PrivateRoute from "./components/PrivateRoute.jsx";
-import AdminRoute from './components/AdminRoute.jsx'; // Import AdminRoute
+import PublicRoute from "./components/Routes/PublicRoute.jsx";
+import PrivateRoute from "./components/Routes/PrivateRoute.jsx";
+import AdminRoute from './components/Routes/AdminRoute.jsx'; // Import AdminRoute
 
 const Test = lazy(() => import('./Test/test.jsx'));
 
@@ -24,7 +24,10 @@ const SelectRolePage = lazy(() => import('./pages/open/onboarding/SelectRolePage
 const OnboardingPreferences = lazy(() => import('./pages/open/onboarding/OnboardingPreferences.jsx'));
 const MedicineInfo = lazy(() => import('./pages/open/onboarding/MedicineInfo.jsx'));
 const DiabeticDevices = lazy(() => import('./pages/open/onboarding/DiabeticDevices.jsx'));
-const OnboardingLinkPatientPage = lazy(() => import('./pages/open/onboarding/OnboardingLinkPatientPage.jsx'));
+
+// Guardian Pages
+const GuardianPortal = lazy(() => import('./pages/Guardian/GuardianPortal.jsx'));
+const GuardianPatientDetail = lazy(() => import('./pages/Guardian/GuardianPatientDetail.jsx')); // Import the new detail page
 
 // Zorgverlener Pages
 const PatientPortal = lazy(() => import('./pages/Zorgverlener/PatientPortal.jsx'));
@@ -56,14 +59,17 @@ function App() {
                     <Route path="/onboarding/preferences" element={<OnboardingPreferences />} />
                     <Route path="/onboarding/medicine" element={<MedicineInfo />} />
                     <Route path="/onboarding/devices" element={<DiabeticDevices />} />
-                    <Route path="/onboarding/link-patient" element={<OnboardingLinkPatientPage />} />
-
+                    
                     {/* Core Application */}
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/glucose-log" element={<GlucoseLogPage />} />
                     <Route path="/my-data" element={<MyDataPage />} />
                     <Route path="/service-hub" element={<ServiceHubPage />} />
                     
+                    {/* Guardian Routes */}
+                    <Route path="/guardian-portal" element={<GuardianPortal />} />
+                    <Route path="/guardian/patient/:patientId" element={<GuardianPatientDetail />} /> {/* Add the new detail route */}
+
                     {/* Zorgverlener Routes */}
                     <Route path="/patient-portal" element={<PatientPortal />} />
                     <Route path="/provider-dashboard" element={<ProviderDashboard />} />

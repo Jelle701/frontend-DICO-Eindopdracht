@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAllUsers, deleteUserById, updateUserById } from '../../services/AdminService.jsx';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/web components/Navbar.jsx';
 import EditUserModal from './EditUserModal';
-import ConfirmationModal from '../../components/ConfirmationModal';
-import Notification from '../../components/Notification';
+import ConfirmationModal from '../../components/web components/ConfirmationModal.jsx';
+import Notification from '../../components/web components/Notification.jsx';
 import AnalyticsCharts from './AnalyticsCharts';
 import ActivityFeed from './ActivityFeed';
 import TableSkeleton from './TableSkeleton';
 import './AdminDashboard.css';
+
+// --- Helper Functions ---
+const getRoleBadgeClass = (role) => {
+    const roleName = (role || 'default').toLowerCase();
+    return `user-role-badge badge-${roleName}`;
+};
 
 // --- Child Component: Dashboard Tab ---
 const DashboardTab = ({ users }) => {
@@ -21,13 +27,25 @@ const DashboardTab = ({ users }) => {
 
     return (
         <div className="tab-content">
-            <div className="stats-container">
-                <div className="card stat-card"><h3>Totaal Gebruikers</h3><p className="numeric">{stats.total}</p></div>
-                <div className="card stat-card"><h3>Patiënten</h3><p className="numeric">{stats.patients}</p></div>
-                <div className="card stat-card"><h3>Ouders/Voogden</h3><p className="numeric">{stats.guardians}</p></div>
-                <div className="card stat-card"><h3>Zorgverleners</h3><p className="numeric">{stats.providers}</p></div>
+            <div className="admin-dashboard-grid mb-6">
+                <div className="card stat-card">
+                    <h3>Totaal Gebruikers</h3>
+                    <p className="stat numeric">{stats.total}</p>
+                </div>
+                <div className="card stat-card">
+                    <h3>Patiënten</h3>
+                    <p className="stat numeric">{stats.patients}</p>
+                </div>
+                <div className="card stat-card">
+                    <h3>Ouders/Voogden</h3>
+                    <p className="stat numeric">{stats.guardians}</p>
+                </div>
+                <div className="card stat-card">
+                    <h3>Zorgverleners</h3>
+                    <p className="stat numeric">{stats.providers}</p>
+                </div>
             </div>
-            <div className="dashboard-grid">
+            <div className="admin-dashboard-grid">
                 <AnalyticsCharts users={users} />
                 <ActivityFeed />
             </div>
@@ -44,6 +62,8 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [bulkRole, setBulkRole] = useState('');
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [isConfirmRoleChangeOpen, setIsConfirmRoleChangeOpen] = useState(false);
 
     const processedUsers = useMemo(() => {
         let filtered = users.filter(user => {
@@ -75,34 +95,39 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
         setSortConfig({ key, direction });
     };
 
-    const handleSelectAll = () => {
-        if (selectedUsers.length === currentUsers.length) setSelectedUsers([]);
-        else setSelectedUsers(currentUsers.map(user => user.id));
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedUsers(currentUsers.map(user => user.id));
+        } else {
+            setSelectedUsers([]);
+        }
     };
 
     const handleDeleteSelected = async () => {
-        if (window.confirm(`Weet je zeker dat je ${selectedUsers.length} gebruikers permanent wilt verwijderen?`)) {
-            await Promise.all(selectedUsers.map(id => deleteUserById(id)));
-            fetchUsers();
-            setSelectedUsers([]);
-            setNotification({ message: `${selectedUsers.length} gebruikers verwijderd.`, type: 'success' });
-        }
+        await Promise.all(selectedUsers.map(id => deleteUserById(id)));
+        fetchUsers();
+        setNotification({ message: `${selectedUsers.length} gebruikers verwijderd.`, type: 'success' });
+        setSelectedUsers([]);
+        setIsConfirmDeleteOpen(false);
     };
 
     const handleBulkRoleChange = async () => {
-        if (!bulkRole) return;
-        if (window.confirm(`Weet je zeker dat je de rol van ${selectedUsers.length} gebruikers wilt wijzigen naar ${bulkRole}?`)) {
-            await Promise.all(selectedUsers.map(id => updateUserById(id, { role: bulkRole })));
-            fetchUsers();
-            setSelectedUsers([]);
-            setBulkRole('');
-            setNotification({ message: `Rol succesvol gewijzigd voor ${selectedUsers.length} gebruikers.`, type: 'success' });
-        }
+        await Promise.all(selectedUsers.map(id => updateUserById(id, { role: bulkRole })));
+        fetchUsers();
+        setNotification({ message: `Rol succesvol gewijzigd voor ${selectedUsers.length} gebruikers.`, type: 'success' });
+        setSelectedUsers([]);
+        setBulkRole('');
+        setIsConfirmRoleChangeOpen(false);
     };
 
     const handleExportCSV = () => {
         const headers = ["ID", "Email", "FirstName", "LastName", "Role", "CreatedAt"];
-        const csvRows = [headers.join(','), ...processedUsers.map(user => [user.id, `"${user.email}"`, `"${user.firstName || ''}"`, `"${user.lastName || ''}"`, `"${user.role}"`, `"${new Date(user.createdAt).toISOString()}"`].join(','))];
+        const csvRows = [
+            headers.join(','),
+            ...processedUsers.map(user =>
+                [user.id, `"${user.email}"`, `"${user.firstName || ''}"`, `"${user.lastName || ''}"`, `"${user.role}"`, `"${new Date(user.createdAt).toISOString()}"`].join(',')
+            )
+        ];
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -115,33 +140,33 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
 
     return (
         <div className="tab-content">
-            <div className="admin-toolbar card">
-                <input type="text" placeholder="Zoek op naam of e-mail..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="input"/>
-                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="input">
+            <div className="card d-flex flex-wrap items-center justify-between gap-4 mb-5">
+                <input type="text" placeholder="Zoek op naam of e-mail..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="input" style={{ flexBasis: '300px' }}/>
+                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="input" style={{ flexBasis: '200px' }}>
                     <option value="ALL">Alle Rollen</option><option value="PATIENT">Patiënt</option><option value="GUARDIAN">Ouder / Voogd</option><option value="PROVIDER">Zorgverlener</option><option value="ADMIN">Admin</option>
                 </select>
-                <button onClick={handleExportCSV} className="btn">Exporteer CSV</button>
+                <button onClick={handleExportCSV} className="btn btn--secondary">Exporteer CSV</button>
             </div>
 
             {selectedUsers.length > 0 && (
-                <div className="bulk-actions-container card">
-                    <span>{selectedUsers.length} geselecteerd</span>
-                    <div className="bulk-actions-buttons">
+                <div className="card d-flex flex-wrap items-center justify-between gap-4 mb-5">
+                    <span className="text-100">{selectedUsers.length} geselecteerd</span>
+                    <div className="d-flex items-center gap-3">
                         <select value={bulkRole} onChange={(e) => setBulkRole(e.target.value)} className="input"><option value="">Kies nieuwe rol...</option><option value="PATIENT">Patiënt</option><option value="GUARDIAN">Ouder / Voogd</option><option value="PROVIDER">Zorgverlener</option></select>
-                        <button onClick={handleBulkRoleChange} disabled={!bulkRole} className="btn">Pas Rol Aan</button>
-                        <button onClick={handleDeleteSelected} className="btn btn--ghost">Verwijder</button>
+                        <button onClick={() => setIsConfirmRoleChangeOpen(true)} disabled={!bulkRole} className="btn btn--primary">Pas Rol Aan</button>
+                        <button onClick={() => setIsConfirmDeleteOpen(true)} className="btn btn--danger">Verwijder</button>
                     </div>
                 </div>
             )}
 
-            <div className="table-container">
-                {loading ? <TableSkeleton /> : error ? <p className="error-message">{error}</p> : (
+            <div className="card">
+                {loading ? <TableSkeleton /> : error ? <p className="form-error">{error}</p> : (
                     currentUsers.length > 0 ? (
                         <>
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th><input type="checkbox" onChange={handleSelectAll} checked={selectedUsers.length === currentUsers.length && currentUsers.length > 0} /></th>
+                                        <th style={{ width: '50px' }}><input type="checkbox" onChange={handleSelectAll} checked={selectedUsers.length > 0 && selectedUsers.length === currentUsers.length} /></th>
                                         <th onClick={() => requestSort('id')} className={`sortable ${sortConfig.key === 'id' ? sortConfig.direction : ''}`}>ID</th>
                                         <th onClick={() => requestSort('email')} className={`sortable ${sortConfig.key === 'email' ? sortConfig.direction : ''}`}>Email</th>
                                         <th onClick={() => requestSort('lastName')} className={`sortable ${sortConfig.key === 'lastName' ? sortConfig.direction : ''}`}>Naam</th>
@@ -158,9 +183,11 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
                             </table>
                             <Pagination usersPerPage={usersPerPage} totalUsers={processedUsers.length} paginate={(p) => setCurrentPage(p)} currentPage={currentPage}/>
                         </>
-                    ) : <div className="empty-state card"><p>Geen gebruikers gevonden die aan uw criteria voldoen.</p></div>
+                    ) : <div className="empty-state"><p>Geen gebruikers gevonden die aan uw criteria voldoen.</p></div>
                 )}
             </div>
+            {isConfirmDeleteOpen && <ConfirmationModal title="Bevestig Verwijdering" message={`Weet je zeker dat je ${selectedUsers.length} gebruikers permanent wilt verwijderen?`} onConfirm={handleDeleteSelected} onCancel={() => setIsConfirmDeleteOpen(false)} />}
+            {isConfirmRoleChangeOpen && <ConfirmationModal title="Bevestig Rol Wijziging" message={`Weet je zeker dat je de rol van ${selectedUsers.length} gebruikers wilt wijzigen naar ${bulkRole}?`} onConfirm={handleBulkRoleChange} onCancel={() => setIsConfirmRoleChangeOpen(false)} />}
         </div>
     );
 };
@@ -169,8 +196,7 @@ const UserTableRow = ({ user, selectedUsers, onSelectUser, fetchUsers, setNotifi
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-    const handleSaveUser = (updatedUser) => {
-        // This is optimistic UI update, but fetchUsers will be the source of truth
+    const handleSaveUser = () => {
         fetchUsers();
         setNotification({ message: 'Gebruiker succesvol bijgewerkt!', type: 'success' });
     };
@@ -186,17 +212,21 @@ const UserTableRow = ({ user, selectedUsers, onSelectUser, fetchUsers, setNotifi
         setIsConfirmModalOpen(false);
     };
 
+    const handleSelect = () => {
+        onSelectUser(prev => prev.includes(user.id) ? prev.filter(id => id !== user.id) : [...prev, user.id]);
+    };
+
     return (
         <>
             <tr className={selectedUsers.includes(user.id) ? 'selected' : ''}>
-                <td><input type="checkbox" onChange={() => onSelectUser(prev => prev.includes(user.id) ? prev.filter(id => id !== user.id) : [...prev, user.id])} checked={selectedUsers.includes(user.id)} /></td>
+                <td><input type="checkbox" onChange={handleSelect} checked={selectedUsers.includes(user.id)} /></td>
                 <td>{user.id}</td>
                 <td>{user.email}</td>
                 <td>{`${user.firstName || ''} ${user.lastName || ''}`}</td>
-                <td><span className={`badge badge--role-${(user.role || 'default').toLowerCase()}`}>{user.role || 'N/A'}</span></td>
+                <td><span className={getRoleBadgeClass(user.role)}>{user.role || 'N/A'}</span></td>
                 <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td className="actions">
-                    <button onClick={() => setIsEditModalOpen(true)} className="btn btn--ghost">Aanpassen</button>
+                <td className="d-flex gap-2">
+                    <button onClick={() => setIsEditModalOpen(true)} className="btn btn--secondary">Aanpassen</button>
                     <button onClick={() => setIsConfirmModalOpen(true)} className="btn btn--ghost">Verwijderen</button>
                 </td>
             </tr>
@@ -215,7 +245,7 @@ const Pagination = ({ usersPerPage, totalUsers, paginate, currentPage }) => {
             <ul className="pagination">
                 {pageNumbers.map(number => (
                     <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                        <a onClick={() => paginate(number)} href="#!" className="page-link">{number}</a>
+                        <a onClick={(e) => { e.preventDefault(); paginate(number); }} href="#!" className="page-link">{number}</a>
                     </li>
                 ))}
             </ul>
@@ -248,22 +278,30 @@ const AdminDashboard = () => {
 
     useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
+    const handleTabClick = (e, tabName) => {
+        e.preventDefault();
+        setActiveTab(tabName);
+        window.history.pushState(null, '', `#${tabName}`);
+    };
+
     return (
         <>
             <Navbar />
-            <div className="admin-dashboard-container page--dark">
-                <header className="admin-header">
-                    <h1>Admin Dashboard</h1>
-                    <p>Krijg inzicht in de gebruikersdata en beheer het platform.</p>
-                </header>
+            <div className="page--dark">
+                <div className="container section">
+                    <header className="mb-6">
+                        <h1>Admin Dashboard</h1>
+                        <p className="text-300">Krijg inzicht in de gebruikersdata en beheer het platform.</p>
+                    </header>
 
-                <div className="tabs-container">
-                    <a href="#dashboard" className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>Dashboard</a>
-                    <a href="#management" className={`tab-button ${activeTab === 'management' ? 'active' : ''}`} onClick={() => setActiveTab('management')}>Gebruikersbeheer</a>
+                    <div className="admin-tabs">
+                        <a href="#dashboard" className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={(e) => handleTabClick(e, 'dashboard')}>Dashboard</a>
+                        <a href="#management" className={`tab-button ${activeTab === 'management' ? 'active' : ''}`} onClick={(e) => handleTabClick(e, 'management')}>Gebruikersbeheer</a>
+                    </div>
+
+                    {activeTab === 'dashboard' && <DashboardTab users={users} />}
+                    {activeTab === 'management' && <UserManagementTab users={users} loading={loading} error={error} fetchUsers={fetchUsers} setNotification={setNotification} />}
                 </div>
-
-                {activeTab === 'dashboard' && <DashboardTab users={users} />}
-                {activeTab === 'management' && <UserManagementTab users={users} loading={loading} error={error} fetchUsers={fetchUsers} setNotification={setNotification} />}
             </div>
             {notification.message && <Notification message={notification.message} type={notification.type} onClose={() => setNotification({ message: '', type: '' })}/>}
         </>

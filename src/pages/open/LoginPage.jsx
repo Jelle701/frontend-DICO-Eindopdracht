@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, useUser } from '../../contexts/AuthContext';
 import { loginUser } from '../../services/AuthService/AuthService';
-import Navbar from '../../components/Navbar.jsx';
+import Navbar from '../../components/web components/Navbar.jsx';
 import '../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function LoginPage() {
@@ -31,8 +31,8 @@ function LoginPage() {
                         navigate('/dashboard');
                         break;
                     case 'GUARDIAN':
-                        console.log('[LoginPage] Guardian user detected, redirecting to /onboarding/link-patient');
-                        navigate('/onboarding/link-patient'); // Corrected route for Guardian
+                        console.log('[LoginPage] Guardian user detected, redirecting to /guardian-portal');
+                        navigate('/guardian-portal'); // Gecorrigeerde route voor Guardian
                         break;
                     case 'PROVIDER':
                         console.log('[LoginPage] Provider user detected, redirecting to /provider-dashboard');

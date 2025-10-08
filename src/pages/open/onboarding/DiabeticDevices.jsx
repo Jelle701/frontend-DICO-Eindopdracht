@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import devicesData from '../../../Data/DiabeticDevices.json';
-import Navbar from '../../../components/Navbar.jsx';
+import Navbar from '../../../components/web components/Navbar.jsx';
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function DiabeticDevices() {

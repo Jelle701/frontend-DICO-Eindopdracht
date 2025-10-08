@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/web components/Navbar.jsx';
 import '../../App.css'; // Zorg dat de algemene stijlen hier ook gelden
 
 // Een eenvoudige placeholder voor de Glucose Pagina

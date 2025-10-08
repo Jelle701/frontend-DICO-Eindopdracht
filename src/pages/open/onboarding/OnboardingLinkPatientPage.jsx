@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../services/ApiClient';
-import Navbar from '../../../components/Navbar.jsx';
+import Navbar from '../../../components/web components/Navbar.jsx';
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 function OnboardingLinkPatientPage() {

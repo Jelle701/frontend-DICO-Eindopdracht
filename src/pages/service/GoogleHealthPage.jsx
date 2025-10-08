@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GoogleHealthPage.css';
-import Navbar from '../../components/Navbar.jsx';
+import Navbar from '../../components/web components/Navbar.jsx';
 
 function GoogleHealthPage() {
     const navigate = useNavigate();

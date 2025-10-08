@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../../../services/AuthService/AuthService.jsx';
-import Navbar from '../../../components/Navbar.jsx'; // Importeer de Navbar
+import Navbar from '../../../components/web components/Navbar.jsx'; // Importeer de Navbar
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
-// Stap 1 van de nieuwe flow: Een generiek account aanmaken.
+// Stap 1 van de nieuwe Routes: Een generiek account aanmaken.
 function RegisterPage() {
     const [formData, setFormData] = useState({
         email: '',

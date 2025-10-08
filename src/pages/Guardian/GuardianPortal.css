@@ -1,0 +1,104 @@
+/* Styles for Guardian Portal */
+.guardian-portal-container {
+    padding: var(--space-6);
+    max-width: var(--container-lg);
+    margin: 0 auto;
+}
+
+.portal-header {
+    margin-bottom: var(--space-6);
+    /* The header is now just a text container, no background needed */
+}
+
+.portal-header .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.portal-header h1 {
+    margin-bottom: var(--space-2);
+}
+
+.portal-header p {
+    color: var(--gray-200);
+    margin: 0;
+    max-width: 600px; /* Limit line length for readability */
+}
+
+/* --- Link Patient View (as a full card) --- */
+.link-patient-view {
+    max-width: 500px;
+    margin: var(--space-7) auto; /* Center the form card in the content area */
+}
+
+.link-patient-form .input-group {
+    margin-bottom: var(--space-5);
+}
+
+.link-patient-form .form-action-button {
+    width: 100%;
+}
+
+/* --- Patient Data View --- */
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-5);
+}
+
+.patient-card {
+    background-color: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.patient-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+}
+
+.patient-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-4);
+}
+
+.patient-card .patient-name {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.patient-card .patient-age {
+    font-size: 16px;
+    color: var(--gray-300);
+}
+
+.patient-card .card-body .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--gray-700);
+}
+
+.patient-card .card-body .stat-item:last-child {
+    border-bottom: none;
+}
+
+.patient-card .stat-label {
+    color: var(--gray-200);
+}
+
+.patient-card .stat-value {
+    font-weight: 700;
+}
+
+/* --- General States --- */
+.loading-message,
+.error-message-full-page {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--gray-300);
+}

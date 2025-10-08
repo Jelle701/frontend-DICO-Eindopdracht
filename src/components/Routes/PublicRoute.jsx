@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth, useUser } from '../contexts/AuthContext.jsx'; // Importeer useUser
+import { useAuth, useUser } from '../../contexts/AuthContext.jsx'; // Importeer useUser
 
 const PublicRoute = ({ children }) => {
     const { isAuth, loading: authLoading } = useAuth();

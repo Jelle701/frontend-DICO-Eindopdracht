@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import medicatieData from '../../../Data/MedicatieDataSet.json';
-import Navbar from '../../../components/Navbar.jsx';
+import Navbar from '../../../components/web components/Navbar.jsx';
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
 const DIABETES_TYPES = [
