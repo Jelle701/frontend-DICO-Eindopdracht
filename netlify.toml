@@ -1,15 +1,19 @@
-# ───────────────────────────────────────────────────────────────────
-# Bestand: netlify.toml
-# Plaats: /<project-root>/netlify.toml
-#───────────────────────────────────────────────────────────────────
+# /netlify.toml
 
 [build]
-  command     = "npm run build"
-  publish     = "dist"
-  environment = { NODE_ENV = "production" }
+  command = "npm run build"
+  publish = "dist"
 
-# (optioneel) als je client‑side routing hebt:
+[build.environment]
+  NODE_VERSION = "22"        # pin Node for the build
+  NODE_ENV     = "production"
+
+# If this is a React/Vite SPA with client-side routing:
 # [[redirects]]
-#   from   = "/*"
-#   to     = "/index.html"
+#   from = "/*"
+#   to   = "/index.html"
 #   status = 200
+
+# (Optional) if you use Netlify Functions:
+# [functions]
+#   directory = "netlify/functions"

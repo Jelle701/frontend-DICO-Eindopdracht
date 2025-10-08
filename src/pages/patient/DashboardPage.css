@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .dashboard-page {
-    max-width: var(--container-lg); /* Gebruik container token */
+    max-width: var(--container-lg);
     margin: 0 auto;
     padding: var(--space-6);
     font-family: var(--font-sans);
@@ -15,30 +15,24 @@
 }
 
 .dashboard-header h1 {
-    font-size: 48px; /* Gebruik h1 token */
-    line-height: 56px; /* Gebruik h1 token */
+    font-size: 48px;
+    line-height: 56px;
     color: var(--color-white);
     margin-bottom: var(--space-2);
 }
 
 .dashboard-header p {
-    font-size: 16px; /* Baseliner */
-    line-height: 24px; /* Baseliner */
+    font-size: 16px;
+    line-height: 24px;
     color: var(--gray-300);
 }
 
+/* Corrected Layout: Always a single column grid */
 .dashboard-layout {
     display: grid;
-    grid-template-columns: 1fr; /* Default to single column */
+    grid-template-columns: 1fr;
     gap: var(--space-6);
     align-items: flex-start;
-}
-
-/* For wider screens, use two columns */
-@media (min-width: 1024px) {
-    .dashboard-layout {
-        grid-template-columns: 2fr 1fr;
-    }
 }
 
 
@@ -47,7 +41,7 @@
    ========================================================================== */
 
 .chart-container, .summary-container {
-    background: rgba(36, 43, 51, 0.5); /* var(--gray-600) with opacity */
+    background: rgba(36, 43, 51, 0.5);
     border: 1px solid var(--gray-700);
     border-radius: var(--radius-lg);
     padding: var(--space-5) var(--space-6) var(--space-6) var(--space-5);
@@ -57,8 +51,8 @@
 .chart-container h2, .summary-container h2 {
     margin-top: 0;
     margin-bottom: var(--space-5);
-    font-size: 28px; /* Gebruik h3 token */
-    line-height: 34px; /* Gebruik h3 token */
+    font-size: 28px;
+    line-height: 34px;
     color: var(--color-white);
 }
 
