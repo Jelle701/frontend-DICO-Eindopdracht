@@ -1,6 +1,6 @@
 // src/pages/Authorization/GlucoseLogPage.jsx
 import React, { useState, useEffect } from 'react';
-import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService';
+import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService.jsx';
 import './GlucoseLogPage.css';
 
 // Helper functions to format date and time

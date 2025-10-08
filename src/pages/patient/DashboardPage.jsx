@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService';
+import { useUser } from '../../contexts/AuthContext.jsx';
+import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService.jsx';
+import { getDiabetesSummary } from '../../services/DiabetesService.jsx'; // Import new service
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './DashboardPage.css';
 import Navbar from "../../components/web components/Navbar.jsx";
+import DiabeticRapportValues from "../../components/DiabeticRapportValues.jsx";
+import "../../components/DiabeticRapportValues.css";
 
 const getInitialDateTime = () => {
     const now = new Date();
@@ -16,12 +18,58 @@ const getInitialDateTime = () => {
     };
 };
 
+// Helper functies voor de grafiek
+const getStartDate = (range) => {
+    const now = new Date();
+    switch (range) {
+        case '6h': return new Date(now.getTime() - 6 * 60 * 60 * 1000);
+        case '24h': return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        case '7d': return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        case '30d': return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        case '180d': return new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+        default: return new Date(now.getTime() - 6 * 60 * 60 * 1000);
+    }
+};
+
+const getChartTitle = (range) => {
+    const titles = {
+        '6h': 'Glucoseverloop (laatste 6 uur)',
+        '24h': 'Glucoseverloop (laatste 24 uur)',
+        '7d': 'Glucoseverloop (laatste 7 dagen)',
+        '30d': 'Glucoseverloop (laatste 30 dagen)',
+        '180d': 'Glucoseverloop (laatste 6 maanden)',
+    };
+    return titles[range] || 'Glucoseverloop';
+};
+
+const timeFormatter = (timestamp, range) => {
+    const date = new Date(timestamp);
+    switch (range) {
+        case '6h':
+        case '24h':
+            return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+        case '7d':
+            return date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+        default:
+            return date.toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' });
+    }
+};
+
+
 function DashboardPage() {
-    const { user, loading: userLoading } = useUser(); // Get user and loading state
+    const { user, loading: userLoading } = useUser();
+    
+    // State for glucose measurements chart
     const [glucoseData, setGlucoseData] = useState([]);
     const [rawMeasurements, setRawMeasurements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [timeRange, setTimeRange] = useState('6h');
+
+    // State for diabetes summary report
+    const [summaryData, setSummaryData] = useState(null);
+    const [summaryLoading, setSummaryLoading] = useState(true);
+    const [summaryError, setSummaryError] = useState('');
 
     const isDelegatedView = !!sessionStorage.getItem('delegatedToken');
     const patientUsername = sessionStorage.getItem('patientUsername');
@@ -30,43 +78,63 @@ function DashboardPage() {
     const [formError, setFormError] = useState('');
     const [formSuccess, setFormSuccess] = useState('');
 
-    const fetchMeasurements = async () => {
+    const fetchAllData = async () => {
+        // Fetch glucose measurements
         setLoading(true);
         setError('');
         try {
             const { data } = await getRecentGlucoseMeasurements();
-
-            if (data && data.length > 0) {
-                setRawMeasurements(data);
-                const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
-                const recentMeasurements = data.filter(m => new Date(m.timestamp) >= sixHoursAgo);
-
-                const chartData = recentMeasurements
-                    .map(m => ({ time: new Date(m.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' }), value: m.value }))
-                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-                setGlucoseData(chartData);
-            } else {
-                setRawMeasurements([]);
-                setGlucoseData([]);
-            }
+            setRawMeasurements(data || []);
         } catch (fetchError) {
             setError(fetchError.message || 'Kon metingen niet ophalen.');
-            setGlucoseData([]);
             setRawMeasurements([]);
         } finally {
             setLoading(false);
+        }
+
+        // Fetch diabetes summary
+        setSummaryLoading(true);
+        setSummaryError('');
+        try {
+            const summary = await getDiabetesSummary();
+            setSummaryData(summary);
+        } catch (fetchError) {
+            setSummaryError(fetchError.message || 'Kon samenvatting niet ophalen.');
+            setSummaryData(null);
+        } finally {
+            setSummaryLoading(false);
         }
     };
 
     useEffect(() => {
         if (isDelegatedView || user) {
-            fetchMeasurements();
+            fetchAllData();
             if (!isDelegatedView) {
-                const intervalId = setInterval(fetchMeasurements, 60000);
+                const intervalId = setInterval(fetchAllData, 60000);
                 return () => clearInterval(intervalId);
             }
         }
     }, [user, isDelegatedView]);
+
+    // Effect to update chart data when raw data or time range changes
+    useEffect(() => {
+        if (rawMeasurements.length > 0) {
+            const startDate = getStartDate(timeRange);
+            const filteredMeasurements = rawMeasurements.filter(m => new Date(m.timestamp) >= startDate);
+
+            const chartData = filteredMeasurements
+                .map(m => ({ 
+                    time: timeFormatter(m.timestamp, timeRange),
+                    value: m.value, 
+                    timestamp: m.timestamp 
+                }))
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            setGlucoseData(chartData);
+        } else {
+            setGlucoseData([]);
+        }
+    }, [rawMeasurements, timeRange]);
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;
@@ -89,7 +157,7 @@ function DashboardPage() {
         try {
             await addGlucoseMeasurement(payload);
             setFormSuccess('Meting succesvol opgeslagen!');
-            fetchMeasurements();
+            fetchAllData(); // Refetch all data after adding a new measurement
             setFormState({ value: '', ...getInitialDateTime() });
             setTimeout(() => setFormSuccess(''), 3000);
         } catch (addError) {
@@ -108,6 +176,14 @@ function DashboardPage() {
         );
     }
 
+    const timeRangeOptions = [
+        { key: '6h', label: '6U' },
+        { key: '24h', label: '24U' },
+        { key: '7d', label: '7D' },
+        { key: '30d', label: '1M' },
+        { key: '180d', label: '6M' },
+    ];
+
     return (
         <>
             <Navbar />
@@ -119,22 +195,35 @@ function DashboardPage() {
 
                 <main className="dashboard-layout">
                     <div className="chart-container">
-                        <h2>Glucoseverloop (laatste 6 uur)</h2>
+                        <h2>{getChartTitle(timeRange)}</h2>
+
+                        <div className="time-range-selector">
+                            {timeRangeOptions.map(option => (
+                                <button 
+                                    key={option.key} 
+                                    onClick={() => setTimeRange(option.key)} 
+                                    className={timeRange === option.key ? 'active' : ''}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
+                        </div>
+
                         {error && <p className="error-message">{error}</p>}
                         {loading ? <p>Metingen laden...</p> : (
                             glucoseData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height={400}>
                                     <LineChart data={glucoseData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-                                        <XAxis dataKey="time" />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                                        <XAxis dataKey="time" interval="preserveStartEnd" />
                                         <YAxis domain={['dataMin - 1', 'dataMax + 1']} allowDecimals={false} />
                                         <Tooltip />
                                         <Legend />
-                                        <Line type="monotone" dataKey="value" name="Glucose" stroke="var(--color-accent-positive)" strokeWidth={2} activeDot={{ r: 8 }}/>
+                                        <Line type="monotone" dataKey="value" name="Glucose" stroke="var(--color-teal)" strokeWidth={2} activeDot={{ r: 8 }} dot={false} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             ) : (
-                                <div className="no-data-placeholder"><p>Geen metingen in de laatste 6 uur.</p></div>
+                                <div className="no-data-placeholder"><p>Geen metingen in de geselecteerde periode.</p></div>
                             )
                         )}
 
@@ -149,7 +238,7 @@ function DashboardPage() {
                                     </div>
                                     {formError && <p className="form-error">{formError}</p>}
                                     {formSuccess && <p className="form-success">{formSuccess}</p>}
-                                    <button type="submit" className="btn-primary">Nu Opslaan</button>
+                                    <button type="submit" className="btn btn--primary">Nu Opslaan</button>
                                 </form>
                             </div>
                         )}
@@ -165,6 +254,18 @@ function DashboardPage() {
                                 </div>
                             ) : !loading && (<p>Geen metingen om weer te geven.</p>)}
                         </div>
+                    </div>
+
+                    <div className="summary-container">
+                        {summaryLoading ? (
+                            <p>Samenvatting laden...</p>
+                        ) : summaryError ? (
+                            <p className="error-message">{summaryError}</p>
+                        ) : summaryData ? (
+                            <DiabeticRapportValues data={summaryData} title="Uw Diabetes Samenvatting" />
+                        ) : (
+                            <p>Geen samenvattingsgegevens beschikbaar.</p>
+                        )}
                     </div>
                 </main>
             </div>

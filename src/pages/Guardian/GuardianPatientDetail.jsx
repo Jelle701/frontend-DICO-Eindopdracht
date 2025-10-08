@@ -55,37 +55,44 @@ const ProfileSummaryCard = ({ patient }) => (
     </div>
 );
 
-const MeasurementsCard = ({ measurements }) => (
-    <div className="measurements-card card">
-        <h3>Recente Glucosemetingen</h3>
-        {measurements.length > 0 ? (
-            <table className="measurements-table">
-                <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Tijd</th>
-                        <th>Waarde (mmol/L)</th>
-                        <th>Commentaar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {measurements.map(m => (
-                        <tr key={m.id}>
-                            <td>{new Date(m.timestamp).toLocaleDateString('nl-NL')}</td>
-                            <td>{new Date(m.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}</td>
-                            <td>
-                                <span className={getGlucoseValueClass(m.value)}>{m.value.toFixed(1)}</span>
-                            </td>
-                            <td>{m.comment || '-'}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        ) : (
-            <p className="empty-state">Geen metingen gevonden voor deze patiënt.</p>
-        )}
-    </div>
-);
+const MeasurementsCard = ({ measurements }) => {
+    // Defensive check: ensure measurements is always an array to prevent crashes.
+    const safeMeasurements = Array.isArray(measurements) ? measurements : [];
+
+    return (
+        <div className="measurements-card card">
+            <h3>Recente Glucosemetingen</h3>
+            {safeMeasurements.length > 0 ? (
+                <div className="table-wrapper-guardian">
+                    <table className="measurements-table">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Tijd</th>
+                                <th>Waarde (mmol/L)</th>
+                                <th>Commentaar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {safeMeasurements.map(m => (
+                                <tr key={m.id}>
+                                    <td>{new Date(m.timestamp).toLocaleDateString('nl-NL')}</td>
+                                    <td>{new Date(m.timestamp).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}</td>
+                                    <td>
+                                        <span className={getGlucoseValueClass(m.value)}>{m.value.toFixed(1)}</span>
+                                    </td>
+                                    <td>{m.comment || '-'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <p className="empty-state">Geen metingen gevonden voor deze patiënt.</p>
+            )}
+        </div>
+    );
+};
 
 // --- Main Component ---
 
@@ -108,7 +115,14 @@ function GuardianPatientDetail() {
 
             const { data: measurementsData, error: measurementsError } = await getGlucoseMeasurementsForPatient(patientId);
             if (measurementsError) throw measurementsError;
-            setMeasurements(measurementsData || []);
+            
+            // Robust check: ensure measurementsData is an array to prevent crash
+            if (Array.isArray(measurementsData)) {
+                setMeasurements(measurementsData);
+            } else {
+                console.warn('[GuardianPatientDetail] API did not return an array for glucose measurements. Received:', measurementsData);
+                setMeasurements([]); // Fallback to empty array
+            }
 
         } catch (err) {
             setError(err.message || 'Fout bij het ophalen van patiëntgegevens.');

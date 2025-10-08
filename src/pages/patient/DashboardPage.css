@@ -29,27 +29,34 @@
 
 .dashboard-layout {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr; /* Default to single column */
     gap: var(--space-6);
     align-items: flex-start;
 }
 
+/* For wider screens, use two columns */
+@media (min-width: 1024px) {
+    .dashboard-layout {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
 
 /* ==========================================================================
-   Left Column: Chart & Quick Add Form
+   Main Content: Chart, Summary, etc.
    ========================================================================== */
 
-.chart-container {
-    background: rgba(255,255,255,var(--op-8)); /* Gebruik card-achtige achtergrond */
-    border: 1px solid rgba(255,255,255,var(--op-16)); /* Gebruik card-achtige rand */
+.chart-container, .summary-container {
+    background: rgba(36, 43, 51, 0.5); /* var(--gray-600) with opacity */
+    border: 1px solid var(--gray-700);
     border-radius: var(--radius-lg);
-    padding: var(--space-5) var(--space-6) var(--space-6) var(--space-4);
+    padding: var(--space-5) var(--space-6) var(--space-6) var(--space-5);
     box-shadow: var(--shadow-1);
 }
 
-.chart-container h2 {
+.chart-container h2, .summary-container h2 {
     margin-top: 0;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
     font-size: 28px; /* Gebruik h3 token */
     line-height: 34px; /* Gebruik h3 token */
     color: var(--color-white);
@@ -62,34 +69,67 @@
     align-items: center;
     height: 400px;
     color: var(--gray-300);
-    background-color: rgba(255,255,255,var(--op-8)); /* Subtiele achtergrond */
+    background-color: var(--gray-800);
     border-radius: var(--radius-md);
     text-align: center;
 }
 
-.no-data-placeholder a {
-    color: var(--color-teal);
-    font-weight: 600;
-    text-decoration: none;
+/* --- Time Range Selector --- */
+.time-range-selector {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+    background-color: var(--gray-800);
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    width: fit-content;
 }
+
+.time-range-selector button {
+    background: transparent;
+    border: none;
+    color: var(--gray-200);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--ts-med) ease;
+}
+
+.time-range-selector button:hover {
+    background-color: var(--gray-700);
+    color: var(--color-white);
+}
+
+.time-range-selector button.active {
+    background-color: var(--color-teal);
+    color: #07261C; /* High-contrast text for teal */
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 241, 159, 0.2);
+}
+
 
 /* --- Quick Add Form --- */
 
 .quick-add-form {
     margin-top: var(--space-7);
     padding-top: var(--space-5);
-    border-top: 1px solid rgba(255,255,255,var(--op-16));
+    border-top: 1px solid var(--gray-700);
 }
 
 .quick-add-form h3 {
     margin-top: 0;
     margin-bottom: var(--space-5);
-    font-size: 20px; /* Geen directe token, behouden */
-    line-height: 28px; /* Geen directe token, behouden */
+    font-size: 20px;
+    line-height: 28px;
     color: var(--color-white);
 }
 
 .quick-add-form .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
     margin-bottom: var(--space-4);
 }
 
@@ -101,7 +141,9 @@
     color: var(--gray-300);
 }
 
-/* .quick-add-form .btn-primary zal de globale .btn--primary stijlen gebruiken */
+.quick-add-form .btn-primary {
+    width: 100%;
+}
 
 .form-error, .form-success {
     text-align: center;
@@ -114,13 +156,13 @@
 
 .form-error {
     color: var(--color-danger);
-    background-color: rgba(255, 0, 38, var(--op-8));
+    background-color: rgba(255, 0, 38, 0.1);
     border: 1px solid var(--color-danger);
 }
 
 .form-success {
     color: var(--color-success);
-    background-color: rgba(22, 236, 6, var(--op-8));
+    background-color: rgba(22, 236, 6, 0.1);
     border: 1px solid var(--color-success);
 }
 
@@ -129,21 +171,21 @@
 .measurements-table-container {
     margin-top: var(--space-7);
     padding-top: var(--space-5);
-    border-top: 1px solid rgba(255,255,255,var(--op-16));
+    border-top: 1px solid var(--gray-700);
 }
 
 .measurements-table-container h3 {
     margin-top: 0;
     margin-bottom: var(--space-5);
-    font-size: 20px; /* Geen directe token, behouden */
-    line-height: 28px; /* Geen directe token, behouden */
+    font-size: 20px;
+    line-height: 28px;
     color: var(--color-white);
 }
 
 .table-wrapper {
     max-height: 400px;
     overflow-y: auto;
-    border: 1px solid rgba(255,255,255,var(--op-16));
+    border: 1px solid var(--gray-700);
     border-radius: var(--radius-md);
 }
 
@@ -158,12 +200,12 @@
     padding: var(--space-3) var(--space-4);
     font-size: 14px;
     line-height: 20px;
-    border-bottom: 1px solid rgba(255,255,255,var(--op-16));
+    border-bottom: 1px solid var(--gray-700);
 }
 
 .measurements-table-container thead th {
-    background-color: var(--gray-700);
-    color: var(--gray-300);
+    background-color: var(--gray-800);
+    color: var(--gray-200);
     font-weight: 600;
     position: sticky;
     top: 0;
@@ -171,80 +213,7 @@
 }
 
 .measurements-table-container tbody tr:hover {
-    background-color: rgba(0, 241, 159, var(--op-8)); /* Lichte teal hover */
-}
-
-
-/* ==========================================================================
-   Right Column: Widgets
-   ========================================================================== */
-
-.widgets-container {
-    display: grid;
-    gap: var(--space-5);
-}
-
-.widget-card {
-    background: rgba(255,255,255,var(--op-8)); /* Gebruik card-achtige achtergrond */
-    border: 1px solid rgba(255,255,255,var(--op-16)); /* Gebruik card-achtige rand */
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    box-shadow: var(--shadow-1);
-}
-
-.widget-card h3 {
-    margin-top: 0;
-    margin-bottom: var(--space-4);
-    font-size: 20px; /* Geen directe token, behouden */
-    line-height: 28px; /* Geen directe token, behouden */
-    color: var(--color-teal);
-    border-bottom: 1px solid rgba(255,255,255,var(--op-16));
-    padding-bottom: var(--space-3);
-}
-
-.widget-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.widget-card li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    line-height: 20px;
-    padding: var(--space-2) 0;
-    color: var(--color-white);
-}
-
-.widget-card li span {
-    color: var(--gray-300);
-}
-
-/* --- Specific Widget for Devices --- */
-
-.device-widget-item {
-    padding: var(--space-3) 0;
-}
-
-.device-widget-item:not(:last-child) {
-    border-bottom: 1px solid rgba(255,255,255,var(--op-16));
-}
-
-.device-widget-item h4 {
-    margin: 0 0 var(--space-1) 0;
-    font-size: 16px;
-    line-height: 24px;
-    text-transform: capitalize;
-    color: var(--color-white);
-}
-
-.device-widget-item p {
-    margin: 0;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--gray-300);
+    background-color: rgba(0, 241, 159, 0.05);
 }
 
 
@@ -252,13 +221,11 @@
    Responsive Design
    ========================================================================== */
 
-@media (max-width: 1200px) {
-    .dashboard-layout {
-        grid-template-columns: 1fr;
+@media (max-width: 768px) {
+    .dashboard-page {
+        padding: var(--space-4);
     }
-}
 
-@media (max-width: 600px) {
     .quick-add-form .form-row {
         grid-template-columns: 1fr;
     }

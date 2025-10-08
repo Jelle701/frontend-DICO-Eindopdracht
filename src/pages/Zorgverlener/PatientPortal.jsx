@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getLinkedPatients, linkPatientToProvider } from '../../services/ProviderService';
+import { getDiabetesSummaryForPatient } from '../../services/DiabetesService.jsx'; // Import new service
 import Navbar from '../../components/web components/Navbar.jsx';
+import DiabeticRapportValues from '../../components/DiabeticRapportValues.jsx'; // Import summary component
+import '../../components/DiabeticRapportValues.css'; // Import summary styles
 import './PatientPortal.css';
 
 // --- Child Components ---
@@ -45,12 +48,12 @@ const PatientListSidebar = ({ patients, selectedPatient, onSelectPatient, onAddP
     );
 };
 
-const PatientDetailView = ({ patient }) => {
+const PatientDetailView = ({ patient, summaryData, summaryLoading, summaryError }) => {
     if (!patient) {
         return (
             <main className="patient-detail-content card no-patient-selected">
                 <div className="empty-state">
-                    <i className="icon-placeholder"></i> {/* Placeholder for a user icon */}
+                    <i className="icon-placeholder"></i>
                     <h2>Selecteer een patiënt</h2>
                     <p>Klik op een naam in de lijst om de details en metingen te bekijken.</p>
                 </div>
@@ -87,6 +90,19 @@ const PatientDetailView = ({ patient }) => {
                         <div className="detail-item"><span>Langwerkende Insuline</span><strong>{patient.longActingInsulin || 'N/A'}</strong></div>
                         <div className="detail-item"><span>Kortwerkende Insuline</span><strong>{patient.shortActingInsulin || 'N/A'}</strong></div>
                     </div>
+                </div>
+
+                {/* Diabetes Summary Section */}
+                <div className="summary-container-portal">
+                    {summaryLoading ? (
+                        <p>Samenvatting laden...</p>
+                    ) : summaryError ? (
+                        <p className="error-message">{summaryError}</p>
+                    ) : summaryData ? (
+                        <DiabeticRapportValues data={summaryData} title="Diabetes Samenvatting" density="compact" />
+                    ) : (
+                        <p>Geen samenvattingsgegevens beschikbaar.</p>
+                    )}
                 </div>
             </div>
         </main>
@@ -140,6 +156,11 @@ function PatientPortal() {
     const [newPatientCode, setNewPatientCode] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
 
+    // State for the selected patient's summary
+    const [summaryData, setSummaryData] = useState(null);
+    const [summaryLoading, setSummaryLoading] = useState(false);
+    const [summaryError, setSummaryError] = useState('');
+
     const fetchPatients = useCallback(async () => {
         setLoading(true);
         setError('');
@@ -161,6 +182,26 @@ function PatientPortal() {
     useEffect(() => {
         fetchPatients();
     }, [fetchPatients]);
+
+    // Effect to fetch summary when a patient is selected
+    useEffect(() => {
+        if (selectedPatient) {
+            const fetchSummary = async () => {
+                setSummaryLoading(true);
+                setSummaryError('');
+                setSummaryData(null);
+                try {
+                    const data = await getDiabetesSummaryForPatient(selectedPatient.id);
+                    setSummaryData(data);
+                } catch (err) {
+                    setSummaryError(err.message || 'Kon samenvatting niet laden.');
+                } finally {
+                    setSummaryLoading(false);
+                }
+            };
+            fetchSummary();
+        }
+    }, [selectedPatient]);
 
     const handleAddPatientSubmit = async (e) => {
         e.preventDefault();
@@ -207,7 +248,12 @@ function PatientPortal() {
                             searchTerm={searchTerm}
                             setSearchTerm={setSearchTerm}
                         />
-                        <PatientDetailView patient={selectedPatient} />
+                        <PatientDetailView 
+                            patient={selectedPatient} 
+                            summaryData={summaryData}
+                            summaryLoading={summaryLoading}
+                            summaryError={summaryError}
+                        />
                     </>
                 )}
                 

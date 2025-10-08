@@ -12,9 +12,9 @@ const Test = lazy(() => import('./Test/test.jsx'));
 // --- Page Imports (Lazily Loaded) ---
 const HomePage = lazy(() => import('./pages/open/HomePage.jsx'));
 const LoginPage = lazy(() => import('./pages/open/LoginPage.jsx'));
-const DashboardPage = lazy(() => import('./pages/Authorization/DashboardPage.jsx'));
-const MyDataPage = lazy(() => import('./pages/Authorization/MyDataPage.jsx'));
-const GlucoseLogPage = lazy(() => import('./pages/Authorization/GlucoseLogPage.jsx'));
+const DashboardPage = lazy(() => import('./pages/patient/DashboardPage.jsx'));
+const MyDataPage = lazy(() => import('./pages/patient/MyDataPage.jsx'));
+const GlucoseLogPage = lazy(() => import('./pages/patient/GlucoseLogPage.jsx'));
 const ServiceHubPage = lazy(() => import('./pages/service/ServiceHubPage.jsx'));
 
 // Onboarding Pages

@@ -1,0 +1,159 @@
+/* DiabeticRapportValues.css - Refactored to use global design tokens */
+
+.dr-card {
+  font-family: var(--font-sans);
+  background-color: rgba(255, 255, 255, 0.02); /* Match .card */
+  border: 1px solid rgba(255, 255, 255, 0.06); /* Match .card */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  color: var(--color-white);
+  padding: var(--space-6);
+}
+
+.dr-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: var(--space-4);
+}
+
+.dr-card__title {
+  font-size: 28px; /* Match h3 */
+  line-height: 34px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  margin: 0;
+}
+
+.dr-card__meta {
+  font-size: 14px;
+  color: var(--gray-200);
+}
+
+.dr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.dr-tile {
+  background-color: var(--gray-800);
+  border: 1px solid var(--gray-700);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: all var(--ts-med) ease-in-out;
+}
+
+.dr-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: var(--gray-600);
+}
+
+.dr-tile__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.dr-tile__title {
+  font-weight: 600;
+  color: var(--gray-100);
+}
+
+.dr-tile__value {
+  font-family: var(--font-numeric);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: var(--space-1);
+  letter-spacing: 0;
+}
+
+.dr-tile__sub {
+  font-size: 0.875rem;
+  color: var(--gray-300);
+}
+
+.dr-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 9999px;
+}
+
+.dr-badge--ok {
+  background-color: var(--color-success);
+  color: #062107; /* Contrast color from index.css */
+}
+
+.dr-badge--warn {
+  background-color: var(--color-warning);
+  color: #3A3000; /* Contrast color from index.css */
+}
+
+.dr-badge--alert {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.dr-avglist, .dr-list {
+  width: 100%;
+  font-size: 14px;
+}
+
+.dr-avglist__row, .dr-list__row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--gray-700);
+}
+
+.dr-avglist__row:last-child, .dr-list__row:last-child {
+    border-bottom: none;
+}
+
+.dr-avglist__key, .dr-list span:first-child {
+  color: var(--gray-200);
+}
+
+.dr-avglist__value, .dr-list span:last-child {
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.dr-card__footer {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dr-footnote {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  text-align: center;
+  margin: 0;
+}
+
+/* Compact density adjustments */
+.dr--compact .dr-card {
+    padding: var(--space-4);
+}
+.dr--compact .dr-tile {
+    padding: var(--space-3);
+}
+.dr--compact .dr-tile__value {
+    font-size: 1.5rem;
+}
