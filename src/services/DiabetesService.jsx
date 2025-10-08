@@ -44,7 +44,7 @@ export const getDiabetesSummaryForPatient = async (patientId) => {
     }
 };
 
-// Nieuwe functie voor ouders/voogden om data van een specifieke patiënt op te halen
+// Functie voor ouders/voogden om data van een specifieke patiënt op te halen
 export const getDiabetesSummaryForGuardian = async (patientId) => {
     const token = localStorage.getItem('token'); // Ouders/voogden gebruiken hun eigen token
 
@@ -53,7 +53,8 @@ export const getDiabetesSummaryForGuardian = async (patientId) => {
     }
 
     try {
-        const response = await axios.get(`${API_URL}/guardian/linked-patients/${patientId}/diabetes-summary`, {
+        // URL aangepast naar het nieuwe endpoint /summary-report
+        const response = await axios.get(`${API_URL}/guardian/linked-patients/${patientId}/summary-report`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },

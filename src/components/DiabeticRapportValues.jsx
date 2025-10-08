@@ -18,12 +18,13 @@ function mgdlToMmol(x) {
 function calcEagFromHbA1cPercent(hba1cPercent) {
   const eAGmgdl = 28.7 * hba1cPercent - 46.7;
   const eAGmmol = mgdlToMmol(eAGmgdl);
+  // Round mmol value to 1 decimal place
   return { mgdl: round(eAGmgdl, 0), mmol: round(eAGmmol, 1) };
 }
 
 function round(num, dp = 1) {
   const f = Math.pow(10, dp);
-  return Math.round(num * f) / f;
+  return (Math.round(num * f) / f).toFixed(dp);
 }
 
 function statusBadge(
@@ -179,7 +180,8 @@ const DiabeticRapportValues = ({
                     <div key={k} className="dr-avglist__row" role="listitem">
                       <span className="dr-avglist__key">{k}</span>
                       <span className="dr-avglist__value">
-                        {data.avgGlucose.values[k]} {data.avgGlucose.unit}
+                        {/* Round to 1 decimal place */}
+                        {round(data.avgGlucose.values[k], 1)} {data.avgGlucose.unit}
                       </span>
                     </div>
                   ) : null
