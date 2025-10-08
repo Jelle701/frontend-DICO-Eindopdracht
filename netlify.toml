@@ -5,15 +5,14 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "22"        # pin Node for the build
-  NODE_ENV     = "production"
+  NODE_VERSION = "22"   # pin Node 22 voor consistente builds
 
-# If this is a React/Vite SPA with client-side routing:
+# Voor SPA routing (optioneel):
 # [[redirects]]
 #   from = "/*"
 #   to   = "/index.html"
 #   status = 200
 
-# (Optional) if you use Netlify Functions:
+# Als je Netlify Functions gebruikt (optioneel):
 # [functions]
 #   directory = "netlify/functions"
