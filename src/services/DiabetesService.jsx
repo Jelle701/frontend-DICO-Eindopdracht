@@ -32,7 +32,6 @@ export const getDiabetesSummaryForPatient = async (patientId) => {
     }
 
     try {
-        // URL hersteld: /provider prefix weer toegevoegd om te matchen met de ProviderController
         const response = await axios.get(`${API_URL}/provider/patients/${patientId}/diabetes-summary`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -41,6 +40,27 @@ export const getDiabetesSummaryForPatient = async (patientId) => {
         return response.data;
     } catch (error) {
         console.error(`Fout bij ophalen samenvatting voor patiënt ${patientId}:`, error.response || error.message);
+        throw new Error(error.response?.data?.message || `Kon samenvatting voor patiënt ${patientId} niet ophalen.`);
+    }
+};
+
+// Nieuwe functie voor ouders/voogden om data van een specifieke patiënt op te halen
+export const getDiabetesSummaryForGuardian = async (patientId) => {
+    const token = localStorage.getItem('token'); // Ouders/voogden gebruiken hun eigen token
+
+    if (!token) {
+        throw new Error('Geen authenticatietoken voor ouder/voogd gevonden.');
+    }
+
+    try {
+        const response = await axios.get(`${API_URL}/guardian/linked-patients/${patientId}/diabetes-summary`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Fout bij ophalen samenvatting voor patiënt ${patientId} (voogd):`, error.response || error.message);
         throw new Error(error.response?.data?.message || `Kon samenvatting voor patiënt ${patientId} niet ophalen.`);
     }
 };

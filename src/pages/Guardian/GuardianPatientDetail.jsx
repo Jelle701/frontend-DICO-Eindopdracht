@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import apiClient from '../../services/ApiClient';
+import { getDiabetesSummaryForGuardian } from '../../services/DiabetesService.jsx'; // Import new service
 import Navbar from '../../components/web components/Navbar.jsx';
+import DiabeticRapportValues from '../../components/DiabeticRapportValues.jsx'; // Import summary component
+import '../../components/DiabeticRapportValues.css'; // Import summary styles
 import './GuardianPatientDetail.css';
 
-// --- API Functions (integrated to avoid import issues) ---
+// --- API Functions ---
 const getLinkedPatientsForGuardian = async () => {
     try {
         const response = await apiClient.get('/guardian/linked-patients');
@@ -56,7 +59,6 @@ const ProfileSummaryCard = ({ patient }) => (
 );
 
 const MeasurementsCard = ({ measurements }) => {
-    // Defensive check: ensure measurements is always an array to prevent crashes.
     const safeMeasurements = Array.isArray(measurements) ? measurements : [];
 
     return (
@@ -100,13 +102,20 @@ function GuardianPatientDetail() {
     const { patientId } = useParams();
     const [patient, setPatient] = useState(null);
     const [measurements, setMeasurements] = useState([]);
+    const [summaryData, setSummaryData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [summaryLoading, setSummaryLoading] = useState(true);
+    const [summaryError, setSummaryError] = useState('');
 
     const fetchData = useCallback(async () => {
         setLoading(true);
+        setSummaryLoading(true);
         setError('');
+        setSummaryError('');
+
         try {
+            // Fetch patient details and measurements
             const { data: patients, error: patientsError } = await getLinkedPatientsForGuardian();
             if (patientsError) throw patientsError;
             const currentPatient = patients.find(p => p.id.toString() === patientId);
@@ -115,19 +124,22 @@ function GuardianPatientDetail() {
 
             const { data: measurementsData, error: measurementsError } = await getGlucoseMeasurementsForPatient(patientId);
             if (measurementsError) throw measurementsError;
-            
-            // Robust check: ensure measurementsData is an array to prevent crash
             if (Array.isArray(measurementsData)) {
                 setMeasurements(measurementsData);
             } else {
-                console.warn('[GuardianPatientDetail] API did not return an array for glucose measurements. Received:', measurementsData);
-                setMeasurements([]); // Fallback to empty array
+                console.warn('[GuardianPatientDetail] API did not return an array for glucose measurements.');
+                setMeasurements([]);
             }
+
+            // Fetch diabetes summary
+            const summary = await getDiabetesSummaryForGuardian(patientId);
+            setSummaryData(summary);
 
         } catch (err) {
             setError(err.message || 'Fout bij het ophalen van patiëntgegevens.');
         } finally {
             setLoading(false);
+            setSummaryLoading(false);
         }
     }, [patientId]);
 
@@ -157,6 +169,17 @@ function GuardianPatientDetail() {
                         <div className="patient-details-grid">
                             <ProfileSummaryCard patient={patient} />
                             <MeasurementsCard measurements={measurements} />
+                            <div className="summary-container-guardian">
+                                {summaryLoading ? (
+                                    <p>Samenvatting laden...</p>
+                                ) : summaryError ? (
+                                    <p className="error-message">{summaryError}</p>
+                                ) : summaryData ? (
+                                    <DiabeticRapportValues data={summaryData} title="Diabetes Samenvatting" density="compact" />
+                                ) : (
+                                    <p>Geen samenvattingsgegevens beschikbaar.</p>
+                                )}
+                            </div>
                         </div>
                     </>
                 )}
