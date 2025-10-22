@@ -1,5 +1,5 @@
 // src/components/HamburgerMenu.jsx
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import './HamburgerMenu.css';
@@ -47,12 +47,15 @@ function HamburgerMenu() {
                         <li>
                             <Link to="/dashboard" onClick={() => setIsOpen(false)}>Dashboard</Link>
                         </li>
+                        {/* De volgende links zijn verwijderd omdat de routes niet bestaan. */}
+                        {/* 
                         <li>
                             <Link to="/profile" onClick={() => setIsOpen(false)}>Mijn Profiel</Link>
                         </li>
                         <li>
                             <Link to="/settings" onClick={() => setIsOpen(false)}>Instellingen</Link>
                         </li>
+                        */}
                         <li className="separator"></li>
                         <li>
                             <button onClick={logout} className="logout-button">

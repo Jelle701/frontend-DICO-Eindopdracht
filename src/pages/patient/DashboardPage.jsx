@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../../contexts/AuthContext.jsx';
 import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService.jsx';
 import { getDiabetesSummary } from '../../services/DiabetesService.jsx'; // Import new service
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea } from 'recharts';
 import './DashboardPage.css';
 import Navbar from "../../components/web components/Navbar.jsx";
 import DiabeticRapportValues from "../../components/DiabeticRapportValues.jsx";
@@ -213,12 +213,14 @@ function DashboardPage() {
                         {loading ? <p>Metingen laden...</p> : (
                             glucoseData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height={400}>
-                                    <LineChart data={glucoseData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                    <LineChart data={glucoseData}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                                         <XAxis dataKey="time" interval="preserveStartEnd" />
                                         <YAxis domain={['dataMin - 1', 'dataMax + 1']} allowDecimals={false} />
                                         <Tooltip />
                                         <Legend />
+                                        <ReferenceArea y1={0} y2={4} fill="rgba(255, 0, 38, 0.2)" strokeOpacity={0} ifOverflow="hidden" />
+                                        <ReferenceArea y1={8} y2={14} fill="rgba(255, 222, 0, 0.2)" strokeOpacity={0} ifOverflow="hidden" />
                                         <Line type="monotone" dataKey="value" name="Glucose" stroke="var(--color-teal)" strokeWidth={2} activeDot={{ r: 8 }} dot={false} />
                                     </LineChart>
                                 </ResponsiveContainer>

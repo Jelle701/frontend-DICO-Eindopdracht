@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import { useUser } from '../../contexts/AuthContext.jsx';
 import { updateUserProfile } from '../../services/ProfileService.jsx';
 import Navbar from '../../components/web components/Navbar.jsx';
@@ -6,7 +7,7 @@ import medicatieData from '../../Data/MedicatieDataSet.json';
 import devicesData from '../../Data/DiabeticDevices.json';
 import './MyDataPage.css';
 
-// --- Data & Mappings ---
+// ... (bestaande data en mappings blijven ongewijzigd)
 const GENDER_OPTIONS = { MALE: 'Man', FEMALE: 'Vrouw', OTHER: 'Anders', PREFER_NOT_TO_SAY: 'Zeg ik liever niet' };
 const DIABETES_TYPE_OPTIONS = { TYPE_1: 'Type 1', TYPE_2: 'Type 2', LADA: 'LADA', MODY: 'MODY', GESTATIONAL: 'Zwangerschapsdiabetes', OTHER: 'Anders/Onbekend' };
 const SYSTEM_OPTIONS = { METRIC: 'mmol/L', IMPERIAL: 'mg/dL' };
@@ -210,6 +211,19 @@ function MyDataPage() {
                         {renderDeviceSelector('cgm', 'CGM')}
                         {renderDeviceSelector('insulinPump', 'Insulinepompen')}
                         {renderDeviceSelector('bloodGlucoseMeter', 'Bloedglucosemeters')}
+                    </div>
+
+                    {/* Nieuwe sectie voor koppelingen */}
+                    <div className="form-section"><h2>Koppelingen</h2>
+                        <div className="connection-status-item">
+                            <span>LibreView</span>
+                            {user?.libreViewEmail ? (
+                                <span className="status-text connected">Verbonden</span>
+                            ) : (
+                                <span className="status-text disconnected">Niet Verbonden</span>
+                            )}
+                            <Link to="/service-hub" className="btn btn--ghost btn--small">Beheer</Link>
+                        </div>
                     </div>
 
                     {success && <p className="form-message success">{success}</p>}

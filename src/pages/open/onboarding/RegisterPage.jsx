@@ -4,6 +4,12 @@ import { registerUser } from '../../../services/AuthService/AuthService.jsx';
 import Navbar from '../../../components/web components/Navbar.jsx'; // Importeer de Navbar
 import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
 
+// Helper functie om e-mail te valideren
+const isValidEmail = (email) => {
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    return emailRegex.test(email);
+};
+
 // Stap 1 van de nieuwe Routes: Een generiek account aanmaken.
 function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -22,6 +28,12 @@ function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        // E-mail validatie toegevoegd
+        if (!isValidEmail(formData.email)) {
+            setError('Voer een geldig e-mailadres in.');
+            return;
+        }
 
         if (formData.password !== formData.confirmPassword) {
             setError('Wachtwoorden komen niet overeen.');

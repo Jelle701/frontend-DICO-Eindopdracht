@@ -58,7 +58,6 @@
 .form-card .btn-primary {
     width: 100%;
     margin-top: var(--space-4); /* 16px */
-    /* De rest van de styling wordt overgenomen van de globale .btn en .btn--primary */
 }
 
 .form-message {
@@ -74,12 +73,42 @@
 
 .form-message.error {
     color: var(--color-danger);
-    background-color: rgba(255, 0, 38, var(--op-8)); /* var(--color-danger) met --op-8 */
+    background-color: rgba(255, 0, 38, var(--op-8));
     border-color: var(--color-danger);
 }
 
 .form-message.success {
     color: var(--color-success);
-    background-color: rgba(22, 236, 6, var(--op-8)); /* var(--color-success) met --op-8 */
+    background-color: rgba(22, 236, 6, var(--op-8));
     border-color: var(--color-success);
+}
+
+/* --- Nieuwe Styles voor Koppelingen Sectie --- */
+.connection-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--gray-700);
+}
+
+.connection-status-item:first-of-type {
+    border-top: none;
+}
+
+.connection-status-item span {
+    font-weight: 600;
+}
+
+.status-text.connected {
+    color: var(--color-success);
+}
+
+.status-text.disconnected {
+    color: var(--gray-300);
+}
+
+.btn--small {
+    padding: var(--space-1) var(--space-2);
+    font-size: 12px;
 }

@@ -1,35 +1,13 @@
-import React from 'react';
-import './ActivityFeed.css';
-
-// Mock data for recent activities
-const mockActivities = [
-    {
-        id: 1,
-        type: 'USER_REGISTRATION',
-        description: 'Nieuwe gebruiker \'patient@example.com\' heeft zich geregistreerd.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-    },
-    {
-        id: 2,
-        type: 'USER_DELETION',
-        description: 'Gebruiker \'oud-gebruiker@example.com\' is verwijderd door een admin.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-    },
-    {
-        id: 3,
-        type: 'ROLE_CHANGE',
-        description: 'De rol van \'zorg@example.com\' is gewijzigd naar PROVIDER.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(), // 8 hours ago
-    },
-];
+import React, { useState, useEffect } from 'react';
+import { getRecentActivities } from '../../services/AdminService';
 
 // Helper to determine icon based on activity type
 const getActivityIcon = (type) => {
     switch (type) {
-        case 'USER_REGISTRATION': return '👤'; // Person icon
-        case 'USER_DELETION': return '🗑️'; // Trash can icon
-        case 'ROLE_CHANGE': return '🔄'; // Cycle icon
-        default: return '🔔'; // Bell icon
+        case 'USER_REGISTRATION': return '👤';
+        case 'USER_DELETION': return '🗑️';
+        case 'ROLE_CHANGE': return '🔄';
+        default: return '🔔';
     }
 };
 
@@ -50,23 +28,57 @@ const TimeAgo = ({ timestamp }) => {
 };
 
 const ActivityFeed = () => {
-    // In a real app, this data would come from props or a hook: `const { activities, loading } = useActivityFeed();`
-    const activities = mockActivities;
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    return (
-        <div className="activity-feed-card">
-            <h4>Recente Activiteit</h4>
+    useEffect(() => {
+        const fetchActivities = async () => {
+            setLoading(true);
+            const { data, error: apiError } = await getRecentActivities();
+            if (apiError) {
+                setError(apiError.message || 'Fout bij het ophalen van activiteiten.');
+            } else {
+                setActivities(data || []);
+            }
+            setLoading(false);
+        };
+
+        fetchActivities();
+    }, []);
+
+    const renderContent = () => {
+        if (loading) {
+            return <p className="text-300">Activiteiten laden...</p>;
+        }
+
+        if (error) {
+            return <p className="form-error">{error}</p>;
+        }
+
+        if (activities.length === 0) {
+            return <p className="text-300">Geen recente activiteiten gevonden.</p>;
+        }
+
+        return (
             <ul className="activity-list">
                 {activities.map(activity => (
                     <li key={activity.id} className="activity-item">
-                        <div className="activity-icon">{getActivityIcon(activity.type)}</div>
-                        <div className="activity-details">
-                            <p className="activity-description">{activity.description}</p>
-                            <span className="activity-timestamp"><TimeAgo timestamp={activity.timestamp} /></span>
+                        <div className="activity-icon text-teal">{getActivityIcon(activity.type)}</div>
+                        <div>
+                            <p className="activity-description mb-1">{activity.description}</p>
+                            <span className="activity-timestamp small text-400"><TimeAgo timestamp={activity.timestamp} /></span>
                         </div>
                     </li>
                 ))}
             </ul>
+        );
+    };
+
+    return (
+        <div className="card activity-feed">
+            <h4 className="card-title mt-0 mb-4">Recente Activiteit</h4>
+            {renderContent()}
         </div>
     );
 };

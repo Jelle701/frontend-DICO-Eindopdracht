@@ -1,23 +1,20 @@
-/* ===========================
-   1) DESIGN TOKENS
-   =========================== */
 :root {
-  /* Brand core */
+  /* Basic */
   --color-black: #000000;
   --color-white: #FFFFFF;
 
-  /* Primary (CTA) */
+  /* Primary/usp color */
   --color-teal: #00F19F;
 
   /* Data-kleuren */
   --color-strain: #0093E7;
-  --color-recovery-high: #16EC06;  /* 100–67% */
-  --color-recovery-med:  #FFDE00;  /* 66–34% */
-  --color-recovery-low:  #FF0026;  /* 33–0% */
+  --color-recovery-high: #16EC06;  /* 100% */
+  --color-recovery-med:  #FFDE00;  /* 66% */
+  --color-recovery-low:  #FF0026;  /* 33% */
   --color-sleep:         #7BA1BB;
   --color-recovery-blue: #67AEE6;
 
-  /* Background gradient */
+  /* Background */
   --gradient-bg-start: #283339;
   --gradient-bg-end:   #101518;
 
@@ -32,16 +29,16 @@
   --gray-200: #98A6B6;
   --gray-100: #C8D1DA;
 
-  /* State mapping */
+  /* State colors */
   --color-success: var(--color-recovery-high);
   --color-warning: var(--color-recovery-med);
   --color-danger:  var(--color-recovery-low);
 
-  /* Opacity helpers */
+  /* Opacity tool */
   --op-8: 0.08;
   --op-16: 0.16;
 
-  /* Typography stacks */
+  /* Typography  */
   --font-sans: "Proxima Nova", Inter, "Helvetica Neue", Arial, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-numeric: "DIN Pro", "DIN 2014", "IBM Plex Sans Condensed", Rajdhani, "Segoe UI", Arial, sans-serif;
 
@@ -54,6 +51,7 @@
   --space-6: 32px;
   --space-7: 48px;
   --space-8: 64px;
+  --space-9: 96px;
 
   /* Radius (px) */
   --radius-sm: 6px;
@@ -152,7 +150,7 @@ a:hover { text-decoration: underline; }
   position: sticky;
   top: 0;
   z-index: 1000;
-  height: 64px;
+  height: var(--space-8);
   display: flex;
   align-items: center;
   background: linear-gradient(180deg, rgba(16,21,24,0.9), rgba(16,21,24,0));
@@ -242,8 +240,8 @@ a:hover { text-decoration: underline; }
 }
 
 .section {
-  padding-top: 64px;  /* vaste px i.p.v. clamp */
-  padding-bottom: 96px;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-9);
 }
 
 /* ===========================
@@ -309,7 +307,7 @@ input[type="time"] {
 
 .label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
   font-size: 12px;
   line-height: 16px;
   color: var(--gray-200);
@@ -400,23 +398,23 @@ input[type="time"] {
    10) UTILITIES
    =========================== */
 .mt-0 { margin-top: 0px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
-.mt-5 { margin-top: 24px; }
-.mt-6 { margin-top: 32px; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
 
 .mb-0 { margin-bottom: 0px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-.mb-4 { margin-bottom: 16px; }
-.mb-5 { margin-bottom: 24px; }
-.mb-6 { margin-bottom: 32px; }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+.mb-6 { margin-bottom: var(--space-6); }
 
-.pt-6 { padding-top: 32px; }
-.pb-6 { padding-bottom: 32px; }
-.pl-4 { padding-left: 16px; }
-.pr-4 { padding-right: 16px; }
+.pt-6 { padding-top: var(--space-6); }
+.pb-6 { padding-bottom: var(--space-6); }
+.pl-4 { padding-left: var(--space-4); }
+.pr-4 { padding-right: var(--space-4); }
 
 .rounded-sm { border-radius: var(--radius-sm); }
 .rounded-md { border-radius: var(--radius-md); }

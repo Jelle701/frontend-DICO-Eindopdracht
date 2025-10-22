@@ -1,8 +1,7 @@
 import React from 'react';
-import './TableSkeleton.css';
 
 const SkeletonRow = () => (
-    <div className="skeleton-row">
+    <div className="skeleton-row d-flex gap-4 p-4">
         <div className="skeleton-cell skeleton-checkbox"></div>
         <div className="skeleton-cell skeleton-id"></div>
         <div className="skeleton-cell skeleton-email"></div>

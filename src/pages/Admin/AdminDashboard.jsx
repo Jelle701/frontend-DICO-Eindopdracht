@@ -29,19 +29,19 @@ const DashboardTab = ({ users }) => {
         <div className="tab-content">
             <div className="admin-dashboard-grid mb-6">
                 <div className="card stat-card">
-                    <h3>Totaal Gebruikers</h3>
+                    <h3 className="card-title mt-0 mb-5">Totaal Gebruikers</h3>
                     <p className="stat numeric">{stats.total}</p>
                 </div>
                 <div className="card stat-card">
-                    <h3>Patiënten</h3>
+                    <h3 className="card-title mt-0 mb-5">Patiënten</h3>
                     <p className="stat numeric">{stats.patients}</p>
                 </div>
                 <div className="card stat-card">
-                    <h3>Ouders/Voogden</h3>
+                    <h3 className="card-title mt-0 mb-5">Ouders/Voogden</h3>
                     <p className="stat numeric">{stats.guardians}</p>
                 </div>
                 <div className="card stat-card">
-                    <h3>Zorgverleners</h3>
+                    <h3 className="card-title mt-0 mb-5">Zorgverleners</h3>
                     <p className="stat numeric">{stats.providers}</p>
                 </div>
             </div>
@@ -125,8 +125,7 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
         const csvRows = [
             headers.join(','),
             ...processedUsers.map(user =>
-                [user.id, `"${user.email}"`, `"${user.firstName || ''}"`, `"${user.lastName || ''}"`, `"${user.role}"`, `"${new Date(user.createdAt).toISOString()}"`].join(',')
-            )
+                [user.id, `\"${user.email}\"`, `\"${user.firstName || ''}\"`, `\"${user.lastName || ''}\"`, `\"${user.role}\"`, `\"${new Date(user.createdAt).toISOString()}\"`].join(','))
         ];
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -141,8 +140,8 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
     return (
         <div className="tab-content">
             <div className="card d-flex flex-wrap items-center justify-between gap-4 mb-5">
-                <input type="text" placeholder="Zoek op naam of e-mail..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="input" style={{ flexBasis: '300px' }}/>
-                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="input" style={{ flexBasis: '200px' }}>
+                <input type="text" placeholder="Zoek op naam of e-mail..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="input admin-filter-input"/>
+                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="input admin-filter-input">
                     <option value="ALL">Alle Rollen</option><option value="PATIENT">Patiënt</option><option value="GUARDIAN">Ouder / Voogd</option><option value="PROVIDER">Zorgverlener</option><option value="ADMIN">Admin</option>
                 </select>
                 <button onClick={handleExportCSV} className="btn btn--secondary">Exporteer CSV</button>
@@ -163,24 +162,26 @@ const UserManagementTab = ({ users, loading, error, fetchUsers, setNotification 
                 {loading ? <TableSkeleton /> : error ? <p className="form-error">{error}</p> : (
                     currentUsers.length > 0 ? (
                         <>
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th style={{ width: '50px' }}><input type="checkbox" onChange={handleSelectAll} checked={selectedUsers.length > 0 && selectedUsers.length === currentUsers.length} /></th>
-                                        <th onClick={() => requestSort('id')} className={`sortable ${sortConfig.key === 'id' ? sortConfig.direction : ''}`}>ID</th>
-                                        <th onClick={() => requestSort('email')} className={`sortable ${sortConfig.key === 'email' ? sortConfig.direction : ''}`}>Email</th>
-                                        <th onClick={() => requestSort('lastName')} className={`sortable ${sortConfig.key === 'lastName' ? sortConfig.direction : ''}`}>Naam</th>
-                                        <th onClick={() => requestSort('role')} className={`sortable ${sortConfig.key === 'role' ? sortConfig.direction : ''}`}>Rol</th>
-                                        <th onClick={() => requestSort('createdAt')} className={`sortable ${sortConfig.key === 'createdAt' ? sortConfig.direction : ''}`}>Geregistreerd</th>
-                                        <th>Acties</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {currentUsers.map(user => (
-                                        <UserTableRow key={user.id} user={user} selectedUsers={selectedUsers} onSelectUser={setSelectedUsers} fetchUsers={fetchUsers} setNotification={setNotification} />
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div className="table-container">
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th style={{ width: '50px' }}><input type="checkbox" onChange={handleSelectAll} checked={selectedUsers.length > 0 && selectedUsers.length === currentUsers.length} /></th>
+                                            <th onClick={() => requestSort('id')} className={`sortable ${sortConfig.key === 'id' ? sortConfig.direction : ''}`}>ID</th>
+                                            <th onClick={() => requestSort('email')} className={`sortable ${sortConfig.key === 'email' ? sortConfig.direction : ''}`}>Email</th>
+                                            <th onClick={() => requestSort('lastName')} className={`sortable ${sortConfig.key === 'lastName' ? sortConfig.direction : ''}`}>Naam</th>
+                                            <th onClick={() => requestSort('role')} className={`sortable ${sortConfig.key === 'role' ? sortConfig.direction : ''}`}>Rol</th>
+                                            <th onClick={() => requestSort('createdAt')} className={`sortable ${sortConfig.key === 'createdAt' ? sortConfig.direction : ''}`}>Geregistreerd</th>
+                                            <th>Acties</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {currentUsers.map(user => (
+                                            <UserTableRow key={user.id} user={user} selectedUsers={selectedUsers} onSelectUser={setSelectedUsers} fetchUsers={fetchUsers} setNotification={setNotification} />
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                             <Pagination usersPerPage={usersPerPage} totalUsers={processedUsers.length} paginate={(p) => setCurrentPage(p)} currentPage={currentPage}/>
                         </>
                     ) : <div className="empty-state"><p>Geen gebruikers gevonden die aan uw criteria voldoen.</p></div>
@@ -245,7 +246,7 @@ const Pagination = ({ usersPerPage, totalUsers, paginate, currentPage }) => {
             <ul className="pagination">
                 {pageNumbers.map(number => (
                     <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                        <a onClick={(e) => { e.preventDefault(); paginate(number); }} href="#!" className="page-link">{number}</a>
+                        <button onClick={() => paginate(number)} className="page-link">{number}</button>
                     </li>
                 ))}
             </ul>
@@ -278,12 +279,6 @@ const AdminDashboard = () => {
 
     useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
-    const handleTabClick = (e, tabName) => {
-        e.preventDefault();
-        setActiveTab(tabName);
-        window.history.pushState(null, '', `#${tabName}`);
-    };
-
     return (
         <>
             <Navbar />
@@ -293,11 +288,6 @@ const AdminDashboard = () => {
                         <h1>Admin Dashboard</h1>
                         <p className="text-300">Krijg inzicht in de gebruikersdata en beheer het platform.</p>
                     </header>
-
-                    <div className="admin-tabs">
-                        <a href="#dashboard" className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={(e) => handleTabClick(e, 'dashboard')}>Dashboard</a>
-                        <a href="#management" className={`tab-button ${activeTab === 'management' ? 'active' : ''}`} onClick={(e) => handleTabClick(e, 'management')}>Gebruikersbeheer</a>
-                    </div>
 
                     {activeTab === 'dashboard' && <DashboardTab users={users} />}
                     {activeTab === 'management' && <UserManagementTab users={users} loading={loading} error={error} fetchUsers={fetchUsers} setNotification={setNotification} />}

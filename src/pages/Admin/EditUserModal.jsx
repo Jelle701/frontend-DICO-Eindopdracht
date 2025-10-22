@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { updateUserById } from '../../services/AdminService';
-import './EditUserModal.css';
 
 const EditUserModal = ({ user, onClose, onSave }) => {
     const [formData, setFormData] = useState({
@@ -48,29 +47,28 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>Gebruiker Bewerken</h2>
+            <div className="card modal-content">
+                <h2 className="mt-0 mb-6">Gebruiker Bewerken</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="input-group">
+                    <div className="form-group">
                         <label htmlFor="firstName">Voornaam</label>
-                        <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} />
+                        <input className="input" type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} />
                     </div>
-                    <div className="input-group">
+                    <div className="form-group">
                         <label htmlFor="lastName">Achternaam</label>
-                        <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} />
+                        <input className="input" type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} />
                     </div>
-                    <div className="input-group">
+                    <div className="form-group">
                         <label htmlFor="role">Rol</label>
-                        <select id="role" name="role" value={formData.role} onChange={handleChange}>
+                        <select className="input" id="role" name="role" value={formData.role} onChange={handleChange}>
                             <option value="PATIENT">Patiënt</option>
                             <option value="GUARDIAN">Ouder / Voogd</option>
                             <option value="PROVIDER">Zorgverlener</option>
-                            {/* Admins can't have their role changed from the frontend based on backend rules */}
                             {user.role === 'ADMIN' && <option value="ADMIN">Admin</option>}
                         </select>
                     </div>
-                    {error && <p className="error-message">{error}</p>}
-                    <div className="modal-actions">
+                    {error && <p className="form-error">{error}</p>}
+                    <div className="d-flex gap-4 mt-6" style={{ justifyContent: 'flex-end' }}>
                         <button type="button" onClick={onClose} disabled={loading} className="btn btn--secondary">Annuleren</button>
                         <button type="submit" disabled={loading} className="btn btn--primary">{loading ? 'Opslaan...' : 'Opslaan'}</button>
                     </div>

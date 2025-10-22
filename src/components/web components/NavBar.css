@@ -106,7 +106,7 @@
 }
 
 .nav-menu-mobile {
-    display: none; /* Verberg op desktop */
+    display: none; /* Standaard verborgen */
     position: absolute;
     right: var(--space-4); /* 16px */
     top: 64px; /* Consistent met navbar hoogte */
@@ -117,7 +117,11 @@
     border-radius: var(--radius-md); /* 10px */
     border: 1px solid var(--gray-700); /* Subtiele rand */
     overflow: hidden;
-    animation: fadeIn var(--ts-med) ease-out;
+}
+
+.nav-menu-mobile.open {
+    display: block; /* Toon wanneer geopend */
+    animation: fadeIn var(--ts-med) ease-out forwards;
 }
 
 .nav-menu-mobile ul {
@@ -160,9 +164,7 @@
         flex-direction: column;
         justify-content: space-around;
     }
-    .nav-menu-mobile {
-        display: block; /* Toon mobiel menu indien open */
-    }
+    /* .nav-menu-mobile display is nu gecontroleerd door .nav-menu-mobile.open */
 }
 
 @keyframes fadeIn {

@@ -81,6 +81,7 @@
     animation: continuousSlide 15s linear infinite; /* Duur en herhaling */
     padding-right: 2em; /* Ruimte tussen de items */
     flex-shrink: 0; /* Voorkomt dat items krimpen */
+    animation-fill-mode: backwards; /* Zorgt ervoor dat de animatie correct start */
 }
 
 .hero-highlights span:nth-child(1) {
@@ -168,7 +169,7 @@
     width: 100%;
     height: auto;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-2);\
+    box-shadow: var(--shadow-2);
 }
 
 .data-impact-section {
@@ -241,7 +242,7 @@
 }
 
 .how-it-works-step .step-number {
-    font-family: var(--font-numeric);\
+    font-family: var(--font-numeric);
     font-size: 48px;
     line-height: 1;
     color: var(--color-teal);
@@ -308,11 +309,11 @@
     margin-top: var(--space-4);
     font-style: normal;
     font-weight: 700;
-    color: var(--color-white);\
+    color: var(--color-white);
 }
 
 .cta-section {
-    padding: var(--space-7) var(--space-6);\
+    padding: var(--space-7) var(--space-6);
     text-align: center;
     background-color: var(--gray-800);
 }

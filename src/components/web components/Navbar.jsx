@@ -1,8 +1,7 @@
-// src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, useUser } from '../../contexts/AuthContext.jsx';
-import DicoLogo from '../../assets/react.svg';
+import DicoLogo from '../../content/DiCo_logo.svg';
 import './NavBar.css';
 
 function Navbar() {
@@ -15,7 +14,7 @@ function Navbar() {
 
     const isAdmin = user?.role === 'ADMIN';
     const isProvider = user?.role === 'PROVIDER';
-    const isGuardian = user?.role === 'GUARDIAN'; // Added for clarity
+    const isGuardian = user?.role === 'GUARDIAN';
     const dashboardPath = isAdmin ? '/admin-dashboard' : isProvider ? '/provider-dashboard' : isGuardian ? '/guardian-portal' : '/dashboard';
 
     const handleLogout = () => {
@@ -40,7 +39,6 @@ function Navbar() {
 
     const closeMenu = () => setMenuOpen(false);
 
-    // Custom isActive function for admin links
     const getAdminNavLinkClass = (targetHash) => {
         const isBasePathActive = location.pathname === '/admin-dashboard';
         let isThisLinkActive = false;
@@ -52,38 +50,35 @@ function Navbar() {
         return `nav-link ${isThisLinkActive ? 'active' : ''}`;
     };
 
-    // Generic NavLink class for non-admin links
     const getNavLinkClass = ({ isActive }) => {
         return `nav-link ${isActive ? 'active' : ''}`;
     };
 
     return (
         <nav className="navbar" ref={menuRef}>
-            <div className="navbar-container d-flex justify-between items-center"> {/* Removed w-100 */}
+            <div className="navbar-container d-flex justify-between items-center">
                 <NavLink to={isAuth ? dashboardPath : "/"} className="navbar-logo" onClick={closeMenu}>
                     <img src={DicoLogo} alt="App Logo" />
-                    <span>Diabeheer</span>
+
                 </NavLink>
 
-                {isAuth && (
-                    <button
-                        onClick={toggleMenu}
-                        className={`hamburger-button ${menuOpen ? 'open' : ''}`}
-                        aria-label="Toggle menu"
-                    >
-                        <div className="hamburger-line"></div>
-                        <div className="hamburger-line"></div>
-                        <div className="hamburger-line"></div>
-                    </button>
-                )}
+                <button
+                    onClick={toggleMenu}
+                    className={`hamburger-button ${menuOpen ? 'open' : ''}`}
+                    aria-label="Toggle menu"
+                >
+                    <div className="hamburger-line"></div>
+                    <div className="hamburger-line"></div>
+                    <div className="hamburger-line"></div>
+                </button>
 
                 <ul className="nav-menu-desktop">
                     {isAuth ? (
                         <>
                             {isAdmin ? (
                                 <>
-                                    <li><NavLink to="/admin-dashboard#dashboard" className={getAdminNavLinkClass('/admin-dashboard#dashboard')}>Dashboard</NavLink></li>
-                                    <li><NavLink to="/admin-dashboard#management" className={getAdminNavLinkClass('/admin-dashboard#management')}>Gebruikersbeheer</NavLink></li>
+                                    <li><Link to="/admin-dashboard#dashboard" className={getAdminNavLinkClass('#dashboard')}>Dashboard</Link></li>
+                                    <li><Link to="/admin-dashboard#management" className={getAdminNavLinkClass('#management')}>Gebruikersbeheer</Link></li>
                                 </> 
                             ) : isGuardian ? (
                                 <li><NavLink to="/guardian-portal" className={getNavLinkClass}>Ouderportaal</NavLink></li>
@@ -93,7 +88,6 @@ function Navbar() {
                                     <li><NavLink to="/patient-portal" className={getNavLinkClass}>Patiënten Beheren</NavLink></li>
                                 </>
                             ) : (
-                                // Default Patient links
                                 <>
                                     <li><NavLink to="/dashboard" className={getNavLinkClass}>Dashboard</NavLink></li>
                                     <li><NavLink to="/my-data" className={getNavLinkClass}>Mijn Gegevens</NavLink></li>
@@ -111,35 +105,41 @@ function Navbar() {
                     )}
                 </ul>
 
-                {isAuth && menuOpen && (
-                    <div className="nav-menu-mobile">
-                        <ul>
-                            {isAdmin ? (
-                                <>
-                                    <li><NavLink to="/admin-dashboard#dashboard" className={getAdminNavLinkClass('#dashboard')} onClick={closeMenu}>Dashboard</NavLink></li>
-                                    <li><NavLink to="/admin-dashboard#management" className={getAdminNavLinkClass('#management')} onClick={closeMenu}>Gebruikersbeheer</NavLink></li>
-                                </> 
-                            ) : isGuardian ? (
-                                <li><NavLink to="/guardian-portal" className={getNavLinkClass} onClick={closeMenu}>Ouderportaal</NavLink></li>
-                            ) : isProvider ? (
-                                <>
-                                    <li><NavLink to="/provider-dashboard" className={getNavLinkClass} onClick={closeMenu}>Dashboard</NavLink></li>
-                                    <li><NavLink to="/patient-portal" className={getNavLinkClass} onClick={closeMenu}>Patiënten Beheren</NavLink></li>
-                                </>
-                            ) : (
-                                // Default Patient links
-                                <>
-                                    <li><NavLink to="/dashboard" className={getNavLinkClass} onClick={closeMenu}>Dashboard</NavLink></li>
-                                    <li><NavLink to="/my-data" className={getNavLinkClass} onClick={closeMenu}>Mijn Gegevens</NavLink></li>
-                                    <li><NavLink to="/service-hub" className={getNavLinkClass} onClick={closeMenu}>Services</NavLink></li>
-                                </>
-                            )}
+                <div className={`nav-menu-mobile ${menuOpen ? 'open' : ''}`}>
+                    <ul>
+                        {isAuth ? (
+                            <>
+                                {isAdmin ? (
+                                    <>
+                                        <li><Link to="/admin-dashboard#dashboard" className={getAdminNavLinkClass('#dashboard')} onClick={closeMenu}>Dashboard</Link></li>
+                                        <li><Link to="/admin-dashboard#management" className={getAdminNavLinkClass('#management')} onClick={closeMenu}>Gebruikersbeheer</Link></li>
+                                    </> 
+                                ) : isGuardian ? (
+                                    <li><NavLink to="/guardian-portal" className={getNavLinkClass} onClick={closeMenu}>Ouderportaal</NavLink></li>
+                                ) : isProvider ? (
+                                    <>
+                                        <li><NavLink to="/provider-dashboard" className={getNavLinkClass} onClick={closeMenu}>Dashboard</NavLink></li>
+                                        <li><NavLink to="/patient-portal" className={getNavLinkClass} onClick={closeMenu}>Patiënten Beheren</NavLink></li>
+                                    </>
+                                ) : (
+                                    <>
+                                        <li><NavLink to="/dashboard" className={getNavLinkClass} onClick={closeMenu}>Dashboard</NavLink></li>
+                                        <li><NavLink to="/my-data" className={getNavLinkClass} onClick={closeMenu}>Mijn Gegevens</NavLink></li>
+                                        <li><NavLink to="/service-hub" className={getNavLinkClass} onClick={closeMenu}>Services</NavLink></li>
+                                    </>
+                                )}
 
-                            <li className="separator"></li>
-                            <li><button onClick={handleLogout} className="btn btn--outline">Uitloggen</button></li>
-                        </ul>
-                    </div>
-                )}
+                                <li className="separator"></li>
+                                <li><button onClick={handleLogout} className="btn btn--outline">Uitloggen</button></li>
+                            </>
+                        ) : (
+                            <>
+                                <li><NavLink to="/login" className={getNavLinkClass} onClick={closeMenu}>Inloggen</NavLink></li>
+                                <li><NavLink to="/register" className="btn btn--primary" onClick={closeMenu}>Registreren</NavLink></li>
+                            </>
+                        )}
+                    </ul>
+                </div>
             </div>
         </nav>
     );

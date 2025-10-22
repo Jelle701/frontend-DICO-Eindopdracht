@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth, useUser } from '../../contexts/AuthContext';
-import { loginUser } from '../../services/AuthService/AuthService';
+import { useAuth, useUser } from '../../contexts/AuthContext.jsx';
+import { loginUser } from '../../services/AuthService/AuthService.jsx';
 import Navbar from '../../components/web components/Navbar.jsx';
 import '../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
+
+// Helper functie om e-mail te valideren
+const isValidEmail = (email) => {
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    return emailRegex.test(email);
+};
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -70,8 +76,15 @@ function LoginPage() {
             return;
         }
 
+        if (!isValidEmail(formData.email)) {
+            setError('Voer een geldig e-mailadres in.');
+            setLoading(false);
+            return;
+        }
+
+        // Correctie: De backend verwacht 'email', geen 'username'.
         const loginData = {
-            username: formData.email,
+            email: formData.email,
             password: formData.password
         };
 

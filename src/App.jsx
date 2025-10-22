@@ -16,6 +16,8 @@ const DashboardPage = lazy(() => import('./pages/patient/DashboardPage.jsx'));
 const MyDataPage = lazy(() => import('./pages/patient/MyDataPage.jsx'));
 const GlucoseLogPage = lazy(() => import('./pages/patient/GlucoseLogPage.jsx'));
 const ServiceHubPage = lazy(() => import('./pages/service/ServiceHubPage.jsx'));
+const LibreViewLoginPage = lazy(() => import('./pages/service/LibreViewLoginPage.jsx'));
+const LibreViewTestPage = lazy(() => import('./pages/service/LibreViewTestPage.jsx'));
 
 // Onboarding Pages
 const RegisterPage = lazy(() => import('./pages/open/onboarding/RegisterPage.jsx'));
@@ -27,7 +29,7 @@ const DiabeticDevices = lazy(() => import('./pages/open/onboarding/DiabeticDevic
 
 // Guardian Pages
 const GuardianPortal = lazy(() => import('./pages/Guardian/GuardianPortal.jsx'));
-const GuardianPatientDetail = lazy(() => import('./pages/Guardian/GuardianPatientDetail.jsx')); // Import the new detail page
+const GuardianPatientDetail = lazy(() => import('./pages/Guardian/GuardianPatientDetail.jsx'));
 
 // Zorgverlener Pages
 const PatientPortal = lazy(() => import('./pages/Zorgverlener/PatientPortal.jsx'));
@@ -65,10 +67,12 @@ function App() {
                     <Route path="/glucose-log" element={<GlucoseLogPage />} />
                     <Route path="/my-data" element={<MyDataPage />} />
                     <Route path="/service-hub" element={<ServiceHubPage />} />
+                    <Route path="/service-hub/libreview-login" element={<LibreViewLoginPage />} />
+                    <Route path="/libreview-test" element={<LibreViewTestPage />} /> {/* Nieuwe testroute */}
                     
                     {/* Guardian Routes */}
                     <Route path="/guardian-portal" element={<GuardianPortal />} />
-                    <Route path="/guardian/patient/:patientId" element={<GuardianPatientDetail />} /> {/* Add the new detail route */}
+                    <Route path="/guardian/patient/:patientId" element={<GuardianPatientDetail />} />
 
                     {/* Zorgverlener Routes */}
                     <Route path="/patient-portal" element={<PatientPortal />} />

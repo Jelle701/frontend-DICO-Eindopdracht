@@ -21,12 +21,19 @@
     border: 1px solid var(--gray-700); /* Consistent with card border */
 }
 
+/* Styling for the logo */
+.auth-form-logo {
+    display: block;
+    margin: 0 auto var(--space-6);
+    height: 50px; /* Adjust height as needed */
+}
+
 .auth-form-card h1 {
     text-align: center;
     margin-bottom: var(--space-6); /* 32px */
     color: var(--color-white); /* Consistent with general text color */
-    font-size: 36px; /* H2 token */
-    line-height: 44px; /* H2 token */
+    font-size: 30px; /* Reduced from 36px */
+    line-height: 38px; /* Adjusted from 44px */
 }
 
 .auth-form-description {

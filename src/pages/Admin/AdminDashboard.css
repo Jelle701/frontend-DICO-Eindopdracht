@@ -2,20 +2,29 @@
 
 .admin-dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-5); /* 24px gap */
+    /* Allow columns to shrink more gracefully, or stack on very small screens */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: var(--space-5);
 }
 
-.stat-card h3 {
+/* New reusable class for card titles */
+.card-title {
+    font-size: 20px;
+    line-height: 28px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-weight: 700;
+}
+
+.stat-card .card-title {
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    padding-bottom: var(--space-4); /* 16px */
-    margin-bottom: var(--space-5); /* 24px */
+    padding-bottom: var(--space-4);
 }
 
 .stat-card .stat {
-    font-size: 48px; /* Larger font for the main statistic */
+    font-size: 48px;
     line-height: 1.1;
-    margin-bottom: var(--space-2); /* 8px */
+    margin-bottom: var(--space-2);
 }
 
 .stat-card .stat-label {
@@ -25,11 +34,17 @@
     letter-spacing: 1.2px;
 }
 
+/* Responsive container for the user management table */
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
 .user-list-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-3) 0; /* 12px top/bottom */
+    padding: var(--space-3) 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -63,20 +78,153 @@
 /* Role-specific badge colors, using variables from index.css */
 .badge-admin {
     background-color: var(--color-teal);
-    color: #07261C; /* High contrast text */
+    color: #07261C;
 }
 
 .badge-provider {
     background-color: var(--color-strain);
-    color: #001728; /* High contrast text */
+    color: #001728;
 }
 
 .badge-guardian {
     background-color: var(--color-sleep);
-    color: #0A1B25; /* High contrast text */
+    color: #0A1B25;
 }
 
 .badge-patient {
     background-color: var(--gray-500);
     color: var(--color-white);
 }
+
+/* Styles for filter inputs in User Management */
+.admin-filter-input {
+    flex-grow: 1;
+    min-width: 180px;
+}
+
+@media (max-width: 768px) {
+    .admin-filter-input {
+        width: 100%;
+        flex-basis: auto;
+    }
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-5) 0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: var(--space-2);
+}
+
+.page-item .page-link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--gray-200);
+    text-decoration: none;
+    background-color: var(--gray-700);
+    transition: background-color var(--ts-fast) ease;
+}
+
+.page-item .page-link:hover {
+    background-color: var(--gray-600);
+}
+
+.page-item.active .page-link {
+    background-color: var(--color-teal);
+    color: var(--color-black);
+    font-weight: 700;
+}
+
+.page-item.active .page-link:hover {
+    background-color: var(--color-teal);
+}
+
+/* Activity Feed Styles */
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+}
+
+.activity-item:not(:last-child) {
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--gray-700);
+}
+
+.activity-icon {
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.activity-description {
+    margin: 0;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(14, 18, 21, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    max-width: 500px;
+}
+
+/* Table Skeleton Styles */
+@keyframes skeleton-loading {
+    0% {
+        background-color: var(--gray-700);
+    }
+    100% {
+        background-color: var(--gray-600);
+    }
+}
+
+.skeleton-table {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--gray-700);
+    background-color: var(--gray-800);
+}
+
+.skeleton-row:not(:last-child) {
+    border-bottom: 1px solid var(--gray-700);
+}
+
+.skeleton-cell {
+    height: 20px;
+    border-radius: var(--radius-sm);
+    animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.skeleton-checkbox { width: 20px; flex-shrink: 0; }
+.skeleton-id { width: 40px; }
+.skeleton-email { flex: 3; }
+.skeleton-name { flex: 2; }
+.skeleton-role { flex: 1; }
+.skeleton-date { flex: 1.5; }
+.skeleton-actions { flex: 2; }

@@ -51,3 +51,18 @@ export const deleteUserById = async (userId) => {
         return { data: null, error: { message: errorMessage, original: error } };
     }
 };
+
+/**
+ * Fetches recent activities from the backend.
+ * @returns {Promise<{data: any, error: any}>}
+ */
+export const getRecentActivities = async () => {
+    try {
+        const response = await apiClient.get('/admin/activities');
+        return { data: response.data, error: null };
+    } catch (error) {
+        console.error('Error fetching recent activities:', error);
+        const errorMessage = error.response?.data?.message || error.message || 'An unknown error occurred';
+        return { data: null, error: { message: errorMessage, original: error } };
+    }
+};
