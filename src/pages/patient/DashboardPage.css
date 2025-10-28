@@ -35,7 +35,6 @@
     align-items: flex-start;
 }
 
-
 /* ==========================================================================
    Main Content: Chart, Summary, etc.
    ========================================================================== */
@@ -103,7 +102,6 @@
     box-shadow: 0 2px 4px rgba(0, 241, 159, 0.2);
 }
 
-
 /* --- Quick Add Form --- */
 
 .quick-add-form {
@@ -139,7 +137,7 @@
     width: 100%;
 }
 
-.form-error, .form-success {
+.form-error, .form-success, .error-message {
     text-align: center;
     padding: var(--space-3);
     border-radius: var(--radius-sm);
@@ -148,7 +146,7 @@
     line-height: 20px;
 }
 
-.form-error {
+.form-error, .error-message {
     color: var(--color-danger);
     background-color: rgba(255, 0, 38, 0.1);
     border: 1px solid var(--color-danger);
@@ -210,6 +208,42 @@
     background-color: rgba(0, 241, 159, 0.05);
 }
 
+/* --- Summary Explanation --- */
+.summary-explanation {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--gray-700);
+}
+
+.summary-explanation h4 {
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+    font-size: 20px;
+    color: var(--color-white);
+}
+
+.summary-explanation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.summary-explanation li {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--gray-300);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--gray-700);
+}
+
+.summary-explanation li:last-child {
+    border-bottom: none;
+}
+
+.summary-explanation strong {
+    color: var(--gray-100);
+    font-weight: 600;
+}
 
 /* ==========================================================================
    Responsive Design

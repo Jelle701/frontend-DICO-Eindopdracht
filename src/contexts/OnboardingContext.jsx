@@ -73,7 +73,13 @@ export function OnboardingContextProvider({ children }) {
         };
 
         const mapUnitToSystemValue = (unit) => {
-            return (unit === 'mmol/L' || unit === 'mg/dL') ? 'METRIC' : 'METRIC';
+            // Correctly map the unit to the system value.
+            // mg/dL is common in the US (Imperial system for this context).
+            if (unit === 'mg/dL') {
+                return 'IMPERIAL';
+            }
+            // mmol/L is the standard SI unit (Metric).
+            return 'METRIC';
         };
 
         const toInsulinEnum = (name) => {

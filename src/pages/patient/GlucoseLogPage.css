@@ -1,117 +1,31 @@
-/* src/pages/Authorization/GlucoseLogPage.css */
-.glucose-log-page {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    font-family: sans-serif;
-}
+/* src/pages/patient/GlucoseLogPage.css */
 
-.glucose-log-page h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 2rem;
-}
+/* 
+ * De meeste styling voor deze pagina (knoppen, kaarten, invoervelden) 
+ * wordt nu afgehandeld door de globale classes uit index.css.
+ * Dit bestand bevat alleen de unieke layout-regels voor deze pagina.
+ */
 
 .log-container {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 2rem;
+    grid-template-columns: 1fr; /* Standaard 1 kolom voor mobiel */
+    gap: var(--space-6);
+    margin-top: var(--space-6);
 }
 
-/* Styling voor het toevoeg-formulier */
-.add-measurement-section {
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e0e0e0;
-}
-
-.add-measurement-section h2 {
-    margin-top: 0;
-    color: #007bff;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.add-measurement-section .input-group {
-    margin-bottom: 1rem;
-}
-
-.add-measurement-section .btn-primary {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.add-measurement-section .btn-primary:hover {
-    background-color: #0056b3;
-}
-
-/* Styling voor de metingen-lijst */
-.measurement-list-section {
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e0e0e0;
-}
-
-.measurement-list-section h2 {
-    margin-top: 0;
-    color: #333;
-}
-
-.measurement-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-.measurement-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.measurement-item:last-child {
-    border-bottom: none;
-}
-
-.measurement-value {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #007bff;
-}
-
-.measurement-time {
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.error-message {
-    color: #d9534f;
-    background-color: rgba(217, 83, 79, 0.1);
-    padding: 0.5rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-/* Responsive aanpassing voor kleinere schermen */
-@media (max-width: 900px) {
+/* Op grotere schermen, schakel over naar een 2-koloms layout */
+@media (min-width: 900px) {
     .log-container {
-        grid-template-columns: 1fr;
+        /* Het formulier neemt 1 deel, de lijst 2 delen */
+        grid-template-columns: 1fr 2fr;
     }
 }
+
+/* Wrapper voor de lijst met metingen om deze scrollbaar te maken */
+.measurement-list-wrapper {
+    max-height: 500px; /* Pas hoogte aan indien nodig */
+    overflow-y: auto;
+    margin-top: var(--space-5);
+}
+
+/* De individuele lijst-items (.detail-item) worden volledig gestyled door index.css */

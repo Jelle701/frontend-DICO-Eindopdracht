@@ -1,9 +1,8 @@
-// src/services/ApiClient.jsx
 import axios from 'axios';
-import { API_URL } from '../../config.js';
+// import { API_URL } from '../../config.js'; // Deze import is nu niet meer direct nodig voor baseURL
 
 const apiClient = axios.create({
-    baseURL: API_URL, // Gebruik de omgevingsvariabele
+    baseURL: '/api', // Aangepast volgens instructies: alle API-aanroepen krijgen nu /api als prefix
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

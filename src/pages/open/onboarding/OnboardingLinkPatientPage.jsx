@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../../../services/ApiClient';
+// Import the new, centralized service function
+import { linkPatient } from '../../../services/ProviderService.jsx';
 import Navbar from '../../../components/web components/Navbar.jsx';
-import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
+import '../../../styles/AuthForm.css';
 
 function OnboardingLinkPatientPage() {
     const [accessCode, setAccessCode] = useState('');
@@ -22,26 +23,19 @@ function OnboardingLinkPatientPage() {
         }
 
         try {
-            // CORRECTIE: De overbodige '/api' is verwijderd.
-            await apiClient.post('/guardian/link-patient', { 
-                accessCode: accessCode 
-            });
+            // Use the new, centralized service function
+            const { error: apiError } = await linkPatient(accessCode);
+
+            if (apiError) {
+                throw apiError;
+            }
 
             // Navigeer naar de portal na een succesvolle koppeling
             navigate('/patient-portal');
 
         } catch (err) {
-            // Verbeterde foutafhandeling volgens de nieuwe backend-standaard
-            if (err.response && err.response.data && err.response.data.message) {
-                // Gebruik de specifieke foutmelding van de backend
-                setError(err.response.data.message);
-            } else if (err.request) {
-                // Netwerkfout
-                setError('Kan de server niet bereiken. Controleer je internetverbinding.');
-            } else {
-                // Andere onverwachte fouten
-                setError('Er is een onbekende fout opgetreden. Probeer het later opnieuw.');
-            }
+            // Use the standardized error message from the service
+            setError(err.message || 'Er is een onbekende fout opgetreden. Probeer het later opnieuw.');
         } finally {
             setLoading(false);
         }
@@ -50,11 +44,11 @@ function OnboardingLinkPatientPage() {
     return (
         <>
             <Navbar />
-            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
-                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
+            <div className="auth-page-container">
+                <div className="auth-form-card">
                     <form onSubmit={handleSubmit}>
                         <h1>Koppel aan Patiënt</h1>
-                        <p className="auth-form-description">Voer de unieke toegangscode in die u van de patiënt heeft ontvangen.</p> {/* Gebruik de nieuwe description class */}
+                        <p className="auth-form-description">Voer de unieke toegangscode in die u van de patiënt heeft ontvangen.</p>
                         
                         <div className="input-group">
                             <label htmlFor="code">Toegangscode</label>

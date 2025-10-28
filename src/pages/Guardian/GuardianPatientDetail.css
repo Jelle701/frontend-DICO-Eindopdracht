@@ -1,59 +1,32 @@
-/* Styles for Guardian Patient Detail Page */
-.patient-detail-container {
-    padding: var(--space-6);
+/* GuardianPatientDetail.css */
+
+.patient-detail-page {
     max-width: var(--container-lg);
     margin: 0 auto;
 }
 
-.detail-page-header {
-    margin-bottom: var(--space-6);
-}
-
-.detail-page-header .header-content {
+.patient-detail-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--space-4);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--gray-700);
 }
 
-.detail-page-header h1 {
-    margin-bottom: 0;
+.patient-detail-header h1 {
+    font-size: 48px;
+    line-height: 56px;
+    color: var(--color-white);
+    margin: 0;
 }
 
-.detail-page-header .back-link {
-    color: var(--gray-200);
-    text-decoration: none;
-    margin-bottom: var(--space-4);
-    display: inline-block;
-}
-
-.detail-page-header .back-link:hover {
-    color: var(--color-teal);
-}
-
-.patient-details-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-}
-
-@media (min-width: 960px) {
-    .patient-details-grid {
-        grid-template-columns: 300px 1fr;
-    }
-}
-
-.profile-summary-card.card {
-    padding: var(--space-5);
-}
-
-.measurements-card.card {
-    padding: 0; /* Remove padding to allow table to fill the card */
-}
-
-.measurements-card h3 {
-    padding: var(--space-5) var(--space-5) 0;
+/* Wrapper voor de scrollbare tabel */
+.measurements-table-wrapper {
+    max-height: 400px; /* Stel een maximale hoogte in */
+    overflow-y: auto;  /* Schakel verticale scrolling in als de inhoud hoger is */
+    border-top: 1px solid var(--gray-700);
 }
 
 .measurements-table {
@@ -65,32 +38,33 @@
 .measurements-table td {
     padding: var(--space-3) var(--space-5);
     text-align: left;
+    font-size: 14px;
     border-bottom: 1px solid var(--gray-700);
 }
 
 .measurements-table thead th {
-    font-size: 12px;
-    text-transform: uppercase;
-    color: var(--gray-300);
+    background-color: var(--gray-800);
+    color: var(--gray-200);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .measurements-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* --- Glucose Value Styling --- */
-.glucose-value--high {
-    color: var(--color-danger);
-    font-weight: 700;
+.measurements-table tbody tr:hover {
+    background-color: rgba(0, 241, 159, 0.05);
 }
 
-.glucose-value--low {
+.glucose-value--high {
     color: var(--color-warning);
     font-weight: 700;
 }
 
-/* Optional: highlight the entire row for emphasis */
-.measurement-row--high td,
-.measurement-row--low td {
-    background-color: rgba(255, 255, 255, 0.02);
+.glucose-value--low {
+    color: var(--color-danger);
+    font-weight: 700;
 }

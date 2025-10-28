@@ -1,3 +1,4 @@
+
 /* src/pages/Services/ServicesHubPage.css */
 .services-page-container {
     max-width: var(--container-lg);
@@ -87,4 +88,28 @@
 .service-card.disabled .btn:hover {
     transform: none;
     box-shadow: none;
+}
+
+/* Custom File Input Stijlen */
+.file-input-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4); /* 16px */
+    width: 100%;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.file-name {
+    font-size: 14px;
+    color: var(--gray-300);
+    /* Lange bestandsnamen afkappen */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px; /* Pas aan indien nodig */
+    flex-grow: 1;
+    text-align: left;
 }

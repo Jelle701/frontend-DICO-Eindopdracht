@@ -1,6 +1,17 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth, useUser } from '../../contexts/AuthContext.jsx';
+import { ROLES } from '../../constants.js'; // Importeer de constanten
+
+// Robuuste helper functie om de rol te normaliseren
+const normalizeRole = (role) => {
+    if (typeof role !== 'string') return null;
+    let normalized = role.toUpperCase(); // 1. Converteer naar hoofdletters
+    if (normalized.startsWith('ROLE_')) { // 2. Verwijder prefix
+        normalized = normalized.substring(5);
+    }
+    return normalized;
+};
 
 // Define routes that are part of the initial onboarding Routes
 const ONBOARDING_ROUTES = [
@@ -32,15 +43,17 @@ function PrivateRoute() {
         return <div className="loading-fallback-message">Gebruikersprofiel ophalen...</div>;
     }
 
+    const userRole = normalizeRole(user.role);
+    const currentPath = location.pathname;
+
     // --- Main Navigation & Access Control Logic ---
 
     // Admins have unrestricted access
-    if (user.role === 'ADMIN') {
+    if (userRole === ROLES.ADMIN) {
         return <Outlet />;
     }
 
     const isFullyOnboarded = user?.flags?.hasDetails;
-    const currentPath = location.pathname;
     const isTryingToAccessOnboarding = ONBOARDING_ROUTES.includes(currentPath);
 
     // 1. User is NOT fully onboarded
@@ -58,15 +71,15 @@ function PrivateRoute() {
         // If an onboarded user tries to access an old onboarding page, redirect them to their main portal.
         if (isTryingToAccessOnboarding) {
             let homePath = '/';
-            switch (user.role) {
-                case 'PATIENT':
+            switch (userRole) {
+                case ROLES.PATIENT:
                     homePath = '/dashboard';
                     break;
-                case 'PROVIDER':
+                case ROLES.PROVIDER:
                     homePath = '/provider-dashboard';
                     break;
-                case 'GUARDIAN':
-                    homePath = '/guardian-portal'; // Correct home for Guardian
+                case ROLES.GUARDIAN:
+                    homePath = '/guardian-portal';
                     break;
                 default:
                     homePath = '/';
@@ -77,17 +90,17 @@ function PrivateRoute() {
 
     // 3. Role-based access control for specific pages
     // Redirect PROVIDER from patient dashboard to their own
-    if (user.role === 'PROVIDER' && currentPath === '/dashboard') {
+    if (userRole === ROLES.PROVIDER && currentPath === '/dashboard') {
          return <Navigate to="/provider-dashboard" replace />;
     }
     
     // Prevent PATIENT from accessing provider/guardian portals
-    if (user.role === 'PATIENT' && (currentPath === '/provider-dashboard' || currentPath === '/patient-portal' || currentPath === '/guardian-portal')) {
+    if (userRole === ROLES.PATIENT && (currentPath === '/provider-dashboard' || currentPath === '/patient-portal' || currentPath === '/guardian-portal')) {
          return <Navigate to="/dashboard" replace />;
     }
 
     // Prevent GUARDIAN from accessing patient/provider dashboards
-    if (user.role === 'GUARDIAN' && (currentPath === '/dashboard' || currentPath === '/provider-dashboard' || currentPath === '/patient-portal')) {
+    if (userRole === ROLES.GUARDIAN && (currentPath === '/dashboard' || currentPath === '/provider-dashboard' || currentPath === '/patient-portal')) {
         return <Navigate to="/guardian-portal" replace />;
     }
 

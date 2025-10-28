@@ -30,15 +30,14 @@ export async function updateUserProfile(profileData) {
 
 /**
  * Slaat de LibreView-inloggegevens van de gebruiker op voor automatische synchronisatie.
- * @param {string} userId - De ID van de gebruiker.
  * @param {string} libreViewEmail - Het e-mailadres voor LibreView.
  * @param {string} libreViewPassword - Het wachtwoord voor LibreView.
  * @returns {Promise<{data: object|null, error: object|null}>}
  */
-export async function saveLibreViewCredentials(userId, { libreViewEmail, libreViewPassword }) {
+export async function saveLibreViewCredentials({ libreViewEmail, libreViewPassword }) {
     try {
         const payload = { libreViewEmail, libreViewPassword };
-        const { data } = await apiClient.put(`/users/${userId}`, payload);
+        const { data } = await apiClient.put('/profile/me/services/libreview', payload);
         return { data, error: null };
     } catch (error) {
         return { data: null, error: handleApiError(error) };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useUser } from '../../contexts/AuthContext.jsx';
+import { ROLES } from '../../constants.js'; // Importeer de constanten
 
 const AdminRoute = () => {
     const { user, loading } = useUser();
@@ -11,7 +12,7 @@ const AdminRoute = () => {
     }
 
     // Check if user is authenticated and has the ADMIN role
-    if (user && user.role === 'ADMIN') {
+    if (user && user.role === ROLES.ADMIN) {
         return <Outlet />;
     } else {
         // If not an admin, redirect to the dashboard or a 'not authorized' page

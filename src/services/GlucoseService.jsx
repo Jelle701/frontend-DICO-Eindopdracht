@@ -18,7 +18,7 @@ export async function getRecentGlucoseMeasurements() {
 
 /**
  * Voegt een nieuwe, handmatige glucosemeting toe aan je eigen backend.
- * @param {{value: number, timestamp: string}} measurementData - De nieuwe meting.
+ * @param {{value: number, timestamp: string, source: string}} measurementData - De nieuwe meting, inclusief de bron.
  * @returns {Promise<{data: object|null, error: object|null}>}
  */
 export async function addGlucoseMeasurement(measurementData) {

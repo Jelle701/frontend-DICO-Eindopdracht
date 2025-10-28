@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { getLinkedPatients, linkPatientToProvider } from '../../services/ProviderService';
-import { getDiabetesSummaryForPatient } from '../../services/DiabetesService.jsx'; // Import new service
+import { useNavigate } from 'react-router-dom'; // Importeer useNavigate
+import { getLinkedPatients, linkPatient, getDelegateTokenForPatient } from '../../services/ProviderService.jsx'; // Importeer getDelegateTokenForPatient
+import { getDiabetesSummaryForPatient } from '../../services/DiabetesService.jsx';
 import Navbar from '../../components/web components/Navbar.jsx';
-import DiabeticRapportValues from '../../components/DiabeticRapportValues.jsx'; // Import summary component
-import '../../components/DiabeticRapportValues.css'; // Import summary styles
+import DiabeticRapportValues from '../../components/DiabeticRapportValues.jsx';
+import '../../components/DiabeticRapportValues.css';
 import './PatientPortal.css';
 
 // --- Child Components ---
@@ -49,6 +50,25 @@ const PatientListSidebar = ({ patients, selectedPatient, onSelectPatient, onAddP
 };
 
 const PatientDetailView = ({ patient, summaryData, summaryLoading, summaryError }) => {
+    const navigate = useNavigate();
+
+    const handleOpenDashboard = async () => {
+        if (!patient) return;
+
+        const { data, error } = await getDelegateTokenForPatient(patient.id);
+        if (error) {
+            console.error('Fout bij ophalen gedelegeerd token:', error);
+            // Toon hier een foutmelding aan de gebruiker
+            return;
+        }
+
+        if (data?.delegatedToken) {
+            sessionStorage.setItem('delegatedToken', data.delegatedToken);
+            sessionStorage.setItem('patientUsername', patient.email); // Of patient.firstName + ' ' + patient.lastName
+            navigate('/dashboard');
+        }
+    };
+
     if (!patient) {
         return (
             <main className="patient-detail-content card no-patient-selected">
@@ -67,7 +87,7 @@ const PatientDetailView = ({ patient, summaryData, summaryLoading, summaryError 
                 <h1>{patient.firstName} {patient.lastName}</h1>
                 <div className="header-actions">
                     <button className="btn btn--outline">Stuur Bericht</button>
-                    <button className="btn btn--primary">Bekijk Grafieken</button>
+                    <button className="btn btn--primary" onClick={handleOpenDashboard}>Open Dashboard</button>
                 </div>
             </header>
 
@@ -191,8 +211,13 @@ function PatientPortal() {
                 setSummaryError('');
                 setSummaryData(null);
                 try {
-                    const data = await getDiabetesSummaryForPatient(selectedPatient.id);
-                    setSummaryData(data);
+                    const { data, error: apiError } = await getDiabetesSummaryForPatient(selectedPatient.id);
+                    if (apiError) {
+                        setSummaryError(apiError.message || 'Kon samenvatting niet laden.');
+                        setSummaryData(null);
+                    } else {
+                        setSummaryData(data); // Sla alleen de daadwerkelijke data op
+                    }
                 } catch (err) {
                     setSummaryError(err.message || 'Kon samenvatting niet laden.');
                 } finally {
@@ -207,7 +232,7 @@ function PatientPortal() {
         e.preventDefault();
         setModalError('');
         try {
-            const { error: apiError } = await linkPatientToProvider(newPatientCode);
+            const { error: apiError } = await linkPatient(newPatientCode);
             if (apiError) throw apiError;
             
             await fetchPatients();

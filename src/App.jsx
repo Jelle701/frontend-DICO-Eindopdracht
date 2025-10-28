@@ -31,9 +31,9 @@ const DiabeticDevices = lazy(() => import('./pages/open/onboarding/DiabeticDevic
 const GuardianPortal = lazy(() => import('./pages/Guardian/GuardianPortal.jsx'));
 const GuardianPatientDetail = lazy(() => import('./pages/Guardian/GuardianPatientDetail.jsx'));
 
-// Zorgverlener Pages
-const PatientPortal = lazy(() => import('./pages/Zorgverlener/PatientPortal.jsx'));
-const ProviderDashboard = lazy(() => import('./pages/Zorgverlener/ProviderDashboard.jsx'));
+// Provider Pages
+const PatientPortal = lazy(() => import('./pages/Provider/PatientPortal.jsx'));
+const ProviderDashboard = lazy(() => import('./pages/Provider/ProviderDashboard.jsx'));
 
 // Admin Pages
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'));
@@ -74,7 +74,7 @@ function App() {
                     <Route path="/guardian-portal" element={<GuardianPortal />} />
                     <Route path="/guardian/patient/:patientId" element={<GuardianPatientDetail />} />
 
-                    {/* Zorgverlener Routes */}
+                    {/* Provider Routes */}
                     <Route path="/patient-portal" element={<PatientPortal />} />
                     <Route path="/provider-dashboard" element={<ProviderDashboard />} />
 

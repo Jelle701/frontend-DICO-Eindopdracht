@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth, useUser } from '../../contexts/AuthContext.jsx'; // Importeer useUser
+import { useAuth, useUser } from '../../contexts/AuthContext.jsx';
+import { ROLES } from '../../constants.js'; // Importeer de constanten
 
 const PublicRoute = ({ children }) => {
     const { isAuth, loading: authLoading } = useAuth();
@@ -22,17 +23,22 @@ const PublicRoute = ({ children }) => {
         let intendedStartPath = '/'; // Fallback
 
         switch (user.role) {
-            case 'ADMIN':
-                intendedStartPath = '/admin-dashboard'; // Aangepast naar de correcte admin route
+            case ROLES.ADMIN:
+                intendedStartPath = '/admin-dashboard';
                 break;
-            case 'PATIENT':
+            case ROLES.PATIENT:
                 intendedStartPath = '/dashboard';
                 break;
-            case 'GUARDIAN':
-                // FIX: A Guardian's next step is always to link a patient.
-                intendedStartPath = '/onboarding/link-patient';
+            case ROLES.GUARDIAN:
+                // Als de ouder/voogd al een patiënt heeft gekoppeld, stuur naar het portaal.
+                if (user.linkedPatients && user.linkedPatients.length > 0) {
+                    intendedStartPath = '/guardian-portal';
+                } else {
+                    // Anders, stuur naar de pagina om een patiënt te koppelen.
+                    intendedStartPath = '/onboarding/link-patient';
+                }
                 break;
-            case 'PROVIDER':
+            case ROLES.PROVIDER:
                 intendedStartPath = '/provider-dashboard';
                 break;
             default:

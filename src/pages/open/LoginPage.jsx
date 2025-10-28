@@ -3,12 +3,23 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, useUser } from '../../contexts/AuthContext.jsx';
 import { loginUser } from '../../services/AuthService/AuthService.jsx';
 import Navbar from '../../components/web components/Navbar.jsx';
-import '../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
+import '../../styles/AuthForm.css';
+import { ROLES } from '../../constants.js'; // Importeer de constanten
 
 // Helper functie om e-mail te valideren
 const isValidEmail = (email) => {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     return emailRegex.test(email);
+};
+
+// Robuuste helper functie om de rol te normaliseren
+const normalizeRole = (role) => {
+    if (typeof role !== 'string') return null;
+    let normalized = role.toUpperCase(); // 1. Converteer naar hoofdletters
+    if (normalized.startsWith('ROLE_')) { // 2. Verwijder prefix
+        normalized = normalized.substring(5);
+    }
+    return normalized;
 };
 
 function LoginPage() {
@@ -24,36 +35,31 @@ function LoginPage() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // Wacht tot de authenticatie is voltooid EN het user object is geladen.
         if (isAuth && user) {
-            console.log('[LoginPage] User authenticated, determining redirect...', user);
-            if (user.role) {
-                switch (user.role) {
-                    case 'ADMIN':
-                        console.log('[LoginPage] Admin user detected, redirecting to /admin-dashboard');
-                        navigate('/admin-dashboard');
+            const userRole = normalizeRole(user.role);
+
+            if (userRole) {
+                switch (userRole) {
+                    case ROLES.ADMIN:
+                        navigate('/admin-dashboard', { replace: true });
                         break;
-                    case 'PATIENT':
-                        console.log('[LoginPage] Patient user detected, redirecting to /dashboard');
-                        navigate('/dashboard');
+                    case ROLES.PATIENT:
+                        navigate('/dashboard', { replace: true });
                         break;
-                    case 'GUARDIAN':
-                        console.log('[LoginPage] Guardian user detected, redirecting to /guardian-portal');
-                        navigate('/guardian-portal'); // Gecorrigeerde route voor Guardian
+                    case ROLES.GUARDIAN:
+                        navigate('/guardian-portal', { replace: true });
                         break;
-                    case 'PROVIDER':
-                        console.log('[LoginPage] Provider user detected, redirecting to /provider-dashboard');
-                        navigate('/provider-dashboard');
+                    case ROLES.PROVIDER:
+                        navigate('/provider-dashboard', { replace: true });
                         break;
                     default:
-                        console.log(`[LoginPage] Unknown role ${user.role}, redirecting to /`);
-                        navigate('/');
+                        navigate('/', { replace: true });
                 }
             } else {
-                console.log('[LoginPage] User has no role, redirecting to onboarding');
-                navigate('/onboarding/role');
+                // Als de gebruiker wel is ingelogd maar geen rol heeft (bv. tijdens onboarding)
+                navigate('/onboarding/role', { replace: true });
             }
-        } else if (isAuth && user === null) {
-            console.log('[LoginPage] Auth is ready, but user object is pending...');
         }
     }, [isAuth, user, navigate]);
 
@@ -82,7 +88,6 @@ function LoginPage() {
             return;
         }
 
-        // Correctie: De backend verwacht 'email', geen 'username'.
         const loginData = {
             email: formData.email,
             password: formData.password
@@ -92,20 +97,21 @@ function LoginPage() {
 
         if (apiError) {
             setError(apiError.message || 'Er is een onbekende fout opgetreden.');
+            setLoading(false);
         } else {
             login(data.jwt);
+            // De useEffect hierboven handelt de navigatie af zodra de user state is bijgewerkt.
         }
-        setLoading(false);
     };
 
     return (
         <>
             <Navbar />
-            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
-                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
+            <div className="auth-page-container">
+                <div className="auth-form-card">
                     <form onSubmit={handleSubmit}>
                         <h1>Inloggen</h1>
-                        <p className="auth-form-description">Welkom terug! Log in om verder te gaan.</p> {/* Gebruik de nieuwe description class */}
+                        <p className="auth-form-description">Welkom terug! Log in om verder te gaan.</p>
 
                         <div className="input-group">
                             <label htmlFor="email">E-mailadres</label>

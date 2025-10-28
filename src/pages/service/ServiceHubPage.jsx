@@ -1,9 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Navbar from '../../components/web components/Navbar.jsx';
 import apiClient from '../../services/ApiClient';
 import { getUserServices, refreshLibreViewSession } from '../../services/UserService.jsx';
 import { invalidateLibreViewSession, getLibreViewConnections } from '../../services/LibreView/LibreViewService.jsx';
+import { getAllMyGlucoseData } from '../../services/DataService.jsx'; // Importeer de nieuwe functie
+import GlucoseUpload from '../../components/GlucoseUpload/GlucoseUpload.jsx';
 import './ServicesHubPage.css';
 import '../Authorization/AccessCodeManagementPage.css';
 
@@ -15,11 +18,15 @@ function ServiceHubPage() {
     const [copySuccess, setCopySuccess] = useState('');
 
     // State voor LibreView
-    const [libreViewStatus, setLibreViewStatus] = useState('loading'); // 'loading', 'linked_and_active', 'linked_but_expired', 'unlinked'
+    const [libreViewStatus, setLibreViewStatus] = useState('loading');
     const [libreViewInfo, setLibreViewInfo] = useState(null);
     const [libreViewLoading, setLibreViewLoading] = useState(false);
     const [libreViewMessage, setLibreViewMessage] = useState('');
     const location = useLocation();
+
+    // State voor Export
+    const [exporting, setExporting] = useState(false);
+    const [exportError, setExportError] = useState('');
 
     // Functies voor Toegangscode
     const fetchAccessCode = async () => {
@@ -50,6 +57,43 @@ function ServiceHubPage() {
         if (accessCode) {
             navigator.clipboard.writeText(accessCode).then(() => setCopySuccess('Gekopieerd!'), () => setErrorCode('Kopiëren mislukt.'));
             setTimeout(() => setCopySuccess(''), 2000);
+        }
+    };
+
+    // Functie voor Export
+    const handleExportData = async () => {
+        setExporting(true);
+        setExportError('');
+        try {
+            const { data, error } = await getAllMyGlucoseData();
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                setExportError('Geen gegevens gevonden om te exporteren.');
+                return;
+            }
+
+            // Genereer CSV content
+            const headers = ["timestamp", "value", "unit", "source"];
+            const csvRows = [
+                headers.join(','),
+                ...data.map(row => 
+                    [row.timestamp, row.value, row.unit || 'mmol/L', row.source].join(',')
+                )
+            ];
+            
+            const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'glucose_export.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+
+        } catch (err) {
+            setExportError('Fout bij het exporteren van gegevens.');
+        } finally {
+            setExporting(false);
         }
     };
 
@@ -109,7 +153,24 @@ function ServiceHubPage() {
                 </header>
 
                 <main className="services-grid">
-                    {/* --- Toegangscode Kaart (Hersteld) --- */}
+                    {/* --- Glucose Upload Kaart --- */}
+                    <div className="service-card">
+                        <h3 className="service-card-title">Handmatige Upload</h3>
+                        <p className="service-card-description">Importeer handmatig uw glucosegegevens via een CSV-bestand.</p>
+                        <GlucoseUpload />
+                    </div>
+
+                    {/* --- Data Export Kaart --- */}
+                    <div className="service-card">
+                        <h3 className="service-card-title">Data Export</h3>
+                        <p className="service-card-description">Exporteer al uw opgeslagen glucosemetingen naar een CSV-bestand.</p>
+                        <button onClick={handleExportData} disabled={exporting} className="btn btn--primary mt-4">
+                            {exporting ? 'Bezig met exporteren...' : 'Exporteer Glucose Data'}
+                        </button>
+                        {exportError && <p className="error-text mt-3">{exportError}</p>}
+                    </div>
+
+                    {/* --- Toegangscode Kaart --- */}
                     <div className="service-card access-management-card">
                         <h3 className="service-card-title">Deel Toegang met Zorgverlener</h3>
                         <p className="service-card-description">Genereer een unieke code om uw zorgverlener of voogd alleen-lezen toegang te geven tot uw dashboard.</p>
@@ -127,7 +188,7 @@ function ServiceHubPage() {
                                         </>
                                     ) : <p>Er is nog geen code gegenereerd.</p>}
                                 </div>
-                                <button onClick={generateAccessCode} disabled={loadingCode} className="btn btn--primary generate-button">
+                                <button onClick={generateAccessCode} disabled={loadingCode} className="btn btn--primary">
                                     {accessCode ? 'Genereer Nieuwe Code' : 'Genereer Toegangscode'}
                                 </button>
                             </>
@@ -164,14 +225,14 @@ function ServiceHubPage() {
                         {libreViewStatus === 'unlinked' && (
                             <div className="libreview-status">
                                 <p>Status: <span className="status-dot disconnected"></span>Niet verbonden</p>
-                                <Link to="/service-hub/libreview-login" className="btn btn--primary mt-4">
-                                    Koppel Account
-                                </Link>
+                                <button disabled className="btn btn--primary mt-4">
+                                    Binnenkort
+                                </button>
                             </div>
                         )}
                     </div>
 
-                    {/* --- Herstelde "Binnenkort" Kaarten --- */}
+                    {/* --- "Binnenkort" Kaarten --- */}
                     <div className="service-card disabled">
                         <h3 className="service-card-title">Google Fit (Binnenkort)</h3>
                         <p className="service-card-description">Synchroniseer uw activiteits- en gezondheidsgegevens.</p>

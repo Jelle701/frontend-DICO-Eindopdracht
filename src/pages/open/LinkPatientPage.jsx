@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { linkPatientByCode } from '../Guardian/GuardianService.jsx'; // Importeer de nieuwe service
+// Update to the new centralized ProviderService
+import { linkPatient } from '../../services/ProviderService.jsx'; 
 import './GrantAccessPage.css'; // We hergebruiken de styling
 
 // Deze pagina is voor een ingelogde Ouder/Voogd om hun account te koppelen aan een patiënt.
@@ -22,8 +23,8 @@ function LinkPatientPage() {
         }
 
         try {
-            // Roep de nieuwe service aan om de koppeling te maken.
-            const { data, error: apiError } = await linkPatientByCode(code);
+            // Use the new, correct service function
+            const { data, error: apiError } = await linkPatient(code);
 
             if (apiError) {
                 throw apiError;

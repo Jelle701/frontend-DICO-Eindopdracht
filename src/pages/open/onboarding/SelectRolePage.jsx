@@ -4,7 +4,8 @@ import { updateUserProfile } from '../../../services/ProfileService';
 import { useOnboarding } from '../../../contexts/OnboardingContext';
 import { useUser } from '../../../contexts/AuthContext';
 import Navbar from '../../../components/web components/Navbar.jsx';
-import '../../../styles/AuthForm.css'; // Importeer de nieuwe centrale stylesheet
+import '../../../styles/AuthForm.css';
+import { ROLES } from '../../../constants.js'; // Importeer de constanten
 
 function SelectRolePage() {
     const [selectedRole, setSelectedRole] = useState('');
@@ -47,15 +48,15 @@ function SelectRolePage() {
             // Direct navigation
             console.log(`[SelectRolePage] Navigeren op basis van rol: ${selectedRole}`);
             switch (selectedRole) {
-                case 'PATIENT':
+                case ROLES.PATIENT:
                     console.log('[SelectRolePage] Navigeren naar /onboarding/preferences');
                     navigate('/onboarding/preferences');
                     break;
-                case 'GUARDIAN':
+                case ROLES.GUARDIAN:
                     console.log('[SelectRolePage] Navigeren naar /guardian-portal');
                     navigate('/guardian-portal');
                     break;
-                case 'PROVIDER':
+                case ROLES.PROVIDER:
                     console.log('[SelectRolePage] Navigeren naar /provider-dashboard');
                     navigate('/provider-dashboard');
                     break;
@@ -74,11 +75,11 @@ function SelectRolePage() {
     return (
         <>
             <Navbar />
-            <div className="auth-page-container"> {/* Gebruik de nieuwe container class */}
-                <div className="auth-form-card"> {/* Gebruik de nieuwe formulier card class */}
+            <div className="auth-page-container">
+                <div className="auth-form-card">
                     <form onSubmit={handleSubmit}>
                         <h1>Kies uw rol</h1>
-                        <p className="auth-form-description">Vertel ons wie u bent om uw ervaring te personaliseren.</p> {/* Gebruik de nieuwe description class */}
+                        <p className="auth-form-description">Vertel ons wie u bent om uw ervaring te personaliseren.</p>
 
                         <div className="input-group">
                             <label htmlFor="role-select">Uw rol</label>
@@ -93,16 +94,16 @@ function SelectRolePage() {
                                 required
                             >
                                 <option value="" disabled>-- Maak een keuze --</option>
-                                <option value="PATIENT">Patiënt</option>
-                                <option value="GUARDIAN">Ouder / Voogd</option>
-                                <option value="PROVIDER">Zorgverlener</option>
+                                <option value={ROLES.PATIENT}>Patiënt</option>
+                                <option value={ROLES.GUARDIAN}>Ouder / Voogd</option>
+                                <option value={ROLES.PROVIDER}>Zorgverlener</option>
                             </select>
                         </div>
 
-                        <div className="role-description text-center min-h-60px mt-3"> {/* Gebruik utility classes */}
-                            {selectedRole === 'PATIENT' && <p>Ik wil mijn eigen gezondheidsdata bijhouden en beheren.</p>}
-                            {selectedRole === 'GUARDIAN' && <p>Ik wil de data van een gezinslid (bv. mijn kind) bekijken.</p>}
-                            {selectedRole === 'PROVIDER' && <p>Ik wil de data van meerdere patiënten beheren.</p>}
+                        <div className="role-description text-center min-h-60px mt-3">
+                            {selectedRole === ROLES.PATIENT && <p>Ik wil mijn eigen gezondheidsdata bijhouden en beheren.</p>}
+                            {selectedRole === ROLES.GUARDIAN && <p>Ik wil de data van een gezinslid (bv. mijn kind) bekijken.</p>}
+                            {selectedRole === ROLES.PROVIDER && <p>Ik wil de data van meerdere patiënten beheren.</p>}
                         </div>
 
                         {error && <p className="error-message">{error}</p>}

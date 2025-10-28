@@ -1,29 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../../services/ApiClient';
+import { getLinkedPatients, linkPatient } from '../../services/ProviderService.jsx';
 import Navbar from '../../components/web components/Navbar.jsx';
-import './GuardianPortal.css';
-
-// --- API Functions (integrated to avoid import issues) ---
-const getLinkedPatientsForGuardian = async () => {
-    try {
-        const response = await apiClient.get('/guardian/linked-patients');
-        return { data: response.data, error: null };
-    } catch (error) {
-        console.error('[GuardianPortal] Fout bij ophalen gekoppelde patiënten:', error);
-        return { data: null, error };
-    }
-};
-
-const linkPatientToGuardian = async (accessCode) => {
-    try {
-        const response = await apiClient.post('/guardian/link-patient', { accessCode });
-        return { data: response.data, error: null };
-    } catch (error) {
-        console.error('[GuardianPortal] Fout bij koppelen patiënt:', error);
-        return { data: null, error };
-    }
-};
+import ConfirmationModal from '../../components/web components/ConfirmationModal.jsx'; // Voor de modal
+// import './GuardianPortal.css'; // Niet langer nodig
 
 // --- Helper Functions ---
 const calculateAge = (dobString) => {
@@ -38,16 +18,44 @@ const calculateAge = (dobString) => {
 
 // --- Child Components ---
 
-const LinkPatientView = ({ onSubmit, accessCode, setAccessCode, error, loading }) => (
-    <div className="link-patient-view">
-        <div className="auth-form-card">
-            <h2>Koppel aan uw kind</h2>
-            <p className="auth-form-description">Voer de unieke toegangscode in die u van uw kind of zorgverlener heeft ontvangen om de gegevens in te zien.</p>
-            <form onSubmit={onSubmit} className="link-patient-form">
+const PatientCard = ({ patient }) => {
+    const navigate = useNavigate();
+    return (
+        <div className="card bg-800 shadow-1 hover:shadow-2 hover:-translate-y-1 transition-all cursor-pointer flex flex-column" onClick={() => navigate(`/guardian/patient/${patient.id}`)}>
+            <div className="flex items-center gap-4 mb-4">
+                <div>
+                    <h3 className="text-xl font-bold text-white mt-0 mb-0">{patient.firstName} {patient.lastName}</h3>
+                    <p className="text-base text-300 m-0">{calculateAge(patient.dateOfBirth)} jaar</p>
+                </div>
+            </div>
+            <div className="flex-grow mb-5 space-y-2">
+                <div className="detail-item"><span className="detail-item__label">Diabetes Type</span><strong className="detail-item__value">{patient.diabetesType || 'N/A'}</strong></div>
+                <div className="detail-item"><span className="detail-item__label">Geboortedatum</span><strong className="detail-item__value">{new Date(patient.dateOfBirth).toLocaleDateString('nl-NL')}</strong></div>
+            </div>
+            <button className="btn btn--outline w-100 mt-auto">Bekijk Details</button>
+        </div>
+    );
+};
+
+const AddPatientCard = ({ onClick }) => (
+    <div className="card bg-800 shadow-1 hover:shadow-2 hover:-translate-y-1 transition-all cursor-pointer flex flex-column items-center justify-center text-center min-h-[250px] border-dashed border-2 border-gray-700 hover:border-teal"
+         onClick={onClick}>
+        <h4 className="text-lg font-semibold text-white m-0">Koppel een kind</h4>
+    </div>
+);
+
+const LinkPatientModal = ({ isOpen, onClose, onSubmit, accessCode, setAccessCode, error, loading }) => {
+    if (!isOpen) return null;
+
+    return (
+        <ConfirmationModal title="Koppel aan uw kind" onCancel={onClose} showConfirmButton={false} customFooter={null}>
+            <p className="text-300 mb-5">Voer de unieke toegangscode in die u van uw kind of zorgverlener heeft ontvangen om de gegevens in te zien.</p>
+            <form onSubmit={onSubmit}>
                 <div className="input-group">
                     <label htmlFor="accessCode">Toegangscode</label>
                     <input
                         id="accessCode"
+                        className="input"
                         type="text"
                         value={accessCode}
                         onChange={(e) => setAccessCode(e.target.value)}
@@ -55,52 +63,15 @@ const LinkPatientView = ({ onSubmit, accessCode, setAccessCode, error, loading }
                         required
                     />
                 </div>
-                {error && <p className="error-message">{error}</p>}
-                <button type="submit" disabled={loading} className="btn btn--primary form-action-button">
-                    {loading ? 'Bezig met koppelen...' : 'Koppel'}
-                </button>
+                {error && <p className="form-error mt-3">{error}</p>}
+                <div className="d-flex justify-end mt-6">
+                    <button type="button" onClick={onClose} className="btn btn--secondary mr-4">Annuleren</button>
+                    <button type="submit" disabled={loading} className="btn btn--primary">
+                        {loading ? 'Bezig met koppelen...' : 'Koppel'}
+                    </button>
+                </div>
             </form>
-        </div>
-    </div>
-);
-
-const PatientDataView = ({ patients }) => {
-    const navigate = useNavigate();
-    const handlePatientClick = (patientId) => {
-        navigate(`/guardian/patient/${patientId}`);
-    };
-
-    return (
-        <div className="patient-data-view">
-            <div className="patient-grid">
-                {patients.map(patient => (
-                    <div key={patient.id} className="patient-card card" onClick={() => handlePatientClick(patient.id)}>
-                        <div className="card-header">
-                            <div className="patient-name">{patient.firstName} {patient.lastName}</div>
-                            <div className="patient-age">{calculateAge(patient.dateOfBirth)} jaar</div>
-                        </div>
-                        <div className="card-body">
-                            <div className="stat-item">
-                                <span className="stat-label">Geboortedatum</span>
-                                <span className="stat-value">{patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString('nl-NL') : 'N/A'}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Diabetes Type</span>
-                                <span className="stat-value">{patient.diabetesType || 'N/A'}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Lengte</span>
-                                <span className="stat-value">{patient.height ? `${patient.height} cm` : 'N/A'}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Gewicht</span>
-                                <span className="stat-value">{patient.weight ? `${patient.weight} kg` : 'N/A'}</span>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+        </ConfirmationModal>
     );
 };
 
@@ -110,6 +81,7 @@ function GuardianPortal() {
     const [linkedPatients, setLinkedPatients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [formError, setFormError] = useState('');
     const [accessCode, setAccessCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -118,7 +90,7 @@ function GuardianPortal() {
         setLoading(true);
         setError('');
         try {
-            const { data, error: apiError } = await getLinkedPatientsForGuardian();
+            const { data, error: apiError } = await getLinkedPatients();
             if (apiError) throw apiError;
             setLinkedPatients(data || []);
         } catch (err) {
@@ -137,9 +109,11 @@ function GuardianPortal() {
         setIsSubmitting(true);
         setFormError('');
         try {
-            const { error: apiError } = await linkPatientToGuardian(accessCode);
+            const { error: apiError } = await linkPatient(accessCode);
             if (apiError) throw apiError;
-            await fetchLinkedPatients(); // On success, this will refresh and show the patient view
+            await fetchLinkedPatients();
+            setIsModalOpen(false);
+            setAccessCode('');
         } catch (err) {
             setFormError(err.response?.data?.message || 'De code is ongeldig of al gebruikt.');
         } finally {
@@ -147,42 +121,40 @@ function GuardianPortal() {
         }
     };
 
-    const renderContent = () => {
-        if (loading) {
-            return <p className="loading-message">Gegevens worden geladen...</p>;
-        }
-        if (error) {
-            return <p className="error-message-full-page">{error}</p>;
-        }
-        if (linkedPatients.length > 0) {
-            return <PatientDataView patients={linkedPatients} />;
-        }
-        // If no patients are linked, directly show the form to link one.
-        return (
-            <LinkPatientView
+    return (
+        <>
+            <Navbar />
+            <div className="container page--dark">
+                <header className="text-center mb-7">
+                    <h1 className="mb-2">Ouderportaal</h1>
+                    <p className="text-base text-300 max-w-2xl mx-auto">Een overzicht van de gegevens van uw gekoppelde kind(eren). Klik op een kaart om de gedetailleerde gegevens in te zien.</p>
+                </header>
+
+                {loading ? (
+                    <p className="text-center p-8 text-300">Gegevens worden geladen...</p>
+                ) : error ? (
+                    <p className="text-center p-8 text-danger">{error}</p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {linkedPatients.map(patient => (
+                            <PatientCard key={patient.id} patient={patient} />
+                        ))}
+                        {linkedPatients.length === 0 && (
+                            <AddPatientCard onClick={() => setIsModalOpen(true)} />
+                        )}
+                    </div>
+                )}
+            </div>
+
+            <LinkPatientModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
                 onSubmit={handleLinkSubmit}
                 accessCode={accessCode}
                 setAccessCode={setAccessCode}
                 error={formError}
                 loading={isSubmitting}
             />
-        );
-    };
-
-    return (
-        <>
-            <Navbar />
-            <div className="guardian-portal-container page--dark">
-                <header className="portal-header">
-                    <h1>Ouderportaal</h1>
-                    <p>
-                        {linkedPatients.length > 0
-                            ? 'Een overzicht van de gegevens van uw gekoppelde kind(eren).'
-                            : 'Koppel een kind om de gegevens in te zien.'}
-                    </p>
-                </header>
-                {renderContent()}
-            </div>
         </>
     );
 }

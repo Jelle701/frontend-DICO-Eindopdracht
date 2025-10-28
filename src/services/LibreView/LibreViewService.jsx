@@ -98,11 +98,11 @@ export const getLibreViewPrescriptions = (session) => {
     return getFromLibreProxy(`/libre/connections/${session.patientId}/prescriptions`, session);
 };
 
-export const importHistoricalLibreViewData = async (userId) => {
+export const importHistoricalLibreViewData = async () => {
     try {
-        const response = await apiClient.post(`/libre/sync/historical/${userId}`);
+        const response = await apiClient.post('/libre/sync/historical');
         return { data: response.data, error: null };
     } catch (error) {
-        return handleApiError(error, `/libre/sync/historical/${userId}`);
+        return handleApiError(error, '/libre/sync/historical');
     }
 };

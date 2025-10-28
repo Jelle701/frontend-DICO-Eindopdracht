@@ -1,67 +1,38 @@
-import axios from 'axios';
+import apiClient from './ApiClient';
+import { handleApiError } from './ApiErrorHandler';
 
-const API_URL = import.meta.env.VITE_API_URL;
-// 'http://localhost:8080' achter de bovenste regel
-// Functie voor de ingelogde patiënt (of via delegatie)
+/**
+ * Fetches the diabetes summary for the currently logged-in patient.
+ * This can also be used with a delegated token for providers viewing a patient.
+ * @returns {Promise<{data: object|null, error: object|null}>}
+ */
 export const getDiabetesSummary = async () => {
-    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-    const delegatedToken = sessionStorage.getItem('delegatedToken');
-    const activeToken = delegatedToken || token;
-
-    if (!activeToken) {
-        throw new Error('Geen authenticatietoken gevonden.');
-    }
-
     try {
-        const response = await axios.get(`${API_URL}/diabetes/summary`, {
-            headers: { 'Authorization': `Bearer ${activeToken}` },
-        });
-        return response.data;
+        // The apiClient automatically handles the user token and the delegated token.
+        const response = await apiClient.get('/diabetes/summary');
+        return { data: response.data, error: null };
     } catch (error) {
-        console.error('Fout bij het ophalen van de diabetes samenvatting:', error.response || error.message);
-        throw new Error(error.response?.data?.message || 'Kon de samenvattingsgegevens niet ophalen.');
+        // The handleApiError utility provides consistent error handling.
+        return { data: null, error: handleApiError(error) };
     }
 };
 
-// Functie voor zorgverleners om data van een specifieke patiënt op te halen
+/**
+ * Fetches the diabetes summary for a specific patient.
+ * Corresponds to: GET /api/diabetes/summary/patient/{patientId}
+ * This function is intended for use by providers or guardians viewing a specific patient's data.
+ * @param {number} patientId The ID of the patient.
+ * @returns {Promise<{data: object|null, error: object|null}>}
+ */
 export const getDiabetesSummaryForPatient = async (patientId) => {
-    const token = localStorage.getItem('token'); // Zorgverleners gebruiken hun eigen token
-
-    if (!token) {
-        throw new Error('Geen authenticatietoken voor zorgverlener gevonden.');
-    }
-
     try {
-        const response = await axios.get(`${API_URL}/provider/patients/${patientId}/diabetes-summary`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
-        return response.data;
+        const response = await apiClient.get(`/diabetes/summary/patient/${patientId}`);
+        return { data: response.data, error: null };
     } catch (error) {
-        console.error(`Fout bij ophalen samenvatting voor patiënt ${patientId}:`, error.response || error.message);
-        throw new Error(error.response?.data?.message || `Kon samenvatting voor patiënt ${patientId} niet ophalen.`);
+        return { data: null, error: handleApiError(error) };
     }
 };
 
-// Functie voor ouders/voogden om data van een specifieke patiënt op te halen
-export const getDiabetesSummaryForGuardian = async (patientId) => {
-    const token = localStorage.getItem('token'); // Ouders/voogden gebruiken hun eigen token
-
-    if (!token) {
-        throw new Error('Geen authenticatietoken voor ouder/voogd gevonden.');
-    }
-
-    try {
-        // URL aangepast naar het nieuwe endpoint /summary-report
-        const response = await axios.get(`${API_URL}/guardian/linked-patients/${patientId}/summary-report`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error(`Fout bij ophalen samenvatting voor patiënt ${patientId} (voogd):`, error.response || error.message);
-        throw new Error(error.response?.data?.message || `Kon samenvatting voor patiënt ${patientId} niet ophalen.`);
-    }
-};
+// Note: The functions getDiabetesSummaryForPatient and getDiabetesSummaryForGuardian
+// have been removed from this file. Their functionality is now centralized in
+// getPatientDiabetesSummary in ProviderService.jsx to align with the new backend structure.

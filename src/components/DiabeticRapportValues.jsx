@@ -22,6 +22,13 @@ function calcEagFromHbA1cPercent(hba1cPercent) {
   return { mgdl: round(eAGmgdl, 0), mmol: round(eAGmmol, 1) };
 }
 
+// GMI-formule: GMI(%) ≈ 3.31 + 0.02392 × Gemiddelde Glucose (in mg/dL)
+function calcGmiFromAvgGlucose(avgGlucoseMgdl) {
+    if (avgGlucoseMgdl == null) return null;
+    const gmi = 3.31 + (0.02392 * avgGlucoseMgdl);
+    return round(gmi, 1);
+}
+
 function round(num, dp = 1) {
   const f = Math.pow(10, dp);
   return (Math.round(num * f) / f).toFixed(dp);
@@ -51,7 +58,6 @@ function sectionVisible(
 
 // Placeholder for empty values
 const EmptyValue = () => <div className="dr-tile__sub">Geen gegevens</div>;
-
 
 // ====== Component ======
 const DiabeticRapportValues = ({
@@ -119,8 +125,13 @@ const DiabeticRapportValues = ({
       ? calcEagFromHbA1cPercent(data.hbA1c.value)
       : null;
 
+  // GMI berekening
+  const avgGlucose90d = data.avgGlucose?.values['90d'];
+  const avgGlucose90dMgdl = data.avgGlucose?.unit === 'mmol/L' && avgGlucose90d != null ? avgGlucose90d * 18 : avgGlucose90d;
+  const gmi = calcGmiFromAvgGlucose(avgGlucose90dMgdl);
+
   return (
-    <section className={`dr-card ${densityClass}`} aria-live="polite">
+    <section className={`card bg-800 ${densityClass}`} aria-live="polite">
       <header className="dr-card__header">
         <h2 className="dr-card__title">{title}</h2>
         {data.updatedAt && (
@@ -145,7 +156,10 @@ const DiabeticRapportValues = ({
             aria-label="HbA1c"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">HbA1c</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                    <span className="dr-tile__title">HbA1c</span>
+                </div>
             </div>
             {data.hbA1c ? (
               <>
@@ -162,6 +176,29 @@ const DiabeticRapportValues = ({
           </button>
         )}
 
+        {/* GMI */}
+        {sectionVisible("gmi", showSections) && (
+            <button
+                type="button"
+                className="dr-tile"
+                onClick={() => handleTileClick("gmi")}
+                aria-label="Glucose Management Indicator"
+            >
+                <div className="dr-tile__head">
+                    <div className="dr-tile__title-container">
+                        <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        <span className="dr-tile__title">GMI</span>
+                    </div>
+                </div>
+                {gmi ? (
+                    <>
+                        <div className="dr-tile__value">{gmi}%</div>
+                        <div className="dr-tile__sub">Geschat op basis van 90d gemiddelde</div>
+                    </>
+                ) : <EmptyValue />}
+            </button>
+        )}
+
         {/* Gemiddelde glucose */}
         {sectionVisible("avgGlucose", showSections) && (
           <button
@@ -171,7 +208,10 @@ const DiabeticRapportValues = ({
             aria-label="Gemiddelde glucose"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Gemiddelde glucose</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>
+                    <span className="dr-tile__title">Gemiddelde glucose</span>
+                </div>
             </div>
             {data.avgGlucose && Object.keys(data.avgGlucose.values).length > 0 ? (
               <div className="dr-avglist" role="list" aria-label="Gemiddelden per periode">
@@ -200,13 +240,21 @@ const DiabeticRapportValues = ({
             aria-label="Time in Range"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Time in Range</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span className="dr-tile__title">Time in Range</span>
+                </div>
               {data.timeInRange && <span className="dr-tile__status">{tirStatus(data.timeInRange)}</span>}
             </div>
             {data.timeInRange ? (
               <>
                 <div className="dr-tile__value">
                   {data.timeInRange.inRangePct}% in bereik
+                </div>
+                <div className="tir-bar">
+                    <div className="tir-bar__segment tir-bar__segment--below" style={{ width: `${data.timeInRange.belowRangePct}%` }} title={`Te laag: ${data.timeInRange.belowRangePct}%`}></div>
+                    <div className="tir-bar__segment tir-bar__segment--in-range" style={{ width: `${data.timeInRange.inRangePct}%` }} title={`In bereik: ${data.timeInRange.inRangePct}%`}></div>
+                    <div className="tir-bar__segment tir-bar__segment--above" style={{ width: `${data.timeInRange.aboveRangePct}%` }} title={`Te hoog: ${data.timeInRange.aboveRangePct}%`}></div>
                 </div>
                 <div className="dr-tile__sub">
                   {data.timeInRange.belowRangePct}% laag · {data.timeInRange.aboveRangePct}% hoog
@@ -225,7 +273,10 @@ const DiabeticRapportValues = ({
             aria-label="Glucosevariabiliteit"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Variabiliteit (CV)</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    <span className="dr-tile__title">Variabiliteit (CV)</span>
+                </div>
               {data.cvPct != null && <span className="dr-tile__status">{cvStatus(data.cvPct)}</span>}
             </div>
             {data.cvPct != null ? (
@@ -246,7 +297,10 @@ const DiabeticRapportValues = ({
             aria-label="Nuchtere glucose"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Nuchter (FPG)</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <span className="dr-tile__title">Nuchter (FPG)</span>
+                </div>
               {fpgMmol != null && (
                 <span className="dr-tile__status">
                   {valueStatus(fpgMmol, targets.fpgMin, targets.fpgMax)}
@@ -275,7 +329,10 @@ const DiabeticRapportValues = ({
             aria-label="Postprandiale glucose"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Na maaltijd (PPG)</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M3 20a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14z" /></svg>
+                    <span className="dr-tile__title">Na maaltijd (PPG)</span>
+                </div>
               {ppgMmol != null && (
                 <span className="dr-tile__status">
                   {valueStatus(ppgMmol, undefined, targets.ppgMax)}
@@ -304,7 +361,10 @@ const DiabeticRapportValues = ({
             aria-label="Ketonen"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Ketonen</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1014.12 11.88a3 3 0 00-4.242 4.242z" /></svg>
+                    <span className="dr-tile__title">Ketonen</span>
+                </div>
             </div>
             {data.ketones ? (
               <div className="dr-tile__value">
@@ -323,7 +383,10 @@ const DiabeticRapportValues = ({
             aria-label="Leefstijl"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Leefstijl</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    <span className="dr-tile__title">Leefstijl</span>
+                </div>
             </div>
             {data.lifestyle && Object.keys(data.lifestyle).length > 0 ? (
               <div className="dr-list">
@@ -356,7 +419,10 @@ const DiabeticRapportValues = ({
             aria-label="Vitale waarden"
           >
             <div className="dr-tile__head">
-              <span className="dr-tile__title">Vitale waarden</span>
+                <div className="dr-tile__title-container">
+                    <svg className="dr-tile__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    <span className="dr-tile__title">Vitale waarden</span>
+                </div>
             </div>
             {data.vitals && Object.keys(data.vitals).length > 0 ? (
               <div className="dr-list">

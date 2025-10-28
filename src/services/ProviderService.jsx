@@ -1,70 +1,89 @@
-import apiClient from './ApiClient';
-import { handleApiError } from './ApiErrorHandler';
+import apiClient from './ApiClient.jsx';
+import { handleApiError } from './ApiErrorHandler.jsx';
 
 /**
- * Koppelt een patiënt aan de ingelogde zorgverlener via een toegangscode.
- * @param {string} accessCode De door de patiënt verstrekte code.
+ * Links a patient to the currently logged-in provider or guardian using an access code.
+ * Corresponds to: POST /api/provider/link-patient
+ * @param {string} accessCode The patient's unique access code.
  * @returns {Promise<{data: object|null, error: object|null}>}
  */
-export async function linkPatientToProvider(accessCode) {
-    console.log(`%cProviderService: Calling linkPatientToProvider with code: ${accessCode}`, 'color: purple;');
+export const linkPatient = async (accessCode) => {
     try {
-        const { data } = await apiClient.post('/provider/link-patient', { accessCode });
-        console.log('%cProviderService: linkPatientToProvider success:', 'color: green;', data);
-        return { data, error: null };
+        const response = await apiClient.post('/provider/link-patient', { accessCode });
+        return { data: response.data, error: null };
     } catch (error) {
-        console.error('ProviderService: linkPatientToProvider error:', error);
         return { data: null, error: handleApiError(error) };
     }
-}
+};
 
 /**
- * Haalt de lijst op van alle patiënten die gekoppeld zijn aan de ingelogde zorgverlener.
- * @returns {Promise<{data: Array|null, error: object|null}>}
+ * Fetches all patients linked to the currently logged-in provider or guardian.
+ * Corresponds to: GET /api/provider/patients
+ * @returns {Promise<{data: any, error: any}>}
  */
-export async function getLinkedPatients() {
-    console.log('%cProviderService: Calling getLinkedPatients', 'color: purple;');
+export const getLinkedPatients = async () => {
     try {
-        const { data } = await apiClient.get('/provider/patients');
-        console.log('%cProviderService: getLinkedPatients success:', 'color: green;', data);
-        return { data, error: null };
+        const response = await apiClient.get('/provider/patients');
+        return { data: response.data, error: null };
     } catch (error) {
-        console.error('ProviderService: getLinkedPatients error:', error);
         return { data: null, error: handleApiError(error) };
     }
-}
+};
 
 /**
- * Verkrijgt een gedelegeerd token voor een specifieke gekoppelde patiënt.
- * @param {string} patientId De ID van de patiënt waarvoor het token moet worden verkregen.
- * @returns {Promise<{data: {delegatedToken: string, patientUsername: string}|null, error: object|null}>}
+ * Fetches glucose measurements for a specific patient.
+ * Corresponds to: GET /api/provider/patients/{patientId}/glucose-measurements
+ * @param {number} patientId The ID of the patient.
+ * @returns {Promise<{data: any, error: any}>}
  */
-export async function getDelegatedTokenForPatient(patientId) {
-    console.log(`%cProviderService: Calling getDelegatedTokenForPatient for patientId: ${patientId}`, 'color: purple;');
+export const getPatientGlucoseMeasurements = async (patientId) => {
     try {
-        const { data } = await apiClient.post(`/provider/patients/${patientId}/delegate-token`);
-        console.log('%cProviderService: getDelegatedTokenForPatient success:', 'color: green;', data);
-        return { data, error: null };
+        const response = await apiClient.get(`/provider/patients/${patientId}/glucose-measurements`);
+        return { data: response.data, error: null };
     } catch (error) {
-        console.error('ProviderService: getDelegatedTokenForPatient error:', error);
         return { data: null, error: handleApiError(error) };
     }
-}
+};
 
 /**
- * NIEUW: Haalt de dashboard-samenvatting op voor een SPECIFIEKE patiënt.
- * @param {string} patientId De ID van de patiënt.
+ * Fetches the diabetes summary for a specific patient.
+ * Corresponds to: GET /api/provider/patients/{patientId}/diabetes-summary
+ * @param {number} patientId The ID of the patient.
+ * @returns {Promise<{data: any, error: any}>}
+ */
+export const getPatientDiabetesSummary = async (patientId) => {
+    try {
+        const response = await apiClient.get(`/provider/patients/${patientId}/diabetes-summary`);
+        return { data: response.data, error: null };
+    } catch (error) {
+        return { data: null, error: handleApiError(error) };
+    }
+};
+
+/**
+ * Requests a temporary, delegated token for a specific patient.
+ * @param {number} patientId The ID of the patient.
+ * @returns {Promise<{data: {delegatedToken: string}|null, error: object|null}>}
+ */
+export const getDelegateTokenForPatient = async (patientId) => {
+    try {
+        const response = await apiClient.post(`/provider/patients/${patientId}/delegate-token`);
+        return { data: response.data, error: null };
+    } catch (error) {
+        return { data: null, error: handleApiError(error) };
+    }
+};
+
+/**
+ * Fetches summary data for the provider dashboard.
+ * Corresponds to: GET /api/provider/summary
  * @returns {Promise<{data: object|null, error: object|null}>}
  */
-export async function getProviderDashboardSummary(patientId) {
-    console.log(`%cProviderService: Calling getProviderDashboardSummary for patientId: ${patientId}`, 'color: purple;');
+export const getProviderDashboardSummary = async () => {
     try {
-        // FIX: Gebruik de nieuwe URL met patientId
-        const { data } = await apiClient.get(`/provider/patients/${patientId}/dashboard-summary`);
-        console.log(`%cProviderService: getProviderDashboardSummary for patientId ${patientId} success:`, 'color: green;', data);
-        return { data, error: null };
+        const response = await apiClient.get('/provider/summary');
+        return { data: response.data, error: null };
     } catch (error) {
-        console.error(`ProviderService: getProviderDashboardSummary for patientId ${patientId} error:`, error);
         return { data: null, error: handleApiError(error) };
     }
-}
+};

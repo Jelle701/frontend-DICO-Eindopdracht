@@ -66,3 +66,19 @@ export const getRecentActivities = async () => {
         return { data: null, error: { message: errorMessage, original: error } };
     }
 };
+
+/**
+ * Deletes all glucose data for a specific user.
+ * @param {number} userId - The ID of the user whose glucose data should be deleted.
+ * @returns {Promise<{data: any, error: any}>}
+ */
+export const deleteGlucoseDataForUser = async (userId) => {
+    try {
+        const response = await apiClient.delete(`/admin/users/${userId}/glucose-data`);
+        return { data: response.data, error: null };
+    } catch (error) {
+        console.error(`Error deleting glucose data for user ${userId}:`, error);
+        const errorMessage = error.response?.data?.message || error.message || 'An unknown error occurred';
+        return { data: null, error: { message: errorMessage, original: error } };
+    }
+};

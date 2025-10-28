@@ -1,7 +1,8 @@
-// src/pages/Authorization/GlucoseLogPage.jsx
+// src/pages/patient/GlucoseLogPage.jsx
 import React, { useState, useEffect } from 'react';
 import { getRecentGlucoseMeasurements, addGlucoseMeasurement } from '../../services/GlucoseService.jsx';
-import './GlucoseLogPage.css';
+// The new, simplified CSS file will be imported.
+import './GlucoseLogPage.css'; 
 
 // Helper functions to format date and time
 const getCurrentDate = () => new Date().toISOString().slice(0, 10);
@@ -48,7 +49,6 @@ function GlucoseLogPage() {
             return;
         }
 
-        // Combine date and time to a single ISO string
         const timestamp = new Date(`${formState.date}T${formState.time}`).toISOString();
 
         const payload = {
@@ -61,9 +61,7 @@ function GlucoseLogPage() {
         if (addError) {
             setFormError(addError.message);
         } else {
-            // Add the new measurement to the top of the list for an immediate update
             setMeasurements(prev => [newMeasurement, ...prev]);
-            // Reset the form to current date and time
             setFormState({
                 value: '',
                 date: getCurrentDate(),
@@ -84,15 +82,18 @@ function GlucoseLogPage() {
     };
 
     return (
-        <div className="glucose-log-page">
-            <h1>Glucose Logboek</h1>
+        // Use container for consistent padding and max-width
+        <div className="container pt-6 pb-6"> 
+            <h1 className="text-center">Glucose Logboek</h1>
 
             <div className="log-container">
-                <div className="add-measurement-section">
-                    <h2>Nieuwe Meting Toevoegen</h2>
+                {/* Use the global 'card' class */}
+                <div className="card">
+                    <h3>Nieuwe Meting Toevoegen</h3>
                     <form onSubmit={handleFormSubmit}>
-                        <div className="input-group">
-                            <label htmlFor="value">Glucosewaarde (mmol/L)</label>
+                        {/* Use margin utilities for spacing */}
+                        <div className="mb-4">
+                            <label className="label" htmlFor="value">Glucosewaarde (mmol/L)</label>
                             <input
                                 type="number"
                                 id="value"
@@ -103,8 +104,8 @@ function GlucoseLogPage() {
                                 required
                             />
                         </div>
-                        <div className="input-group">
-                            <label htmlFor="date">Datum</label>
+                        <div className="mb-4">
+                            <label className="label" htmlFor="date">Datum</label>
                             <input
                                 type="date"
                                 id="date"
@@ -114,8 +115,8 @@ function GlucoseLogPage() {
                                 required
                             />
                         </div>
-                        <div className="input-group">
-                            <label htmlFor="time">Tijd</label>
+                        <div className="mb-4">
+                            <label className="label" htmlFor="time">Tijd</label>
                             <input
                                 type="time"
                                 id="time"
@@ -125,26 +126,30 @@ function GlucoseLogPage() {
                                 required
                             />
                         </div>
-                        {formError && <p className="error-message">{formError}</p>}
-                        <button type="submit" className="btn-primary">Opslaan</button>
+                        {formError && <p className="form-error">{formError}</p>}
+                        {/* Use the global button classes */}
+                        <button type="submit" className="btn btn--primary w-100">Opslaan</button>
                     </form>
                 </div>
 
-                <div className="measurement-list-section">
-                    <h2>Recente Metingen</h2>
-                    {loading && <p>Metingen worden geladen...</p>}
-                    {error && <p className="error-message">Fout: {error}</p>}
+                {/* Use the global 'card' class */}
+                <div className="card">
+                    <h3>Recente Metingen</h3>
+                    {loading && <p className="empty-state">Metingen worden geladen...</p>}
+                    {error && <p className="form-error">Fout: {error}</p>}
                     {!loading && measurements.length === 0 && (
-                        <p>Je hebt nog geen metingen toegevoegd.</p>
+                        <p className="empty-state">Je hebt nog geen metingen toegevoegd.</p>
                     )}
-                    <ul className="measurement-list">
+                    {/* Use a div wrapper for scrolling, similar to DashboardPage */}
+                    <div className="measurement-list-wrapper">
                         {measurements.map(m => (
-                            <li key={m.id} className="measurement-item">
-                                <span className="measurement-value">{m.value.toFixed(1)} mmol/L</span>
-                                <span className="measurement-time">{formatDate(m.timestamp)}</span>
-                            </li>
+                            // Use the global 'detail-item' class for list items
+                            <div key={m.id} className="detail-item">
+                                <span className="detail-item__value">{m.value.toFixed(1)} mmol/L</span>
+                                <span className="detail-item__label">{formatDate(m.timestamp)}</span>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             </div>
         </div>

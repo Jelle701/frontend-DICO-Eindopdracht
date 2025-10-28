@@ -45,6 +45,7 @@ export function AuthContextProvider({ children }) {
                 try {
                     console.log('AuthContextProvider: Calling getMyProfile...');
                     const { data, error } = await getMyProfile();
+                    console.log('AuthContextProvider: getMyProfile response:', { data, error });
 
                     if (!isMounted) {
                         console.log('AuthContextProvider: Component unmounted after getMyProfile, aborting state update.');
